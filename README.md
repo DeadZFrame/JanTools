@@ -1,1 +1,1 @@
-https://github.com/annulusgames/LitMotion.git?path=src/LitMotion/Assets/LitMotion
+https://github.com/DeadZFrame/JanTools.git?path=src/JanTools/Assets/JanTools
