@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "displayName": "Jan Tools",
   "description": "A comprehensive utility package for Unity development providing essential tools, extensions, and architectural patterns.",
-  "unity": "6000.3.8f1",
+  "unity": "6000.3",
   "unityRelease": "6000.3.8f1",
   "author": {
     "name": "Can Altay",
