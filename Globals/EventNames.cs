@@ -9,5 +9,8 @@ namespace Jan.Core
         public const string OnDetectInteractable = "OnDetectInteractable";
         public const string OnValueObserved = "OnValueObserved";
         public const string OnScroll = "OnScroll";
+        public const string OnMoveInput = "OnMoveInput";
+        public const string OnLookInput = "OnLookInput";
+        public const string OnJumpInput = "OnJumpInput";
     }
 }
