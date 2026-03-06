@@ -1,0 +1,40 @@
+# Unity generated
+*.meta
+*.csproj
+*.sln
+.vs/
+.vscode/
+Library/
+Temp/
+Build/
+Builds/
+ProjectSettings/
+UserSettings/
+
+# IDE
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# OS
+Thumbs.db
+.DS_Store
+
+# Package Management
+Packages/package-lock.json
+node_modules/
+
+# Build artifacts
+bin/
+obj/
+*.dll
+*.pdb
+
+# Test results
+test-results/
+coverage/
+
+# Ignore assembly definitions that are auto-generated
+*.asmdef.meta

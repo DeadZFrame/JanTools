@@ -2,9 +2,38 @@
   "name": "com.canaltay.jantools",
   "version": "1.0.0",
   "displayName": "Jan Tools",
-  "description": "Useful tools for Unity development by Can Altay.",
+  "description": "A comprehensive utility package for Unity development providing essential tools, extensions, and architectural patterns.",
   "unity": "6000.3.8f1",
+  "unityRelease": "6000.3.8f1",
   "author": {
-    "name": "Can Altay"
+    "name": "Can Altay",
+    "email": "canaltay2001@windowslive.com",
+    "url": "https://kodexyazilim.com.tr"
+  },
+  "license": "",
+  "keywords": [
+    "tools",
+    "utilities",
+    "event-system",
+    "interaction",
+    "singleton",
+    "game-feel",
+    "extensions",
+    "async",
+    "grid"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/CanAltay/JanTools.git"
+  },
+  "homepage": "https://github.com/CanAltay/JanTools#readme",
+  "bugs": {
+    "url": "https://github.com/CanAltay/JanTools/issues"
+  },
+  "documentationUrl": "https://github.com/CanAltay/JanTools/blob/main/README.md",
+  "changelogUrl": "https://github.com/CanAltay/JanTools/blob/main/CHANGELOG.md",
+  "samples": [],
+  "dependencies": {
+    "com.sirenix.odinospector": "4.1.0"
   }
 }
