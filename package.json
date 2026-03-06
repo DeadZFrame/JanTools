@@ -31,8 +31,5 @@
   },
   "documentationUrl": "https://github.com/DeadZFrame/JanTools/blob/main/README.md",
   "changelogUrl": "https://github.com/DeadZFrame/JanTools/blob/main/CHANGELOG.md",
-  "samples": [],
-  "dependencies": {
-    "com.sirenix.odinospector": "4.1.0"
-  }
+  "samples": []
 }
