@@ -8,7 +8,7 @@
   "author": {
     "name": "Can Altay",
     "email": "canaltay2001@windowslive.com",
-    "url": "https://github.com/DeadZFrame/JanTools"
+    "url": "https://kodexyazilim.com.tr"
   },
   "license": "",
   "keywords": [
@@ -24,14 +24,14 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/CanAltay/JanTools.git"
+    "url": "https://github.com/DeadZFrame/JanTools.git"
   },
-  "homepage": "https://github.com/CanAltay/JanTools#readme",
+  "homepage": "https://github.com/DeadZFrame/JanTools#readme",
   "bugs": {
-    "url": "https://github.com/CanAltay/JanTools/issues"
+    "url": "https://github.com/DeadZFrame/JanTools/issues"
   },
-  "documentationUrl": "https://github.com/CanAltay/JanTools/blob/main/README.md",
-  "changelogUrl": "https://github.com/CanAltay/JanTools/blob/main/CHANGELOG.md",
+  "documentationUrl": "https://github.com/DeadZFrame/JanTools/blob/main/README.md",
+  "changelogUrl": "https://github.com/DeadZFrame/JanTools/blob/main/CHANGELOG.md",
   "samples": [],
   "dependencies": {
     "com.sirenix.odinospector": "4.1.0"
