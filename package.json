@@ -1,0 +1,10 @@
+{
+  "name": "com.canaltay.jantools",
+  "version": "1.0.0",
+  "displayName": "Jan Tools",
+  "description": "Useful tools for Unity development by Can Altay.",
+  "unity": "6000.3.8f1",
+  "author": {
+    "name": "Can Altay"
+  }
+}
