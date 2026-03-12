@@ -7,6 +7,7 @@ namespace Jan.InteractionSystem
         string Tooltip { get; }
 
         void Interact();
+        void RightClickInteract();
     }
 }
 

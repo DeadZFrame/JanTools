@@ -5,6 +5,7 @@ namespace Jan.Core
     public interface IInputHandler
     {
         void OnMouseClicked();
+        void OnMouseRightClicked();
         void OnMouseReleased();
         void OnMouseHold();
         void OnMouseMoved(Vector2 mousePosition);

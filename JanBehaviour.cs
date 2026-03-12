@@ -23,6 +23,7 @@ namespace Jan.Core
             if(this is IInputHandler inputHandler)
             {
                 EventManager.Register(EventNames.OnMouseClicked, inputHandler.OnMouseClicked);
+                EventManager.Register(EventNames.OnMouseRightClicked, inputHandler.OnMouseRightClicked);
                 EventManager.Register(EventNames.OnMouseHold, inputHandler.OnMouseHold);
                 EventManager.Register<Vector2>(EventNames.OnMouseMoved, inputHandler.OnMouseMoved);
                 EventManager.Register(EventNames.OnMouseReleased, inputHandler.OnMouseReleased);
@@ -35,6 +36,7 @@ namespace Jan.Core
             if(this is IInputHandler inputHandler)
             {
                 EventManager.UnRegister(EventNames.OnMouseClicked, inputHandler.OnMouseClicked);
+                EventManager.UnRegister(EventNames.OnMouseRightClicked, inputHandler.OnMouseRightClicked);
                 EventManager.UnRegister(EventNames.OnMouseHold, inputHandler.OnMouseHold);
                 EventManager.UnRegister<Vector2>(EventNames.OnMouseMoved, inputHandler.OnMouseMoved);
                 EventManager.UnRegister(EventNames.OnMouseReleased, inputHandler.OnMouseReleased);
@@ -61,6 +63,7 @@ namespace Jan.Core
             if(this is IInputHandler inputHandler)
             {
                 EventManager.Register(EventNames.OnMouseClicked, inputHandler.OnMouseClicked);
+                EventManager.Register(EventNames.OnMouseRightClicked, inputHandler.OnMouseRightClicked);
                 EventManager.Register(EventNames.OnMouseHold, inputHandler.OnMouseHold);
                 EventManager.Register<Vector2>(EventNames.OnMouseMoved, inputHandler.OnMouseMoved);
                 EventManager.Register(EventNames.OnMouseReleased, inputHandler.OnMouseReleased);
@@ -73,6 +76,7 @@ namespace Jan.Core
             if(this is IInputHandler inputHandler)
             {
                 EventManager.UnRegister(EventNames.OnMouseClicked, inputHandler.OnMouseClicked);
+                EventManager.UnRegister(EventNames.OnMouseRightClicked, inputHandler.OnMouseRightClicked);
                 EventManager.UnRegister(EventNames.OnMouseHold, inputHandler.OnMouseHold);
                 EventManager.UnRegister<Vector2>(EventNames.OnMouseMoved, inputHandler.OnMouseMoved);
                 EventManager.UnRegister(EventNames.OnMouseReleased, inputHandler.OnMouseReleased);

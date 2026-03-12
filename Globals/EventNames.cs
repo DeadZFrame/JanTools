@@ -3,6 +3,7 @@ namespace Jan.Core
     public static class EventNames
     {
         public const string OnMouseClicked = "OnMouseClicked";
+        public const string OnMouseRightClicked = "OnMouseRightClicked";
         public const string OnMouseHold = "OnMouseHold";
         public const string OnMouseMoved = "OnMouseMoved";
         public const string OnMouseReleased = "OnMouseReleased";

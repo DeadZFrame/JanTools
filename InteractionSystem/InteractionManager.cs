@@ -60,6 +60,19 @@ namespace Jan.InteractionSystem
             }
         }
 
+        public void OnMouseRightClicked()
+        {
+            if(currentInteractable != null)
+            {
+                currentInteractable.RightClickInteract();
+            }
+
+            if(currentInteractable != null)
+            {
+                currentInteractable.Trigger(EventNames.OnMouseRightClicked);
+            }
+        }
+
         public void OnMouseReleased()
         {
             if(currentInteractable != null)

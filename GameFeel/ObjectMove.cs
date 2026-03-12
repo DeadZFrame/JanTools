@@ -145,6 +145,8 @@ namespace Giant.Feel
                             .WithLoops(actualLoops, loopType)
                             .WithOnComplete(onCompleteCallback)
                             .BindToLocalPosition(transform);
+
+                            Debug.Log($"Creating local position motion from {_startLocalPosition} to {_targetLocalPosition} with offset {moveOffset}");
                     }
                 }
                 else
@@ -161,6 +163,7 @@ namespace Giant.Feel
                     {
                         moveHandle = LMotion.Create(_startPosition, _targetPosition, Duration)
                             .WithEase(ease)
+                            .WithLoops(actualLoops, loopType)
                             .WithOnComplete(onCompleteCallback)
                             .BindToPosition(transform);
                     }
