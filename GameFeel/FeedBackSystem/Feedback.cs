@@ -31,8 +31,11 @@ namespace Giant.Feel
         [Tooltip("Scale punch/stretch feedbacks applied to target transforms when triggered.")]
         [SerializeField, ShowIf(nameof(ShowSquashStretches)), FoldoutGroup("Feedbacks", true)]
         private List<SquashStretch> squash = new List<SquashStretch>();
-        [Tooltip("Optional highlight effect (HitFX) to call when feedback is triggered.")]
-        [SerializeField, ShowIf(nameof(ShowColorGradients)), FoldoutGroup("Feedbacks", true)]
+        [Tooltip("Optional color gradient feedbacks to apply to target materials when triggered.")]
+        [SerializeField, ShowIf(nameof(ShowCameraZooms)), FoldoutGroup("Feedbacks", true)]
+        private List<CameraZoom> cameraZooms = new List<CameraZoom>();
+        [Tooltip("Color gradient feedbacks to apply to target materials when triggered.")]
+        [SerializeField, ShowIf(nameof(ShowColorGradients)), FoldoutGroup("Feedbacks", true)]        
         private List<ColorGradient> colorGradients = new List<ColorGradient>();
         [Tooltip("Object movement feedbacks to apply when this feedback is triggered.")]
         [SerializeField, ShowIf(nameof(ShowMovements)), FoldoutGroup("Feedbacks", true)]
@@ -42,6 +45,7 @@ namespace Giant.Feel
         private bool ShowShakes => shakes.Count > 0;
         private bool ShowSquashStretches => squash.Count > 0;
         private bool ShowColorGradients => colorGradients.Count > 0;
+        private bool ShowCameraZooms => cameraZooms.Count > 0;
         private bool ShowMovements => movements.Count > 0;
         private bool IsAppPlaying => Application.isPlaying;
 
@@ -57,6 +61,7 @@ namespace Giant.Feel
             sounds?.ForEach(s => Play(s, transform));
             shakes?.ForEach(sh => Play(sh, transform));
             squash?.ForEach(sq => Play(sq, transform));
+            cameraZooms?.ForEach(cz => Play(cz, transform));
             colorGradients?.ForEach(cg => Play(cg, transform));
             movements?.ForEach(e => Play(e, transform));
 
@@ -99,7 +104,7 @@ namespace Giant.Feel
             feedbackTransform ??= transform;
         }
 
-        private string[] GetOptions => new[] { "Sound", "Vfx", "Shake", "Stretch & Squash", "HitFX", "Color", "Move" };
+        private string[] GetOptions => new[] { "Sound", "Vfx", "Shake", "Stretch & Squash", "Camera Zoom", "Color", "Move" };
         private void OptionSelected()
         {
             switch (selectedOption)
@@ -108,6 +113,7 @@ namespace Giant.Feel
                 case "Vfx": effects.Add(new VFX()); break;
                 case "Shake": shakes.Add(new ObjectShake()); break;
                 case "Stretch & Squash": squash.Add(new SquashStretch()); break;
+                case "Camera Zoom": cameraZooms.Add(new CameraZoom()); break;
                 case "Color": colorGradients.Add(new ColorGradient()); break;
                 case "Move": movements.Add(new ObjectMove()); break;
             }
@@ -124,6 +130,7 @@ namespace Giant.Feel
                 Type t when t == typeof(ObjectShake) && index >= 0 && index < shakes.Count => shakes[index],
                 Type t when t == typeof(SquashStretch) && index >= 0 && index < squash.Count => squash[index],
                 Type t when t == typeof(ColorGradient) && index >= 0 && index < colorGradients.Count => colorGradients[index],
+                Type t when t == typeof(CameraZoom) && index >= 0 && index < cameraZooms.Count => cameraZooms[index],
                 Type t when t == typeof(ObjectMove) && index >= 0 && index < movements.Count => movements[index],
                 _ => null
             };
@@ -139,6 +146,7 @@ namespace Giant.Feel
             feedbacks.AddRange(shakes);
             feedbacks.AddRange(squash);
             feedbacks.AddRange(colorGradients);
+            feedbacks.AddRange(cameraZooms);
             feedbacks.AddRange(movements);
 
             return feedbacks.ToArray();
@@ -170,6 +178,7 @@ namespace Giant.Feel
             shakes?.ForEach(sh => sh.Complete());
             squash?.ForEach(sq => sq.Complete());
             colorGradients?.ForEach(cg => cg.Complete());
+            cameraZooms?.ForEach(cz => cz.Complete());
             movements?.ForEach(e => e.Complete());
             effects?.ForEach(e => e.Complete());
         }

@@ -6,8 +6,7 @@ namespace Jan.InteractionSystem
         bool IsHoldable { get; }
         string Tooltip { get; }
 
-        void Interact();
-        void RightClickInteract();
+        void Interact(int buttonIndex);
     }
 }
 

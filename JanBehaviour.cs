@@ -22,11 +22,10 @@ namespace Jan.Core
             
             if(this is IInputHandler inputHandler)
             {
-                EventManager.Register(EventNames.OnMouseClicked, inputHandler.OnMouseClicked);
-                EventManager.Register(EventNames.OnMouseRightClicked, inputHandler.OnMouseRightClicked);
+                EventManager.Register<int>(EventNames.OnMouseClicked, inputHandler.OnMouseClicked);
                 EventManager.Register(EventNames.OnMouseHold, inputHandler.OnMouseHold);
                 EventManager.Register<Vector2>(EventNames.OnMouseMoved, inputHandler.OnMouseMoved);
-                EventManager.Register(EventNames.OnMouseReleased, inputHandler.OnMouseReleased);
+                EventManager.Register<int>(EventNames.OnMouseReleased, inputHandler.OnMouseReleased);
                 EventManager.Register<Vector2>(EventNames.OnScroll, inputHandler.OnScroll);
             }
         }
@@ -35,11 +34,11 @@ namespace Jan.Core
         {
             if(this is IInputHandler inputHandler)
             {
-                EventManager.UnRegister(EventNames.OnMouseClicked, inputHandler.OnMouseClicked);
-                EventManager.UnRegister(EventNames.OnMouseRightClicked, inputHandler.OnMouseRightClicked);
+                EventManager.UnRegister<int>(EventNames.OnMouseClicked, inputHandler.OnMouseClicked);
+                EventManager.UnRegister<int>(EventNames.OnMouseReleased, inputHandler.OnMouseReleased);
                 EventManager.UnRegister(EventNames.OnMouseHold, inputHandler.OnMouseHold);
                 EventManager.UnRegister<Vector2>(EventNames.OnMouseMoved, inputHandler.OnMouseMoved);
-                EventManager.UnRegister(EventNames.OnMouseReleased, inputHandler.OnMouseReleased);
+                EventManager.UnRegister<int>(EventNames.OnMouseReleased, inputHandler.OnMouseReleased);
                 EventManager.UnRegister<Vector2>(EventNames.OnScroll, inputHandler.OnScroll);
             }
         }
@@ -62,11 +61,10 @@ namespace Jan.Core
 
             if(this is IInputHandler inputHandler)
             {
-                EventManager.Register(EventNames.OnMouseClicked, inputHandler.OnMouseClicked);
-                EventManager.Register(EventNames.OnMouseRightClicked, inputHandler.OnMouseRightClicked);
+                EventManager.Register<int>(EventNames.OnMouseClicked, inputHandler.OnMouseClicked);
                 EventManager.Register(EventNames.OnMouseHold, inputHandler.OnMouseHold);
                 EventManager.Register<Vector2>(EventNames.OnMouseMoved, inputHandler.OnMouseMoved);
-                EventManager.Register(EventNames.OnMouseReleased, inputHandler.OnMouseReleased);
+                EventManager.Register<int>(EventNames.OnMouseReleased, inputHandler.OnMouseReleased);
                 EventManager.Register<Vector2>(EventNames.OnScroll, inputHandler.OnScroll);
             }
         }
@@ -75,11 +73,10 @@ namespace Jan.Core
         {
             if(this is IInputHandler inputHandler)
             {
-                EventManager.UnRegister(EventNames.OnMouseClicked, inputHandler.OnMouseClicked);
-                EventManager.UnRegister(EventNames.OnMouseRightClicked, inputHandler.OnMouseRightClicked);
+                EventManager.UnRegister<int>(EventNames.OnMouseClicked, inputHandler.OnMouseClicked);
                 EventManager.UnRegister(EventNames.OnMouseHold, inputHandler.OnMouseHold);
                 EventManager.UnRegister<Vector2>(EventNames.OnMouseMoved, inputHandler.OnMouseMoved);
-                EventManager.UnRegister(EventNames.OnMouseReleased, inputHandler.OnMouseReleased);
+                EventManager.UnRegister<int>(EventNames.OnMouseReleased, inputHandler.OnMouseReleased);
                 EventManager.UnRegister<Vector2>(EventNames.OnScroll, inputHandler.OnScroll);
             }
         }

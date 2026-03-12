@@ -1,5 +1,7 @@
+using Globals;
 using Jan.Core;
 using Jan.Events;
+using UIBus;
 using UnityEngine;
 
 namespace Jan.InteractionSystem
@@ -7,6 +9,12 @@ namespace Jan.InteractionSystem
     public class InteractionManager : JanBehaviour, IInputHandler
     {
         private IInteractable currentInteractable;
+        private IInteractionUI _interactionUI;
+
+        private void Start()
+        {
+            UIBusManager.Instance.TryGetUIElement(UINames.InteractionUI, out _interactionUI);
+        }
 
         private void Update()
         {
@@ -29,7 +37,10 @@ namespace Jan.InteractionSystem
 
                     if(!string.IsNullOrEmpty(interactable.Tooltip))
                     {
-                        EventManager.Trigger(EventNames.OnDetectInteractable, (interactable.Tooltip, interactable.HighlightEffect ? InteractionIconNames.LeftClick : ""));
+                        if(_interactionUI != null)
+                        {
+                            _interactionUI.SetTextAndIcon(interactable.Tooltip, interactable.HighlightEffect ? InteractionIconNames.LeftClick : "");
+                        }
                     }
                 }
             }
@@ -43,15 +54,18 @@ namespace Jan.InteractionSystem
                 
                 currentInteractable = null;
 
-                EventManager.Trigger(EventNames.OnDetectInteractable, ("", ""));
+                if(_interactionUI != null)
+                {
+                    _interactionUI.SetTextAndIcon("", "");
+                }
             }
         }
 
-        public void OnMouseClicked()
+        public void OnMouseClicked(int buttonIndex)
         {
             if(currentInteractable != null && !currentInteractable.IsHoldable)
             {
-                currentInteractable.Interact();
+                currentInteractable.Interact(buttonIndex);
             }
 
             if(currentInteractable != null)
@@ -60,20 +74,7 @@ namespace Jan.InteractionSystem
             }
         }
 
-        public void OnMouseRightClicked()
-        {
-            if(currentInteractable != null)
-            {
-                currentInteractable.RightClickInteract();
-            }
-
-            if(currentInteractable != null)
-            {
-                currentInteractable.Trigger(EventNames.OnMouseRightClicked);
-            }
-        }
-
-        public void OnMouseReleased()
+        public void OnMouseReleased(int buttonIndex)
         {
             if(currentInteractable != null)
             {
@@ -85,7 +86,7 @@ namespace Jan.InteractionSystem
         {
             if(currentInteractable != null && currentInteractable.IsHoldable)
             {
-                currentInteractable.Interact();
+                currentInteractable.Interact(0);
             }
             
             if(currentInteractable != null)
