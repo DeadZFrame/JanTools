@@ -18,5 +18,10 @@ namespace Giant.Feel
         {
             VFXAgent.Stop();
         }
+
+        public override void Stop()
+        {
+             Debug.LogWarning("VFX feedback does not support Stop() - it will complete naturally based on its duration. Use Complete() to immediately stop the effect.");
+        }
     }
 }

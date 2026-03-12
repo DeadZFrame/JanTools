@@ -182,5 +182,16 @@ namespace Giant.Feel
             movements?.ForEach(e => e.Complete());
             effects?.ForEach(e => e.Complete());
         }
+
+        public void Stop()
+        {
+            sounds?.ForEach(s => s.Stop());
+            shakes?.ForEach(sh => sh.Stop());
+            squash?.ForEach(sq => sq.Stop());
+            colorGradients?.ForEach(cg => cg.Stop());
+            cameraZooms?.ForEach(cz => cz.Stop());
+            movements?.ForEach(e => e.Stop());
+            effects?.ForEach(e => e.Stop());
+        }
     }
 }

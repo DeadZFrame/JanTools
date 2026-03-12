@@ -31,8 +31,12 @@ namespace Giant.Feel
 
         public override void Complete()
         {
-            // Sound feedback has no ongoing sequences or tweens to complete
-            // Audio clips play instantly and don't need completion handling
+            Debug.LogWarning("Sound feedback does not support Complete() - it will play to completion once triggered. Use Stop() if you need to trigger any stop logic immediately after playing.");
+        }
+
+        public override void Stop()
+        {
+            Debug.LogWarning("Sound feedback does not support Stop() - it will play to completion once triggered. Use Complete() if you need to trigger any completion logic immediately after playing.");
         }
     }
 }

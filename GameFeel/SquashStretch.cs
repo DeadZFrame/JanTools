@@ -155,5 +155,21 @@ namespace Giant.Feel
                 activeMotionHandles.Remove(kvp.Key);
             }
         }
+
+        public override void Stop()
+        {
+            var values = new Dictionary<Transform, MotionHandle>(activeMotionHandles);
+
+            foreach (var kvp in values)
+            {
+                var handle = kvp.Value;
+                if (handle.IsActive())
+                {
+                    handle.Cancel();
+                }
+
+                activeMotionHandles.Remove(kvp.Key);
+            }
+        }
     }
 }

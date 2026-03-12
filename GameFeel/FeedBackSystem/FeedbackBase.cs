@@ -20,6 +20,7 @@ namespace Giant.Feel
         [Button, ShowIf(nameof(IsAppPlaying)), GUIColor(0.75f, .5f, .5f)]
         public abstract FeedbackBase Play(Transform transform);
         public abstract void Complete();
+        public abstract void Stop();
         public virtual void OnComplete(Action callback, GameObject cullingObject = null)
         {
             var time = Delay + Duration;

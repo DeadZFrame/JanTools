@@ -430,5 +430,12 @@ namespace Giant.Feel
             // direct cancellation functionality. The effect will complete naturally
             // based on its duration. No immediate completion action is available.
         }
+
+        public override void Stop()
+         {
+             // ColorGradient feedback uses the Timed system which doesn't provide 
+             // direct cancellation functionality. The effect will stop naturally
+             // based on its duration. No immediate stop action is available.
+         }
     }
 }

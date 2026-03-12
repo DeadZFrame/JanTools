@@ -173,5 +173,20 @@ namespace Giant.Feel
                 feedback?.Complete();
             }
         }
+
+        public void Stop()
+        {
+            if (multiple)
+            {
+                foreach (var fb in feedbacks)
+                {
+                    fb.Stop();
+                }
+            }
+            else
+            {
+                feedback?.Stop();
+            }
+        }
     }
 }

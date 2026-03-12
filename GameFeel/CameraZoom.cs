@@ -87,10 +87,26 @@ namespace Giant.Feel
             TargetCamera = camera;
         }
 
+        public void SetStartZoom(float zoom)
+        {
+            StartZoomValue = zoom;
+        }
+
+        public void SetEndZoom(float zoom)
+        {
+            EndZoomValue = zoom;
+        }
+
         public override void Complete()
         {
             if (zoomHandle.IsActive())
                 zoomHandle.Complete();
+        }
+
+        public override void Stop()
+        {
+            if (zoomHandle.IsActive())
+                zoomHandle.Cancel();
         }
     }
 }
