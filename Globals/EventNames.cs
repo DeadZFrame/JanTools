@@ -1,6 +1,6 @@
 namespace Jan.Core
 {
-    public static class EventNames
+    public static partial class EventNames
     {
         public const string OnMouseClicked = "OnMouseClicked";
         public const string OnMouseHold = "OnMouseHold";

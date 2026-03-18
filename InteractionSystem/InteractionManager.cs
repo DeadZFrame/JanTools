@@ -1,4 +1,3 @@
-using Globals;
 using Jan.Core;
 using Jan.Events;
 using UIBus;

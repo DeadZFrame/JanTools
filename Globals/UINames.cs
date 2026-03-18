@@ -1,4 +1,4 @@
-namespace Globals
+namespace Jan.Core
 {
     public static class UINames
     {
