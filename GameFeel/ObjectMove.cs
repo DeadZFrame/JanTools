@@ -145,8 +145,6 @@ namespace Giant.Feel
                             .WithLoops(actualLoops, loopType)
                             .WithOnComplete(onCompleteCallback)
                             .BindToLocalPosition(transform);
-
-                            Debug.Log($"Creating local position motion from {_startLocalPosition} to {_targetLocalPosition} with offset {moveOffset}");
                     }
                 }
                 else
