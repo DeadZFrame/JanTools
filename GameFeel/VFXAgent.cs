@@ -3,7 +3,7 @@ using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.VFX;
 
-namespace Giant.Feel
+namespace Jan.Feel
 {
     public class VFXAgent : MonoBehaviour
     {

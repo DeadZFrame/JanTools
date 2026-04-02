@@ -5,7 +5,7 @@ using LitMotion.Extensions;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
-namespace Giant.Feel
+namespace Jan.Feel
 {
     [Serializable]
     public class ObjectShake : FeedbackBase

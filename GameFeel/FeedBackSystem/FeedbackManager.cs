@@ -2,7 +2,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 
-namespace Giant.Feel
+namespace Jan.Feel
 {
     public class FeedbackManager : Singleton<FeedbackManager>
     {

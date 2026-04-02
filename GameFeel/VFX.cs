@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace Giant.Feel
+namespace Jan.Feel
 {
     [Serializable]
     public class VFX : FeedbackBase

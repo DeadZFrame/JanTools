@@ -5,7 +5,7 @@ using UnityEngine.UI;
 using TMPro;
 using Sirenix.OdinInspector;
 
-namespace Giant.Feel
+namespace Jan.Feel
 {
     [Serializable]
     public class ColorGradient : FeedbackBase
