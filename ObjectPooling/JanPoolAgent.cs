@@ -1,7 +1,4 @@
-using System.Collections.Generic;
-using Jan.Core;
 using UnityEngine;
-using UnityEngine.Pool;
 
 namespace Jan.Pool
 {

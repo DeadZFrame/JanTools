@@ -11,5 +11,6 @@ namespace Jan.Core
         public const string OnMoveInput = "OnMoveInput";
         public const string OnLookInput = "OnLookInput";
         public const string OnJumpInput = "OnJumpInput";
+        public const string OnGameStateChanged = "OnGameStateChanged";
     }
 }

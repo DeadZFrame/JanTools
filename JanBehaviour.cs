@@ -35,7 +35,6 @@ namespace Jan.Core
             if(this is IInputHandler inputHandler)
             {
                 EventManager.UnRegister<int>(EventNames.OnMouseClicked, inputHandler.OnMouseClicked);
-                EventManager.UnRegister<int>(EventNames.OnMouseReleased, inputHandler.OnMouseReleased);
                 EventManager.UnRegister(EventNames.OnMouseHold, inputHandler.OnMouseHold);
                 EventManager.UnRegister<Vector2>(EventNames.OnMouseMoved, inputHandler.OnMouseMoved);
                 EventManager.UnRegister<int>(EventNames.OnMouseReleased, inputHandler.OnMouseReleased);

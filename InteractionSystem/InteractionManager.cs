@@ -9,6 +9,23 @@ namespace Jan.InteractionSystem
     {
         private IInteractable currentInteractable;
         private IInteractionUI _interactionUI;
+        private static IInteractionContext _currentContext;
+
+        [SerializeField] private float rayDistance = 10f;
+
+        protected override void OnEnable()
+        {
+            base.OnEnable();
+
+            EventManager.Register<GameState>(EventNames.OnGameStateChanged, OnGameStateChanged);
+        }
+
+        protected override void OnDisable()
+        {
+            base.OnDisable();
+
+            EventManager.UnRegister<GameState>(EventNames.OnGameStateChanged, OnGameStateChanged);
+        }
 
         private void Start()
         {
@@ -17,22 +34,32 @@ namespace Jan.InteractionSystem
 
         private void Update()
         {
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            if (Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity, LayerMask.GetMask(Layers.Interactable)))
+            var gamestate = GameStateManager.Instance.CurrentGameState;
+            if(gamestate is GameState.UI or GameState.Paused) return;
+
+            var camera = CameraManager.GetCurrentCamera();
+
+            var highlightManager = HighlightManager.Instance;
+            
+            Ray ray = camera.ScreenPointToRay(Input.mousePosition);
+            if (Physics.Raycast(ray, out RaycastHit hit, rayDistance, LayerMask.GetMask(Layers.Interactable)))
             {
                 var monoBehaviour = currentInteractable as MonoBehaviour;
                 if (monoBehaviour != null)
                 {
-                    HighlightManager.Instance.Unhighlight(monoBehaviour.transform);
+                    highlightManager.Unhighlight(monoBehaviour.transform);
                 }
 
                 if (hit.collider.gameObject.TryGetComponentInParentChildren(out IInteractable interactable))
                 {
                     if(interactable == null) return;
+
+                    if(interactable.SupportedGameState != gamestate && interactable.SupportedGameState != GameState.Any) return;
+
                     currentInteractable = interactable;
 
                     monoBehaviour = interactable as MonoBehaviour;
-                    if(interactable.HighlightEffect) HighlightManager.Instance.Highlight(monoBehaviour.transform);
+                    if(interactable.HighlightEffect) highlightManager.Highlight(monoBehaviour.transform);
 
                     if(!string.IsNullOrEmpty(interactable.Tooltip))
                     {
@@ -48,7 +75,7 @@ namespace Jan.InteractionSystem
                 var monoBehaviour = currentInteractable as MonoBehaviour;
                 if (monoBehaviour != null)
                 {
-                    HighlightManager.Instance.Unhighlight(monoBehaviour.transform);
+                    highlightManager.Unhighlight(monoBehaviour.transform);
                 }
                 
                 currentInteractable = null;
@@ -60,11 +87,38 @@ namespace Jan.InteractionSystem
             }
         }
 
+        private void OnGameStateChanged(GameState newState)
+        {
+            if(newState is GameState.UI or GameState.Paused)
+            {
+                if(currentInteractable != null)
+                {
+                    var monoBehaviour = currentInteractable as MonoBehaviour;
+                    if (monoBehaviour != null)
+                    {
+                        HighlightManager.Instance.Unhighlight(monoBehaviour.transform);
+                    }
+
+                    currentInteractable = null;
+
+                    if(_interactionUI != null)
+                    {
+                        _interactionUI.SetTextAndIcon("", "");
+                    }
+                }
+            }
+        }
+
+        public static void SetContext(IInteractionContext interactor)
+        {
+            _currentContext = interactor;
+        }
+
         public void OnMouseClicked(int buttonIndex)
         {
             if(currentInteractable != null && !currentInteractable.IsHoldable)
             {
-                currentInteractable.Interact(buttonIndex);
+                currentInteractable.Interact(_currentContext, buttonIndex);
             }
 
             if(currentInteractable != null)
@@ -85,7 +139,7 @@ namespace Jan.InteractionSystem
         {
             if(currentInteractable != null && currentInteractable.IsHoldable)
             {
-                currentInteractable.Interact(0);
+                currentInteractable.Interact(_currentContext, 0);
             }
             
             if(currentInteractable != null)

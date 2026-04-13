@@ -36,7 +36,7 @@ namespace Jan.Core
                         if (objs.Length > 1) Debug.LogError("There is more than one " + typeof(T).Name + " in the scene.");
                     }
 
-                    if (_instance == null) Debug.Log($"There is no any {typeof(T).Name}");
+                    //if (_instance == null) Debug.Log($"There is no any {typeof(T).Name}");
                 }
 
                 return _instance;
