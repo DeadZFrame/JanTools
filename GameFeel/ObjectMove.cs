@@ -11,8 +11,8 @@ namespace Giant.Feel
     [Serializable]
     public class ObjectMove : FeedbackBase
     {
-        // Static dictionary to track active motion handles by transform
-        private static Dictionary<Transform, MotionHandle> activeMotionHandles = new Dictionary<Transform, MotionHandle>();
+        // Instance dictionary to track active motion handles by transform
+        private Dictionary<Transform, MotionHandle> activeMotionHandles = new Dictionary<Transform, MotionHandle>();
 
         [SerializeField] private bool move, rotate;
         [SerializeField, ShowIf(nameof(move))] private Vector3 moveOffset = Vector3.zero;

@@ -7,6 +7,8 @@ namespace Jan.InteractionSystem
 {
     public class InteractionManager : JanBehaviour, IInputHandler
     {
+        public Texture2D defaultCursor;
+
         private IInteractable currentInteractable;
         private IInteractionUI _interactionUI;
 
@@ -34,6 +36,8 @@ namespace Jan.InteractionSystem
                     monoBehaviour = interactable as MonoBehaviour;
                     if(interactable.HighlightEffect) HighlightManager.Instance.Highlight(monoBehaviour.transform);
 
+                    interactable.OnHover();
+
                     if(!string.IsNullOrEmpty(interactable.Tooltip))
                     {
                         if(_interactionUI != null)
@@ -49,6 +53,7 @@ namespace Jan.InteractionSystem
                 if (monoBehaviour != null)
                 {
                     HighlightManager.Instance.Unhighlight(monoBehaviour.transform);
+                    currentInteractable.HoverOut();
                 }
                 
                 currentInteractable = null;
