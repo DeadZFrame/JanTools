@@ -5,65 +5,62 @@ using UnityEngine.Pool;
 
 namespace Jan.Pool
 {
-    public static class JanPool
+    public static partial class JanPool
     {
-        private static readonly Dictionary<Type, ObjectPool<IPoolable>> Pools = new();
+        private static readonly Dictionary<string, Queue<MonoBehaviour>> Pools = new();
 
-        private static void CreatePool(MonoBehaviour prefab, int initialSize = 10) 
+        private static void CreatePool(MonoBehaviour prefab) 
         {
-            if (Pools.ContainsKey(prefab.GetType()))
+            if (Pools.ContainsKey(prefab.name))
             {
-                Debug.LogWarning($"Pool with key {prefab.GetType()} already exists.");
+                Debug.LogWarning($"Pool with key {prefab.name} already exists.");
                 return;
             }
 
-            var pool = new ObjectPool<IPoolable>(
-                createFunc: () => CreateFunc(prefab),
-                actionOnGet: obj => { },
-                actionOnRelease: obj => { },
-                actionOnDestroy: obj => UnityEngine.Object.Destroy(obj as UnityEngine.Object),
-                collectionCheck: false,
-                defaultCapacity: initialSize,
-                maxSize: 100
-            );
-        
-            Pools[prefab.GetType()] = pool;
+            Pools.Add(prefab.name, new Queue<MonoBehaviour>());
+            Pools[prefab.name].Enqueue(CreateFunc(prefab));
         }
         
-        public static T Spawn<T>(this T poolable, Transform parent = null) where T : IPoolable
+        public static T Spawn<T>(this T poolable, Transform parent = null) where T : MonoBehaviour
         {
-            var mono = poolable as MonoBehaviour;
-            if (mono == null)           
+            if (poolable == null)           
             {
                 Debug.LogError("Poolable object must be a MonoBehaviour.");
                 return default;
             }
 
-             if (Pools.TryGetValue(mono.GetType(), out var pool))
+            if (Pools.TryGetValue(poolable.name, out var pool))
             {
-                var obj = pool.Get();
-                var objMono = obj as MonoBehaviour;
-                objMono.transform.SetParent(parent);
-                objMono.gameObject.SetActive(true);
+                Debug.Log($"Spawning from pool: {poolable.name}, Pool Count: {pool.Count}");
 
-                return (T)obj;
+                if(!pool.TryDequeue(out var obj))
+                {
+                    Debug.Log($"Pool with key {poolable.name} is empty. Instantiating new object.");
+                    obj = CreateFunc(poolable);
+                }
+
+                obj.transform.SetParent(parent);
+                obj.gameObject.SetActive(true);
+
+                return obj.GetComponent<T>();
             }
             else
             {
-                CreatePool(mono);
-                var createdObj = Pools[mono.GetType()].Get();
-                var createdMono = createdObj as MonoBehaviour;
-                createdMono.transform.SetParent(parent);
-                createdMono.gameObject.SetActive(true);
+                Debug.Log($"Pool with key {poolable.name} does not exist. Creating new pool.");
+                CreatePool(poolable);
+                
+                var createdObj = Pools[poolable.name].Dequeue();
 
-                return (T)createdObj;
+                createdObj.transform.SetParent(parent);
+                createdObj.gameObject.SetActive(true);
+
+                return createdObj.GetComponent<T>();
             }
         }
 
-        public static T[] Spawn<T>(this T poolable, int count, Transform parent = null) where T : IPoolable
+        public static T[] Spawn<T>(this T poolable, int count, Transform parent = null) where T : MonoBehaviour
         {
-            var mono = poolable as MonoBehaviour;
-            if (mono == null)           
+            if (poolable == null)           
             {
                 Debug.LogError("Poolable object must be a MonoBehaviour.");
                 return default;
@@ -73,56 +70,61 @@ namespace Jan.Pool
 
             for (int i = 0; i < count; i++)
              {
-                if (!Pools.ContainsKey(mono.GetType()))
+                if (!Pools.ContainsKey(poolable.name))
                 {
-                    CreatePool(mono);
+                    CreatePool(poolable);
                 }
 
-                var obj = Pools[mono.GetType()].Get();
+                if(!Pools[poolable.name].TryDequeue(out var obj))
+                {
+                    Debug.Log($"Pool with key {poolable.name} is empty. Instantiating new object.");
+                    obj = CreateFunc(poolable);
+                }
 
-                var objMono = obj as MonoBehaviour;
-                objMono.transform.SetParent(parent);
-                objMono.gameObject.SetActive(true);
+                obj.transform.SetParent(parent);
+                obj.gameObject.SetActive(true);
 
-                result[i] = (T)obj;
+                result[i] = obj.GetComponent<T>();
              }
              
              return result;
         }
 
-        public static void Despawn<T>(this T poolable) where T : IPoolable
+        public static T Spawn<T>(this T poolable, Vector3 position, Quaternion rotation, Transform parent = null) where T : MonoBehaviour
         {
-            var poolKey = poolable as MonoBehaviour;
-            if (poolKey == null)
+            var obj = Spawn(poolable, parent);
+            obj.transform.SetPositionAndRotation(position, rotation);
+            return obj;
+        }
+
+        public static void Despawn(this MonoBehaviour poolable)
+        {
+            if (poolable == null)
             {
                 Debug.LogError("Poolable object must be a MonoBehaviour.");
                 return;
             }
 
-             if (Pools.TryGetValue(poolKey.GetType(), out var pool))
+            if (Pools.TryGetValue(poolable.name.Replace("(Clone)", ""), out var pool))
             {
-                poolKey.gameObject.SetActive(false);
-                pool.Release(poolable);
+                Debug.Log($"Despawning to pool: {poolable.name}, Pool Count Before: {pool.Count}");
+                poolable.gameObject.SetActive(false);
+                pool.Enqueue(poolable);
             }
             else
             {
-                Debug.LogWarning($"Pool with key {poolKey.GetType()} does not exist.");
+                Debug.LogWarning($"Pool with key {poolable.name.Replace("(Clone)", "")} does not exist.");
             }
         }
 
-        private static IPoolable CreateFunc(MonoBehaviour prefab)
+        private static MonoBehaviour CreateFunc(MonoBehaviour prefab)
         {
-            var poolable = UnityEngine.Object.Instantiate(prefab).GetComponent<IPoolable>();
+            var poolable = UnityEngine.Object.Instantiate(prefab);
             return poolable;
         }
 
         public static void Dispose(this JanPoolAgent _)
         {
-            foreach (var pool in Pools.Values)
-            {
-                pool.Dispose();
-            }
-
             Pools.Clear();
         }
     }

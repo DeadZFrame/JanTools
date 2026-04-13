@@ -2,7 +2,7 @@ using Jan.Tasks;
 using TMPro;
 using UnityEngine;
 
-namespace Giant.Core
+namespace Jan.Core
 {
     public static class TextExtensions
     {

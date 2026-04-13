@@ -3,7 +3,7 @@ using Jan.Events;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
-namespace Giant.Feel
+namespace Jan.Feel
 {
     public class GFeedback : SerializedMonoBehaviour
     {

@@ -2,7 +2,7 @@ using LitMotion;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
-namespace Giant.Feel
+namespace Jan.Feel
 {
     [System.Serializable]
     public class CameraZoom : FeedbackBase

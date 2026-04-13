@@ -3,7 +3,7 @@ using Jan.Tasks;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
-namespace Giant.Feel
+namespace Jan.Feel
 {
     public abstract class FeedbackBase
     {

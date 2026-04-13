@@ -4,7 +4,7 @@ using Jan.Events;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
-namespace Giant.Feel
+namespace Jan.Feel
 {
     [Serializable]
     public class Sound : FeedbackBase
