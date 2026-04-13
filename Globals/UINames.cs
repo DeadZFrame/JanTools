@@ -5,6 +5,7 @@ namespace Jan.Core
         public const string SensitivityBar = "SensitivityBar";
         public const string InteractionUI = "InteractionUI";
         public const string DialogueUI = "DialogueUI";
+        public const string FpsButton = "FpsButton";
         public const string None = "None";
     }
 }

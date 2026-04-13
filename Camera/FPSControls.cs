@@ -22,15 +22,17 @@ public class FPSControls : MonoBehaviour
 
     void Start()
     {
-        _fpsCamera = CameraManager.GetICamera() as FPSCamera;
+        _fpsCamera = CameraManager.GetCamera() as FPSCamera;
     }
 
     void FixedUpdate()
     {
+        if(GameStateManager.Instance.CurrentGameState != GameState.FPS) return;
+        
         Vector3 move = new Vector3(_moveInput.x, 0f, _moveInput.y);
         move = Vector3.ClampMagnitude(move, 1f);
 
-        Vector3 worldMove = _fpsCamera.Camera.transform.rotation * move;
+        Vector3 worldMove = _fpsCamera.CameraComponent.transform.rotation * move;
         rb.MovePosition(rb.position + worldMove * (moveSpeed * Time.fixedDeltaTime));
     }
 

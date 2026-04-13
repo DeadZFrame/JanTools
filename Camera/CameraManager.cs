@@ -1,17 +1,29 @@
+using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Jan.Core
 {
     public class CameraManager : Singleton<CameraManager>
     {
-        public ICamera CurrentCamera { get; private set; }
+        private List<Camera> cameras = new List<Camera>();
 
-        public void SetCurrentCamera(ICamera camera)
+        public Camera CurrentCamera { get; private set; }
+
+        public void RegisterCamera(Camera camera)
+        {
+            if (!cameras.Contains(camera))
+            {
+                cameras.Add(camera);
+            }
+        }
+
+        public void SetCurrentCamera(Camera camera)
         {
             CurrentCamera = camera;
         }
 
-        public static Camera GetCurrentCamera()
+        public static UnityEngine.Camera GetCurrentCamera()
         {
             var currentCamera = Instance.CurrentCamera;
 
@@ -21,23 +33,40 @@ namespace Jan.Core
                 return null;
             }
 
-            return currentCamera.Camera;
+            return currentCamera.CameraComponent;
         }
 
-        public static ICamera GetICamera()
+        public static Camera GetCamera()
         {
             return Instance.CurrentCamera;
         }
 
-        public static void SwitchCamera(ICamera newCamera)
+        public static void SwitchCamera<T>() where T : Camera
         {
-            newCamera.Camera.enabled = true;
+            Camera newCamera = null;
+
+            foreach (var camera in Instance.cameras)
+            {
+                if (camera is T)
+                {
+                    newCamera = camera;
+                    break;
+                }
+            }
+
+            if (newCamera == null)
+            {
+                Debug.LogError($"No camera of type {typeof(T)} found in the scene.");
+                return;
+            }
+
+            newCamera.CameraComponent.enabled = true;
             newCamera.AudioListener.enabled = true;
             
             var currentCamera = Instance.CurrentCamera;
             if (currentCamera != null)
             {
-                currentCamera.Camera.enabled = false;
+                currentCamera.CameraComponent.enabled = false;
                 currentCamera.AudioListener.enabled = false;
             }
 

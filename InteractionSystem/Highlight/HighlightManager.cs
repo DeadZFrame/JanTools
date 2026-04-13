@@ -6,19 +6,10 @@ namespace Jan.InteractionSystem
 {
     public class HighlightManager : Singleton<HighlightManager>
     {
-        public Texture2D defaultCursor;
-        public Texture2D horizontalHoverCursor;
-        public Texture2D verticalHoverCursor;
-        public Vector2 cursorHotspot = Vector2.zero;
         [SerializeField] private Material highlightMaterial; // Material used for highlighting
         //[SerializeField] private float smoothing = 0.5f; // Animation smoothing factor
 
         private readonly Dictionary<Renderer, Material[]> OriginalMaterials = new();
-
-        public void Start()
-        {
-            Cursor.SetCursor(defaultCursor, cursorHotspot, CursorMode.Auto);
-        }
 
         public void Highlight(Transform target)
         {

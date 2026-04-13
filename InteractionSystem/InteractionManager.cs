@@ -7,8 +7,6 @@ namespace Jan.InteractionSystem
 {
     public class InteractionManager : JanBehaviour, IInputHandler
     {
-        public Texture2D defaultCursor;
-
         private IInteractable currentInteractable;
         private IInteractionUI _interactionUI;
         private static IInteractionContext _currentContext;
