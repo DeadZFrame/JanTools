@@ -14,8 +14,9 @@ namespace Jan.Core
 
         private float _pitch, _yaw;
 
-        void OnEnable()
+        protected override void OnEnable()
         {
+            base.OnEnable();
             EventManager.Register<Vector2>(EventNames.OnLookInput, OnLookInput);
         }
 
@@ -26,8 +27,9 @@ namespace Jan.Core
             GameStateManager.SetGameState(GameState.FPS);
         }
 
-        void OnDisable()
+        protected override void OnDisable()
         {
+            base.OnDisable();
             EventManager.UnRegister<Vector2>(EventNames.OnLookInput, OnLookInput);
         }
 
