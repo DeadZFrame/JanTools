@@ -32,7 +32,9 @@ public class FPSControls : MonoBehaviour
         Vector3 move = new Vector3(_moveInput.x, 0f, _moveInput.y);
         move = Vector3.ClampMagnitude(move, 1f);
 
-        Vector3 worldMove = _fpsCamera.CameraComponent.transform.rotation * move;
+        var yRotation = Quaternion.Euler(0f, _fpsCamera.CameraComponent.transform.eulerAngles.y, 0f);
+
+        Vector3 worldMove = yRotation * move;
         rb.MovePosition(rb.position + worldMove * (moveSpeed * Time.fixedDeltaTime));
     }
 
