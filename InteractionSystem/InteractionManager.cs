@@ -40,9 +40,12 @@ namespace Jan.InteractionSystem
             var camera = CameraManager.GetCurrentCamera();
 
             var highlightManager = HighlightManager.Instance;
-            
+
+            bool isStateSupported = false;
+
             Ray ray = camera.ScreenPointToRay(Input.mousePosition);
-            if (Physics.Raycast(ray, out RaycastHit hit, rayDistance, LayerMask.GetMask(Layers.Interactable)))
+            bool rayHit = Physics.Raycast(ray, out RaycastHit hit, rayDistance, LayerMask.GetMask(Layers.Interactable));
+            if (rayHit)
             {
                 var monoBehaviour = currentInteractable as MonoBehaviour;
                 if (monoBehaviour != null)
@@ -50,29 +53,29 @@ namespace Jan.InteractionSystem
                     highlightManager.Unhighlight(monoBehaviour.transform);
                 }
 
-                if (hit.collider.gameObject.TryGetComponentInParentChildren(out IInteractable interactable))
+                if (hit.collider.gameObject.TryGetComponentInParentChildren(out IInteractable interactable) && interactable != null)
                 {
-                    if(interactable == null) return;
-
-                    if(interactable.SupportedGameState != gamestate && interactable.SupportedGameState != GameState.Any) return;
-
-                    currentInteractable = interactable;
-
-                    monoBehaviour = interactable as MonoBehaviour;
-                    if(interactable.HighlightEffect) highlightManager.Highlight(monoBehaviour.transform);
-
-                    interactable.OnHover();
-
-                    if(!string.IsNullOrEmpty(interactable.Tooltip))
+                    isStateSupported = interactable.SupportedGameState == gamestate || interactable.SupportedGameState == GameState.Any;
+                    if (isStateSupported)
                     {
-                        if(_interactionUI != null)
+                        currentInteractable = interactable;
+
+                        monoBehaviour = interactable as MonoBehaviour;
+                        if (interactable.HighlightEffect) highlightManager.Highlight(monoBehaviour.transform);
+
+                        interactable.OnHover();
+
+                        if (!string.IsNullOrEmpty(interactable.Tooltip))
                         {
-                            _interactionUI.SetTextAndIcon(interactable.Tooltip, interactable.HighlightEffect ? InteractionIconNames.LeftClick : "");
+                            if (_interactionUI != null)
+                            {
+                                _interactionUI.SetTextAndIcon(interactable.Tooltip, interactable.HighlightEffect ? InteractionIconNames.LeftClick : "");
+                            }
                         }
                     }
                 }
             }
-            else
+            if(!rayHit || !isStateSupported)
             {
                 var monoBehaviour = currentInteractable as MonoBehaviour;
                 if (monoBehaviour != null)
@@ -80,7 +83,7 @@ namespace Jan.InteractionSystem
                     HighlightManager.Instance.Unhighlight(monoBehaviour.transform);
                     currentInteractable.HoverOut();
                 }
-                
+
                 currentInteractable = null;
 
                 if(_interactionUI != null)
