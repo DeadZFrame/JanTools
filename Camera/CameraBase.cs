@@ -2,12 +2,12 @@ using UnityEngine;
 
 namespace Jan.Core
 {
-    public class Camera : MonoBehaviour
+    public abstract class CameraBase : MonoBehaviour
     {
-        [field: SerializeField] public UnityEngine.Camera CameraComponent { get; private set; }
+        [field: SerializeField] public Camera CameraComponent { get; private set; }
         [field: SerializeField] public AudioListener AudioListener { get; private set; }
 
-        void Awake()
+        protected virtual void Awake()
         {
             CameraManager.Instance.RegisterCamera(this);
         }

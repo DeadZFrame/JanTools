@@ -4,7 +4,7 @@ namespace Jan.Core
 {
     public interface ICamera
     {
-        Camera Camera { get; }
+        CameraBase Camera { get; }
         AudioListener AudioListener { get; }
     }
 }

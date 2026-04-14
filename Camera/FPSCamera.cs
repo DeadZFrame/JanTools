@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Jan.Core
 {
-    public class FPSCamera : Camera
+    public class FPSCamera : CameraBase
     {
         [SerializeField] private Transform playerBody;
         [SerializeField] private Vector3 offset = new Vector3(0, 1.6f, 0);
@@ -19,8 +19,9 @@ namespace Jan.Core
             EventManager.Register<Vector2>(EventNames.OnLookInput, OnLookInput);
         }
 
-        void Start()
+        protected override void Awake()
         {
+            base.Awake();
             CameraManager.Instance.SetCurrentCamera(this);
             GameStateManager.SetGameState(GameState.FPS);
         }

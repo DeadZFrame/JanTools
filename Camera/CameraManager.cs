@@ -6,11 +6,11 @@ namespace Jan.Core
 {
     public class CameraManager : Singleton<CameraManager>
     {
-        private List<Camera> cameras = new List<Camera>();
+        private List<CameraBase> cameras = new List<CameraBase>();
 
-        public Camera CurrentCamera { get; private set; }
+        public CameraBase CurrentCamera { get; private set; }
 
-        public void RegisterCamera(Camera camera)
+        public void RegisterCamera(CameraBase camera)
         {
             if (!cameras.Contains(camera))
             {
@@ -18,12 +18,12 @@ namespace Jan.Core
             }
         }
 
-        public void SetCurrentCamera(Camera camera)
+        public void SetCurrentCamera(CameraBase camera)
         {
             CurrentCamera = camera;
         }
 
-        public static UnityEngine.Camera GetCurrentCamera()
+        public static Camera GetCurrentCamera()
         {
             var currentCamera = Instance.CurrentCamera;
 
@@ -36,14 +36,14 @@ namespace Jan.Core
             return currentCamera.CameraComponent;
         }
 
-        public static Camera GetCamera()
+        public static CameraBase GetCamera()
         {
             return Instance.CurrentCamera;
         }
 
-        public static void SwitchCamera<T>() where T : Camera
+        public static void SwitchCamera<T>() where T : CameraBase
         {
-            Camera newCamera = null;
+            CameraBase newCamera = null;
 
             foreach (var camera in Instance.cameras)
             {
