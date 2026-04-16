@@ -42,7 +42,11 @@ namespace Jan.InteractionSystem
             var highlightManager = HighlightManager.Instance;
             
             Ray ray = camera.ScreenPointToRay(Input.mousePosition);
-            if (Physics.Raycast(ray, out RaycastHit hit, rayDistance, LayerMask.GetMask(Layers.Interactable)))
+            var isHit = Physics.Raycast(ray, out RaycastHit hit, rayDistance, LayerMask.GetMask(Layers.Interactable));
+
+            bool isStateSupported = false;
+
+            if (isHit)
             {
                 var monoBehaviour = currentInteractable as MonoBehaviour;
                 if (monoBehaviour != null)
@@ -52,27 +56,30 @@ namespace Jan.InteractionSystem
 
                 if (hit.collider.gameObject.TryGetComponentInParentChildren(out IInteractable interactable))
                 {
-                    if(interactable == null) return;
+                    isStateSupported = interactable.SupportedGameState == gamestate || interactable.SupportedGameState == GameState.Any;
 
-                    if(interactable.SupportedGameState != gamestate && interactable.SupportedGameState != GameState.Any) return;
-
-                    currentInteractable = interactable;
-
-                    monoBehaviour = interactable as MonoBehaviour;
-                    if(interactable.HighlightEffect) highlightManager.Highlight(monoBehaviour.transform);
-
-                    interactable.OnHover();
-
-                    if(!string.IsNullOrEmpty(interactable.Tooltip))
+                    if(isStateSupported)
                     {
-                        if(_interactionUI != null)
+                        currentInteractable = interactable;
+
+                        monoBehaviour = interactable as MonoBehaviour;
+                        if(interactable.HighlightEffect) highlightManager.Highlight(monoBehaviour.transform);
+
+                        interactable.OnHover();
+
+                        if(!string.IsNullOrEmpty(interactable.Tooltip))
                         {
-                            _interactionUI.SetTextAndIcon(interactable.Tooltip, interactable.HighlightEffect ? InteractionIconNames.LeftClick : "");
+                            if(_interactionUI != null)
+                            {
+                                _interactionUI.SetTextAndIcon(interactable.Tooltip, interactable.HighlightEffect ? InteractionIconNames.LeftClick : "");
+                                _interactionUI.Show(true);
+                            }
                         }
-                    }
+                    }                    
                 }
             }
-            else
+            
+            if(!isHit || !isStateSupported)
             {
                 var monoBehaviour = currentInteractable as MonoBehaviour;
                 if (monoBehaviour != null)
@@ -86,29 +93,28 @@ namespace Jan.InteractionSystem
                 if(_interactionUI != null)
                 {
                     _interactionUI.SetTextAndIcon("", "");
+                    _interactionUI.Show(false);
                 }
             }
         }
 
         private void OnGameStateChanged(GameState newState)
         {
-            if(newState is GameState.UI or GameState.Paused)
+            if(currentInteractable != null)
             {
-                if(currentInteractable != null)
+                var monoBehaviour = currentInteractable as MonoBehaviour;
+                if (monoBehaviour != null)
                 {
-                    var monoBehaviour = currentInteractable as MonoBehaviour;
-                    if (monoBehaviour != null)
-                    {
-                        HighlightManager.Instance.Unhighlight(monoBehaviour.transform);
-                    }
-
-                    currentInteractable = null;
-
-                    if(_interactionUI != null)
-                    {
-                        _interactionUI.SetTextAndIcon("", "");
-                    }
+                    HighlightManager.Instance.Unhighlight(monoBehaviour.transform);
                 }
+
+                currentInteractable = null;
+            }
+            
+            if(_interactionUI != null)
+            {
+                _interactionUI.SetTextAndIcon("", "");
+                _interactionUI.Show(false);
             }
         }
 
