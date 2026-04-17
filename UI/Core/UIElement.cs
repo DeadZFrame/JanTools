@@ -12,19 +12,14 @@ namespace Jan.UI
         private string[] UINames => GlobalsUtils.GetNames(typeof(UINames));
         [SerializeField, FoldoutGroup("UI Element")] private bool pauseGame;
 
-        void OnEnable()
-        {
-            UIBusManager.RegisterUIElement(_key, this);
-        }
-
-        void OnDisable()
-        {
-            UIBusManager.RegisterUIElement(_key, this);
-        }
-
         protected virtual void Awake()
         {
-            
+            UIBusManager.RegisterUIElement(_key, this);
+        }
+
+        protected virtual void OnDestroy()
+        {
+            UIBusManager.UnregisterUIElement(_key, this);
         }
 
         public virtual void Show(bool show)

@@ -31,11 +31,8 @@ namespace Jan.Pool
 
             if (Pools.TryGetValue(poolable.name, out var pool))
             {
-                Debug.Log($"Spawning from pool: {poolable.name}, Pool Count: {pool.Count}");
-
                 if(!pool.TryDequeue(out var obj))
                 {
-                    Debug.Log($"Pool with key {poolable.name} is empty. Instantiating new object.");
                     obj = CreateFunc(poolable);
                 }
 
@@ -46,7 +43,6 @@ namespace Jan.Pool
             }
             else
             {
-                Debug.Log($"Pool with key {poolable.name} does not exist. Creating new pool.");
                 CreatePool(poolable);
                 
                 var createdObj = Pools[poolable.name].Dequeue();
@@ -62,7 +58,6 @@ namespace Jan.Pool
         {
             if (poolable == null)           
             {
-                Debug.LogError("Poolable object must be a MonoBehaviour.");
                 return default;
             }
 
@@ -77,7 +72,6 @@ namespace Jan.Pool
 
                 if(!Pools[poolable.name].TryDequeue(out var obj))
                 {
-                    Debug.Log($"Pool with key {poolable.name} is empty. Instantiating new object.");
                     obj = CreateFunc(poolable);
                 }
 
@@ -107,7 +101,6 @@ namespace Jan.Pool
 
             if (Pools.TryGetValue(poolable.name.Replace("(Clone)", ""), out var pool))
             {
-                Debug.Log($"Despawning to pool: {poolable.name}, Pool Count Before: {pool.Count}");
                 poolable.gameObject.SetActive(false);
                 pool.Enqueue(poolable);
             }

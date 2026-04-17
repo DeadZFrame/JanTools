@@ -21,8 +21,10 @@ namespace Jan.UI
             }
         }
 
-        public static void UnregisterUIElement(string key)
+        public static void UnregisterUIElement(string key, IUIElement element)
         {
+            key = key == UINames.None ? element.GetType().Name : key;
+
             if (UIElements.ContainsKey(key))
             {
                 UIElements.Remove(key);
