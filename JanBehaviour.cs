@@ -1,5 +1,5 @@
 using Jan.Events;
-using Jan.InteractionSystem;
+using Jan.Interaction;
 using Sirenix.OdinInspector;
 using UnityEngine;
 

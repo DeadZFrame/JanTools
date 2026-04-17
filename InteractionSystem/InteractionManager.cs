@@ -1,9 +1,9 @@
 using Jan.Core;
 using Jan.Events;
-using UIBus;
+using Jan.UI;
 using UnityEngine;
 
-namespace Jan.InteractionSystem
+namespace Jan.Interaction
 {
     public class InteractionManager : JanBehaviour, IInputHandler
     {
@@ -29,7 +29,7 @@ namespace Jan.InteractionSystem
 
         private void Start()
         {
-            UIBusManager.Instance.TryGetUIElement(UINames.InteractionUI, out _interactionUI);
+            UIBusManager.TryGetUIElement(UINames.InteractionUI, out _interactionUI);
         }
 
         private void Update()

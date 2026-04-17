@@ -1,6 +1,6 @@
 using Jan.Core;
 
-namespace Jan.InteractionSystem
+namespace Jan.Interaction
 {
     public interface IInteractable
     {

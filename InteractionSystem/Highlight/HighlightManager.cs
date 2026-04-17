@@ -2,7 +2,7 @@ using Jan.Core;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Jan.InteractionSystem
+namespace Jan.Interaction
 {
     public class HighlightManager : Singleton<HighlightManager>
     {
