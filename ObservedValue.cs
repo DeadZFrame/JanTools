@@ -25,15 +25,15 @@ namespace Jan.Core
 
         public readonly T Value => currentValue;
 
-        public void Set(T value, object sender)
+        public void Set(T value)
         {
             if (!currentValue.Equals(value))
             {
                 lastValue = currentValue;
                 currentValue = value;
 
-                sender.Trigger(EventNames.OnValueObserved, value);
-                sender.Trigger(EventNames.OnValueObserved);
+                this.Trigger(EventNames.OnValueObserved, value);
+                this.Trigger(EventNames.OnValueObserved);
             }
         }
 

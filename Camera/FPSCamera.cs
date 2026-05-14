@@ -11,8 +11,10 @@ namespace Jan.Core
         [SerializeField] private float lookSensitivity = 1f;
         [SerializeField] private float minPitch = -80f;
         [SerializeField] private float maxPitch = 80f;
+        [SerializeField] private float smoothStrength = 0.1f;
 
         private float _pitch, _yaw;
+        private Vector3 _velocity;
 
         protected override void OnEnable()
         {
@@ -35,14 +37,17 @@ namespace Jan.Core
 
         void LateUpdate()
         {
-            if(GameStateManager.Instance.CurrentGameState != GameState.FPS) return;
+            if(GameStateManager.CurrentGameState != GameState.FPS) return;
+
+            var smoothedPosition = Vector3.SmoothDamp(transform.position, playerBody.position + playerBody.TransformDirection(offset), ref _velocity, smoothStrength);
             
-            transform.position = playerBody.position + playerBody.TransformDirection(offset);
+            transform.position = smoothedPosition;
             transform.rotation = Quaternion.Euler(_pitch, _yaw, 0f);
         }
 
         private void OnLookInput(Vector2 lookInput)
         {
+            if(GameStateManager.CurrentGameState != GameState.FPS) return;
             _pitch = Mathf.Clamp(_pitch - lookInput.y * lookSensitivity, minPitch, maxPitch);
             _yaw += lookInput.x * lookSensitivity;
         }

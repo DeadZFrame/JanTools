@@ -1,4 +1,3 @@
-using Jan.Core;
 using UnityEngine;
 
 namespace Jan.Core

@@ -34,7 +34,7 @@ namespace Jan.Interaction
 
         private void Update()
         {
-            var gamestate = GameStateManager.Instance.CurrentGameState;
+            var gamestate = GameStateManager.CurrentGameState;
             if(gamestate is GameState.UI or GameState.Paused) return;
 
             var camera = CameraManager.GetCurrentCamera();
@@ -56,7 +56,7 @@ namespace Jan.Interaction
 
                 if (hit.collider.gameObject.TryGetComponentInParentChildren(out IInteractable interactable))
                 {
-                    isStateSupported = interactable.SupportedGameState == gamestate || interactable.SupportedGameState == GameState.Any;
+                    isStateSupported = (interactable.SupportedGameState & gamestate) != 0 || interactable.SupportedGameState == GameState.Any;
 
                     if(isStateSupported)
                     {

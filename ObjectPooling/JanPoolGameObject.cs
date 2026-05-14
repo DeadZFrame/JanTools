@@ -106,7 +106,8 @@ namespace Jan.Pool
             }
             else
             {
-                Debug.LogWarning($"Pool with key {poolable.name.Replace("(Clone)", "")} does not exist.");
+                CreatePool(poolable);
+                poolable.gameObject.SetActive(false);
             }
         }
 

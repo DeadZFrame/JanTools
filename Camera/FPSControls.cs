@@ -27,7 +27,7 @@ public class FPSControls : MonoBehaviour
 
     void FixedUpdate()
     {
-        if(GameStateManager.Instance.CurrentGameState != GameState.FPS) return;
+        if(GameStateManager.CurrentGameState != GameState.FPS) return;
         
         Vector3 move = new Vector3(_moveInput.x, 0f, _moveInput.y);
         move = Vector3.ClampMagnitude(move, 1f);
