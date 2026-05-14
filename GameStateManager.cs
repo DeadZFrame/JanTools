@@ -1,27 +1,29 @@
+using System;
 using Jan.Events;
 using UnityEngine;
 
 namespace Jan.Core
 {
+    [Flags]
     public enum GameState
     {
-        Paused,
-        Workshop,
-        FPS,
-        UI,
-        Build,
-        Any,
+        Paused = 1 << 0,
+        Workshop = 1 << 1,
+        FPS = 1 << 2,
+        UI = 1 << 3,
+        Build = 1 << 4,
+        Any = ~0,
     }
 
-    public class GameStateManager : Singleton<GameStateManager>
+    public static class GameStateManager
     {
-        public GameState CurrentGameState { get; private set; }
+        public static GameState CurrentGameState { get; private set; }
+        public static GameState PreviousGameState { get; private set; }
 
         public static void SetGameState(GameState newState)
         {
-            Instance.CurrentGameState = newState;
-            EventManager.Trigger<GameState>(EventNames.OnGameStateChanged, newState);
-
+            if(PreviousGameState != CurrentGameState) PreviousGameState = CurrentGameState;
+            
             switch (newState)
             {
                 case GameState.Paused:
@@ -33,12 +35,12 @@ namespace Jan.Core
                     Cursor.visible = true;
                     break;
 
-                    case GameState.FPS:
+                case GameState.FPS:
                     Cursor.lockState = CursorLockMode.Locked;
                     Cursor.visible = false;
                     break;
 
-                    case GameState.Workshop:
+                case GameState.Workshop:
                     Cursor.lockState = CursorLockMode.None;
                     Cursor.visible = true;
                     break;
@@ -51,6 +53,11 @@ namespace Jan.Core
                 default:
                     break;
             }
+
+            CurrentGameState = newState;
+            EventManager.Trigger<GameState>(EventNames.OnGameStateChanged, newState);
+
+            Debug.Log($"Game State changed to: {newState}");
         }
     }
 }

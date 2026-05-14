@@ -15,6 +15,8 @@ namespace Jan.Feel
 
         [Tooltip("Target scale to reach during the squash/stretch animation.")]
         [SerializeField] private Vector3 scale = Vector3.one;
+        [SerializeField] private bool overrideStartingScale = false;
+        [SerializeField, ShowIf(nameof(overrideStartingScale))] private Vector3 startingScale = Vector3.one;
         [Tooltip("Vibrato controls the oscillation/frequency of the punch animation. Must be >= 0.")]
         [SerializeField, ValidateInput(nameof(IsPositiveVibrato), "Value must be positive")]
         private int vibrato = 1;
@@ -46,7 +48,7 @@ namespace Jan.Feel
 
             // Cache all variables
             var temp = transform.localScale;
-            var cachedStartingScale = transform.localScale;
+            var cachedStartingScale = overrideStartingScale ? startingScale : transform.localScale;
             var cachedScale = scale;
             var cachedDuration = Duration;
             var cachedEase = ease;

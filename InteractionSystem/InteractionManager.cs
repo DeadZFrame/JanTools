@@ -35,7 +35,7 @@ namespace Jan.Interaction
 
         private void Update()
         {
-            var gamestate = GameStateManager.Instance.CurrentGameState;
+            var gamestate = GameStateManager.CurrentGameState;
             if(gamestate is GameState.UI or GameState.Paused) return;
 
             var camera = CameraManager.GetCurrentCamera();

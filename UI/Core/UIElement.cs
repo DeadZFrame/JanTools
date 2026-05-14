@@ -8,8 +8,8 @@ namespace Jan.UI
     {
         [Header("UI Settings"), FoldoutGroup("UI Element")]
         [SerializeField, FoldoutGroup("UI Element")] protected GameObject ui;
-        [SerializeField, ValueDropdown(nameof(UINames)), FoldoutGroup("UI Element")] private string _key;
-        private string[] UINames => GlobalsUtils.GetNames(typeof(UINames));
+        [SerializeField, ValueDropdown(nameof(GetUINames)), FoldoutGroup("UI Element")] private string _key = UINames.None;
+        private string[] GetUINames => GlobalsUtils.GetNames(typeof(UINames));
         [SerializeField, FoldoutGroup("UI Element")] private bool pauseGame;
 
         protected virtual void Awake()
@@ -29,10 +29,17 @@ namespace Jan.UI
             if (show && pauseGame)
             {
                 Time.timeScale = 0f;
+                GameStateManager.SetGameState(GameState.UI);
             }
             else
             {
                 Time.timeScale = 1f;
+
+                if(!pauseGame) return;
+                if (GameStateManager.CurrentGameState == GameState.UI)
+                {
+                    GameStateManager.SetGameState(GameStateManager.PreviousGameState);
+                }
             }
         }
     }

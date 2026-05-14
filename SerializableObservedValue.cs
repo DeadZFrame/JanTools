@@ -18,7 +18,7 @@ namespace Jan.Core
         // Property to access ObservedValue<T>
         public readonly ObservedValue<T> Value => observedValue;
 
-        public void SetValue(T value, object sender)
+        public void SetValue(T value)
         {
             if (observedValue.Value.Equals(value))
             {
@@ -26,7 +26,7 @@ namespace Jan.Core
             }
 
             var newValue = observedValue;
-            newValue.Set(value, sender);
+            newValue.Set(value);
             observedValue = newValue;
         }
 
