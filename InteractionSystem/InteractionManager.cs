@@ -8,6 +8,7 @@ namespace Jan.Interaction
     public class InteractionManager : JanBehaviour, IInputHandler
     {
         private IInteractable currentInteractable;
+        private IInteractable previousInteractable;
         private IInteractionUI _interactionUI;
         private static IInteractionContext _currentContext;
 
@@ -56,29 +57,14 @@ namespace Jan.Interaction
 
                 if (hit.collider.gameObject.TryGetComponentInParentChildren(out IInteractable interactable))
                 {
-                    isStateSupported = interactable.SupportedGameState == gamestate || interactable.SupportedGameState == GameState.Any;
+                    isStateSupported = interactable.SupportedGameState == gamestate || interactable.SupportedGameState == GameState.Any || interactable.SupportedGameState == GameState.Build;
 
-                    if(isStateSupported)
+                    if (isStateSupported)
                     {
-                        currentInteractable = interactable;
-
-                        monoBehaviour = interactable as MonoBehaviour;
-                        if(interactable.HighlightEffect) highlightManager.Highlight(monoBehaviour.transform);
-
-                        interactable.OnHover();
-
-                        if(!string.IsNullOrEmpty(interactable.Tooltip))
-                        {
-                            if(_interactionUI != null)
-                            {
-                                _interactionUI.SetTextAndIcon(interactable.Tooltip, interactable.HighlightEffect ? InteractionIconNames.LeftClick : "");
-                                _interactionUI.Show(true);
-                            }
-                        }
+                        InteractionLogic(interactable, monoBehaviour);
                     }                    
                 }
             }
-            
             if(!isHit || !isStateSupported)
             {
                 var monoBehaviour = currentInteractable as MonoBehaviour;
@@ -94,6 +80,55 @@ namespace Jan.Interaction
                 {
                     _interactionUI.SetTextAndIcon("", "");
                     _interactionUI.Show(false);
+                }
+            }
+        }
+
+        private void FPS_StateInteraction(IInteractable interactable, MonoBehaviour monoBehaviour)
+        {
+            currentInteractable = interactable;
+
+            monoBehaviour = interactable as MonoBehaviour;
+            if (interactable.HighlightEffect) HighlightManager.Instance.Highlight(monoBehaviour.transform);
+
+            interactable.OnHover();
+
+            if (!string.IsNullOrEmpty(interactable.Tooltip))
+            {
+                if (_interactionUI != null)
+                {
+                    _interactionUI.SetTextAndIcon(interactable.Tooltip, interactable.HighlightEffect ? InteractionIconNames.LeftClick : "");
+                    _interactionUI.Show(true);
+                }
+            }
+        }
+
+        private void InteractionLogic(IInteractable interactable, MonoBehaviour monoBehaviour)
+        {
+            //check interactable object change and update interactable
+            bool currentInteractableChanged = (currentInteractable != interactable);
+
+            if (currentInteractable != null && currentInteractableChanged)
+            {
+                previousInteractable = currentInteractable;
+                previousInteractable.HoverOut();
+            }
+
+            currentInteractable = interactable;
+
+            if (!interactable.IsActive) return;
+
+            monoBehaviour = interactable as MonoBehaviour;
+            if (interactable.HighlightEffect) HighlightManager.Instance.Highlight(monoBehaviour.transform);
+
+            interactable.OnHover();
+
+            if (!string.IsNullOrEmpty(interactable.Tooltip))
+            {
+                if (_interactionUI != null)
+                {
+                    _interactionUI.SetTextAndIcon(interactable.Tooltip, interactable.HighlightEffect ? InteractionIconNames.LeftClick : "");
+                    _interactionUI.Show(true);
                 }
             }
         }

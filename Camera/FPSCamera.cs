@@ -35,7 +35,7 @@ namespace Jan.Core
 
         void LateUpdate()
         {
-            if(GameStateManager.Instance.CurrentGameState != GameState.FPS) return;
+            if(GameStateManager.Instance.CurrentGameState != GameState.FPS && GameStateManager.Instance.CurrentGameState != GameState.Build) return;
             
             transform.position = playerBody.position + playerBody.TransformDirection(offset);
             transform.rotation = Quaternion.Euler(_pitch, _yaw, 0f);

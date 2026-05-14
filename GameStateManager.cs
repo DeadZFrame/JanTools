@@ -9,6 +9,7 @@ namespace Jan.Core
         Workshop,
         FPS,
         UI,
+        Build,
         Any,
     }
 
@@ -41,6 +42,11 @@ namespace Jan.Core
                     Cursor.lockState = CursorLockMode.None;
                     Cursor.visible = true;
                     break;
+
+                    case GameState.Build:
+                        Cursor.lockState = CursorLockMode.Locked;
+                        Cursor.visible = false;
+                        break;
 
                 default:
                     break;
