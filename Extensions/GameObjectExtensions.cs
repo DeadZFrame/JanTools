@@ -38,12 +38,7 @@ namespace Jan.Core
         }
 
         public static void SetLayer(this GameObject gameObject, string layer)
-        {
-            if(Layers.Ignore == LayerMask.LayerToName(gameObject.layer))
-            {
-                return;
-            }
-            
+        {            
             var layerMask = LayerMask.NameToLayer(layer);
             if (layerMask == -1)
             {
@@ -58,12 +53,7 @@ namespace Jan.Core
         }
 
         public static void SetLayerToChildren(this GameObject gameObject, string layer)
-        {
-            if(Layers.Ignore == LayerMask.LayerToName(gameObject.layer))
-            {
-                return;
-            }
-            
+        {           
             var layerMask = LayerMask.NameToLayer(layer);
             if (layerMask == -1)
             {

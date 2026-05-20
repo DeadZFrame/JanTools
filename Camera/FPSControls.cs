@@ -27,7 +27,7 @@ public class FPSControls : MonoBehaviour
 
     void FixedUpdate()
     {
-        if(GameStateManager.Instance.CurrentGameState != GameState.FPS && GameStateManager.Instance.CurrentGameState != GameState.Build) return;
+        if(GameStateManager.CurrentGameState != GameState.FPS && GameStateManager.CurrentGameState != GameState.Build) return;
         
         Vector3 move = new Vector3(_moveInput.x, 0f, _moveInput.y);
         move = Vector3.ClampMagnitude(move, 1f);
@@ -35,7 +35,8 @@ public class FPSControls : MonoBehaviour
         var yRotation = Quaternion.Euler(0f, _fpsCamera.CameraComponent.transform.eulerAngles.y, 0f);
 
         Vector3 worldMove = yRotation * move;
-        rb.MovePosition(rb.position + worldMove * (moveSpeed * Time.fixedDeltaTime));
+        rb.linearVelocity = worldMove * (moveSpeed * Time.fixedDeltaTime);
+        //rb.MovePosition(rb.position + worldMove * (moveSpeed * Time.fixedDeltaTime));
     }
 
     private void OnMoveInput(Vector2 moveInput)

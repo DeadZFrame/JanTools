@@ -10,5 +10,7 @@ namespace Jan.Core
         public const string Interactable = "Interactable";
         public const string MarblingPlane = "MarblingPlane";
         public const string ContainerRegion = "ContainerRegion";
+        public const string Ground = "Ground";
+        public const string Wall = "Wall";
     }
 }

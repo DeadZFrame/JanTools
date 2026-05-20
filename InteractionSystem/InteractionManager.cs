@@ -43,7 +43,7 @@ namespace Jan.Interaction
             var highlightManager = HighlightManager.Instance;
             
             Ray ray = camera.ScreenPointToRay(Input.mousePosition);
-            var isHit = Physics.Raycast(ray, out RaycastHit hit, rayDistance, LayerMask.GetMask(Layers.Interactable));
+            var isHit = Physics.Raycast(ray, out var hit, rayDistance, LayerMask.GetMask(Layers.Interactable));
 
             bool isStateSupported = false;
 
@@ -57,7 +57,7 @@ namespace Jan.Interaction
 
                 if (hit.collider.gameObject.TryGetComponentInParentChildren(out IInteractable interactable))
                 {
-                    isStateSupported = interactable.SupportedGameState == gamestate || interactable.SupportedGameState == GameState.Any || interactable.SupportedGameState == GameState.Build;
+                    isStateSupported = interactable.SupportedGameState == gamestate || interactable.SupportedGameState == GameState.Any;
 
                     if (isStateSupported)
                     {

@@ -10,12 +10,14 @@ namespace Jan.Core
         public new Transform transform { get; private set; }
         public new GameObject gameObject { get; private set; }
 
+        [SerializeField] private bool overrideLayer = true;  
+
         protected virtual void OnEnable()
         {
             transform = base.transform;
             gameObject = base.gameObject;
 
-            if(this is IInteractable interactable)
+            if(this is IInteractable interactable && overrideLayer)
             {
                 gameObject.SetLayerToChildren(Layers.Interactable);
             }
@@ -47,13 +49,14 @@ namespace Jan.Core
     {
         public new Transform transform { get; private set; }
         public new GameObject gameObject { get; private set; }
-        
+        [SerializeField] private bool overrideLayer = true;
+
         protected virtual void OnEnable()
         {
             transform = base.transform;
             gameObject = base.gameObject;
 
-            if(this is IInteractable interactable)
+            if(this is IInteractable interactable && overrideLayer)
             {
                 gameObject.SetLayerToChildren(Layers.Interactable);
             }
