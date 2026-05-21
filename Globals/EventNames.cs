@@ -13,5 +13,7 @@ namespace Jan.Core
         public const string OnJumpInput = "OnJumpInput";
         public const string OnGameStateChanged = "OnGameStateChanged";
         public const string OnInventoryButtonPressed = "OnInventoryButtonPressed";
+        public const string OnObjectDestroyed = "OnObjectDestroyed";
+        public const string OnObjectInstantiated = "OnObjectInstantiated";
     }
 }
