@@ -168,6 +168,7 @@ namespace Jan.Interaction
             if(currentInteractable != null)
             {
                 currentInteractable.Trigger(EventNames.OnMouseClicked);
+                
             }
         }
 

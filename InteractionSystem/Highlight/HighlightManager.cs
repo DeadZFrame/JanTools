@@ -26,6 +26,8 @@ namespace Jan.Interaction
                 OriginalMaterials[renderer].CopyTo(materials, 0);
                 materials[^1] = highlightMaterial;
                 renderer.materials = materials;
+
+                
             }
         }
 

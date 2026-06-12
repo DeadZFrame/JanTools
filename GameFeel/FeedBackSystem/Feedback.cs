@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using Jan.Core;
-using Jan.Events;
 using Jan.Tasks;
 using Sirenix.OdinInspector;
 using UnityEngine;

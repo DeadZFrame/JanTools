@@ -23,7 +23,8 @@ namespace Jan.Feel
             // Log warning if neither exists
             if (!soundPlayed)
             {
-                Debug.LogWarning($"Sound '{sound}' not found as either Sound Group or Custom Event in MasterAudio");
+                SoundLibrary.PlaySound(sound);
+                soundPlayed = true;
             }
 
             return this;

@@ -7,18 +7,18 @@ namespace Jan.Pool
 {
     public static partial class JanPool
     {
-        private static readonly Dictionary<string, Queue<MonoBehaviour>> Pools = new();
+        private static readonly Dictionary<string, Queue<GameObject>> GameObjectPools = new();
 
-        private static void CreatePool(MonoBehaviour prefab) 
+        private static void CreatePool(GameObject prefab) 
         {
-            if (Pools.ContainsKey(prefab.name))
+            if (GameObjectPools.ContainsKey(prefab.name))
             {
                 Debug.LogWarning($"Pool with key {prefab.name} already exists.");
                 return;
             }
 
-            Pools.Add(prefab.name, new Queue<MonoBehaviour>());
-            Pools[prefab.name].Enqueue(CreateFunc(prefab));
+            GameObjectPools.Add(prefab.name, new Queue<GameObject>());
+            GameObjectPools[prefab.name].Enqueue(CreateFunc(prefab));
         }
         
         public static GameObject Spawn(this GameObject poolable, Transform parent = null)
@@ -113,7 +113,9 @@ namespace Jan.Pool
             }
             else
             {
-                CreatePool(poolable);
+                GameObjectPools.Add(poolable.name.Replace("(Clone)", ""), new Queue<GameObject>());
+                GameObjectPools[poolable.name.Replace("(Clone)", "")].Enqueue(poolable);
+
                 poolable.SetActive(false);
             }
         }
