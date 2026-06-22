@@ -10,7 +10,7 @@ namespace Jan.Navigation
     public partial class NavigationTaskManager : Singleton<NavigationTaskManager>
     {
         private readonly List<IAgent> registeredAgents = new List<IAgent>();
-        public IReadOnlyList<IAgent> Agents => registeredAgents;
+        public IAgent[] Agents => registeredAgents.ToArray();
         private int _currentBatchIndex = 0;
         private const int BATCH_SIZE = 128;
         [SerializeField] private float destinationCheckPeriod = .1f; 

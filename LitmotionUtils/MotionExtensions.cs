@@ -50,7 +50,7 @@ namespace Jan.Core
                     .WithEase(ease.ConvertToLitEase())
                     .BindToRotation(transform);
 
-            return new Motion(motionHandle);
+                return new Motion(motionHandle);
             }
             else
             {

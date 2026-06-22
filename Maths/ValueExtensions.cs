@@ -33,6 +33,12 @@ namespace Jan.Maths
             var rand = UnityEngine.Random.Range(0, values.Length);
             return values[rand];
         }
+        
+        public static float GetRandomFromValues(params float[] values)
+        {
+            var rand = UnityEngine.Random.Range(0, values.Length);
+            return values[rand];
+        }
 
         /// <summary>
         /// Determines if a given value is within the specified range defined by two values.

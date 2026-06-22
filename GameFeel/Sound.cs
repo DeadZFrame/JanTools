@@ -13,18 +13,19 @@ namespace Jan.Feel
         private string sound = "";
         private string[] GetSounds => GlobalsUtils.GetNames(typeof(SoundNames));
 
-        public override FeedbackBase Play(Transform transform)
+        public override FeedbackBase Play(Transform transform = null)
         {
             if (string.IsNullOrEmpty(sound))
                 return this;
 
-            bool soundPlayed = false;
-
             // Log warning if neither exists
-            if (!soundPlayed)
+            if (transform == null)
             {
                 SoundLibrary.PlaySound(sound);
-                soundPlayed = true;
+            }
+            else
+            {
+                SoundLibrary.Play3DSound(sound, transform.position);
             }
 
             return this;

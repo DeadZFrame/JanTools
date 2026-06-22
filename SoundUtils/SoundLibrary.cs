@@ -10,14 +10,14 @@ namespace Jan.Core
         private class Sound
         {
             [field: SerializeField, ValueDropdown(nameof(GetSoundNames))] public string Name { get; private set; }
-            [field: SerializeField] public AudioClip Clip { get; private set; }
+            [field: SerializeField] public AudioClip[] Clips { get; private set; }
 
             private string[] GetSoundNames => GlobalsUtils.GetNames(typeof(SoundNames));
         }
 
         [BoxGroup("Audio Components")]
         [SerializeField] private AudioMixer audioMixer;
-        [SerializeField, BoxGroup("Audio Components")] private AudioSource audioSource;
+        [SerializeField, BoxGroup("Audio Components")] private AudioSource[] audioSources;
 
         [SerializeField, Range(0f, 1f), BoxGroup("Volumes")] private float masterVolume = 1f;
         [SerializeField, Range(0f, 1f), BoxGroup("Volumes")] private float musicVolume = 1f;
@@ -29,7 +29,7 @@ namespace Jan.Core
         [SerializeField, BoxGroup("Sounds")] private Sound[] SFXSounds;
         [SerializeField, BoxGroup("Sounds")] private Sound[] MusicSounds;
 
-        void Awake()
+        void Start()
         {
             SetVolume("Master", masterVolume);
             SetVolume("Music", musicVolume);
@@ -45,7 +45,7 @@ namespace Jan.Core
             {
                 if (uiSounds[i].Name.Equals(soundName))
                 {
-                    Instance.PlayClip(uiSounds[i].Clip, "UI");
+                    Instance.PlayClip(uiSounds[i].Clips.RandomItem(), "UI");
                     return;
                 }
             }
@@ -56,7 +56,7 @@ namespace Jan.Core
             {
                 if (sfxSounds[i].Name.Equals(soundName))
                 {
-                    Instance.PlayClip(sfxSounds[i].Clip, "SFX");
+                    Instance.PlayClip(sfxSounds[i].Clips.RandomItem(), "SFX");
                     return;
                 }
             }
@@ -67,7 +67,7 @@ namespace Jan.Core
             {
                 if (musicSounds[i].Name.Equals(soundName))
                 {
-                    Instance.PlayClip(musicSounds[i].Clip, "Music");
+                    Instance.PlayClip(musicSounds[i].Clips.RandomItem(), "Music");
                     return;
                 }
             }
@@ -83,7 +83,7 @@ namespace Jan.Core
             {
                 if (sfxSounds[i].Name.Equals(soundName))
                 {
-                    AudioSource.PlayClipAtPoint(sfxSounds[i].Clip, position, Instance.sfxVolume);
+                    AudioSource.PlayClipAtPoint(sfxSounds[i].Clips.RandomItem(), position, Instance.sfxVolume);
                     return;
                 }
             }
@@ -99,9 +99,18 @@ namespace Jan.Core
                 return;
             }
 
-            audioSource.clip = clip;
-            audioSource.outputAudioMixerGroup = audioMixer.FindMatchingGroups(volumeParameter)[0];
-            audioSource.Play();
+            for (int i = 0; i < audioSources.Length; i++)
+            {
+                if (!audioSources[i].isPlaying)
+                {
+                    audioSources[i].clip = clip;
+                    audioSources[i].outputAudioMixerGroup = audioMixer.FindMatchingGroups(volumeParameter)[0];
+                    audioSources[i].Play();
+                    return;
+                }
+            }
+
+            Debug.LogWarning("All audio sources are currently playing. Consider increasing the number of audio sources.");
         }
 
         public static void SetVolume(string parameterName, float volume)

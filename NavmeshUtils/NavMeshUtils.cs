@@ -103,51 +103,37 @@ namespace Jan.Navigation
             return isHit ? hit.position : Vector3.zero;
         }
 
-        public static void SetDestination(this IAgent agent, Vector3 destination, params IReadOnlyList<IAgent>[] otherAgents)
+        public static Vector3 SetDestination(this IAgent agent, Vector3 destination)
         {
             Vector3 displacement = Vector3.zero;
+
+            var otherAgents = NavigationTaskManager.Instance.Agents;
 
             if (otherAgents == null || otherAgents.Length == 0)
             {
                 agent.Agent.SetDestination(destination);
-                return;
+                return destination;
             }
 
             const float AgentRadiusSqr = AgentRadius * AgentRadius;
 
             for (int i = 0; i < otherAgents.Length; i++)
             {
-                try
-                {
-                    var item = otherAgents[i];
-                    Vector3 direction = destination - item[0].AgentTransform.position;
-                    float distance = direction.sqrMagnitude;
+                var item = otherAgents[i];
+                Vector3 direction = destination - item.Destination;
+                float distance = direction.sqrMagnitude;
 
-                    // If inside the zone, calculate displacement needed
-                    if (distance < AgentRadiusSqr)
-                    {
-                        if (distance < .001f)
-                        {
-                            // If exactly at NPC position, use random direction
-                            direction = new Vector3(UnityEngine.Random.Range(-1f, 1f), 0, UnityEngine.Random.Range(-1f, 1f)).normalized;
-                        }
-                        else
-                        {
-                            direction = direction.normalized;
-                        }
-
-                        // Calculate how far to push out
-                        float pushDistance = AgentRadiusSqr - distance;
-                        displacement += direction * pushDistance;
-                    }
-                }
-                catch
+                // If inside the zone, calculate displacement needed
+                if (distance < AgentRadiusSqr)
                 {
-                    Debug.LogWarning($"Error processing agent at index {i} in SetDestination. Ensure the agent is valid and has a NavMeshAgent component.");
+                    direction.Normalize();
+                    displacement = 3f * AgentRadiusSqr * -direction;
                 }
             }
 
             agent.Agent.SetDestination(destination + displacement);
+
+            return destination + displacement;
         }
 
         public static T GetNearest<T>(T[] array, Vector3 currentPos, NavmeshAreas areaMask) where T : MonoBehaviour

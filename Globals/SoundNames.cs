@@ -5,6 +5,7 @@ namespace Jan.Core
         public const string Click = "Click";
         public const string Hover = "Hover";
         public const string Interact = "Interact";
-        public const string Marbling = "Marbling";
+        public const string Glass = "Glass";
+        public const string Liquid = "Liquid";
     }
 }
