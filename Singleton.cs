@@ -30,10 +30,10 @@ namespace Jan.Core
             {
                 if (_instance == null)
                 {
-                    if (FindObjectsByType(typeof(T), FindObjectsSortMode.None) is T[] { Length: > 0 } objs)
+                    if (FindObjectsByType(typeof(T)) is T[] { Length: > 0 } objs)
                     {
                         _instance = objs[0];
-                        if (objs.Length > 1) Debug.LogError("There is more than one " + typeof(T).Name + " in the scene.");
+                        if (objs.Length > 1) Debug.LogError("There is more than one " + typeof(T).Name + " in the scene.", Instance);
                     }
 
                     //if (_instance == null) Debug.Log($"There is no any {typeof(T).Name}");
