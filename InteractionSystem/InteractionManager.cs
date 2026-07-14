@@ -40,6 +40,8 @@ namespace Jan.Interaction
 
             var camera = CameraManager.GetCurrentCamera();
 
+            if(camera == null) return;
+
             var highlightManager = HighlightManager.Instance;
             
             Ray ray = camera.ScreenPointToRay(Input.mousePosition);
@@ -57,12 +59,14 @@ namespace Jan.Interaction
 
                 if (hit.collider.gameObject.TryGetComponentInParentChildren(out IInteractable interactable))
                 {
-                    isStateSupported = interactable.SupportedGameState == gamestate || interactable.SupportedGameState == GameState.Any;
+                    isStateSupported = interactable.SupportedGameState.HasFlag(gamestate);
 
                     if (isStateSupported)
                     {
                         InteractionLogic(interactable, monoBehaviour);
                     }                    
+
+                    //Debug.Log($"Hit: {hit.collider.gameObject.name}, Interactable: {interactable.GetType().Name}, SupportedGameState: {interactable.SupportedGameState}, CurrentGameState: {gamestate}");
                 }
             }
             if(!isHit || !isStateSupported)
