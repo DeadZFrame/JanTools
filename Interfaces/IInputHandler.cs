@@ -9,5 +9,7 @@ namespace Jan.Core
         void OnMouseHold();
         void OnMouseMoved(Vector2 mousePosition);
         void OnScroll(Vector2 scrollValue);
+        void OnMouseHover();
+        void OnMouseHoverOut();
     }
 }

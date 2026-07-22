@@ -23,5 +23,18 @@ namespace Jan.Tasks
                 return true; // Canceled
             }
         }
+
+        internal static async UniTask<bool> TryAwait<T>(this UniTask<T> task)
+        {
+            try
+            {
+                await task;
+                return false; // Not canceled
+            }
+            catch (OperationCanceledException)
+            {
+                return true; // Canceled
+            }
+        }
     }
 }

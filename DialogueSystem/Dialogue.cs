@@ -22,7 +22,7 @@ namespace Jan.Dialogue
         }
 
         [field: SerializeField] public T Id { get; private set; }
-        [field: SerializeField] public string DialogueText { get; private set; }
+        [field: SerializeField, TextArea] public string DialogueText { get; private set; }
         [field: SerializeField] public DialogueAction[] Actions { get; private set; }
 
         public void StartDialogue()

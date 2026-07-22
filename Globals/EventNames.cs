@@ -15,5 +15,11 @@ namespace Jan.Core
         public const string OnInventoryButtonPressed = "OnInventoryButtonPressed";
         public const string OnObjectDestroyed = "OnObjectDestroyed";
         public const string OnObjectInstantiated = "OnObjectInstantiated";
+        public const string OnCashChanged = "OnCashChanged";
+        public const string OnPopularityChanged = "OnPopularityChanged";
+        public const string OnMouseHover = "OnMouseHover";
+        public const string OnMouseHoverOut = "OnMouseHoverOut";
+        public const string OnDateProgressed = "OnDateProgressed";
+        public const string OnTimeProgressed = "OnTimeProgressed";
     }
 }

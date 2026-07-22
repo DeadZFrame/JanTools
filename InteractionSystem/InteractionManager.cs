@@ -19,6 +19,14 @@ namespace Jan.Interaction
             base.OnEnable();
 
             EventManager.Register<GameState>(EventNames.OnGameStateChanged, OnGameStateChanged);
+
+            EventManager.Register<int>(EventNames.OnMouseClicked, OnMouseClicked);
+            EventManager.Register(EventNames.OnMouseHold, OnMouseHold);
+            EventManager.Register<Vector2>(EventNames.OnMouseMoved, OnMouseMoved);
+            EventManager.Register<int>(EventNames.OnMouseReleased, OnMouseReleased);
+            EventManager.Register<Vector2>(EventNames.OnScroll, OnScroll);
+            EventManager.Register(EventNames.OnMouseHover, OnMouseHover);
+            EventManager.Register(EventNames.OnMouseHoverOut, OnMouseHoverOut);
         }
 
         protected override void OnDisable()
@@ -26,6 +34,14 @@ namespace Jan.Interaction
             base.OnDisable();
 
             EventManager.UnRegister<GameState>(EventNames.OnGameStateChanged, OnGameStateChanged);
+
+            EventManager.UnRegister<int>(EventNames.OnMouseClicked, OnMouseClicked);
+            EventManager.UnRegister(EventNames.OnMouseHold, OnMouseHold);
+            EventManager.UnRegister<Vector2>(EventNames.OnMouseMoved, OnMouseMoved);
+            EventManager.UnRegister<int>(EventNames.OnMouseReleased, OnMouseReleased);
+            EventManager.UnRegister<Vector2>(EventNames.OnScroll, OnScroll);
+            EventManager.UnRegister(EventNames.OnMouseHover, OnMouseHover);
+            EventManager.UnRegister(EventNames.OnMouseHoverOut, OnMouseHoverOut);
         }
 
         private void Start()
@@ -75,7 +91,7 @@ namespace Jan.Interaction
                 if (monoBehaviour != null)
                 {
                     HighlightManager.Instance.Unhighlight(monoBehaviour.transform);
-                    currentInteractable.HoverOut();
+                    EventManager.Trigger(EventNames.OnMouseHoverOut);
                 }
                 
                 currentInteractable = null;
@@ -88,25 +104,6 @@ namespace Jan.Interaction
             }
         }
 
-        private void FPS_StateInteraction(IInteractable interactable, MonoBehaviour monoBehaviour)
-        {
-            currentInteractable = interactable;
-
-            monoBehaviour = interactable as MonoBehaviour;
-            if (interactable.HighlightEffect) HighlightManager.Instance.Highlight(monoBehaviour.transform);
-
-            interactable.OnHover();
-
-            if (!string.IsNullOrEmpty(interactable.Tooltip))
-            {
-                if (_interactionUI != null)
-                {
-                    _interactionUI.SetTextAndIcon(interactable.Tooltip, interactable.HighlightEffect ? InteractionIconNames.LeftClick : "");
-                    _interactionUI.Show(true);
-                }
-            }
-        }
-
         private void InteractionLogic(IInteractable interactable, MonoBehaviour monoBehaviour)
         {
             //check interactable object change and update interactable
@@ -115,7 +112,7 @@ namespace Jan.Interaction
             if (currentInteractable != null && currentInteractableChanged)
             {
                 previousInteractable = currentInteractable;
-                previousInteractable.HoverOut();
+                EventManager.Trigger(EventNames.OnMouseHoverOut);
             }
 
             currentInteractable = interactable;
@@ -125,7 +122,7 @@ namespace Jan.Interaction
             monoBehaviour = interactable as MonoBehaviour;
             if (interactable.HighlightEffect) HighlightManager.Instance.Highlight(monoBehaviour.transform);
 
-            interactable.OnHover();
+            EventManager.Trigger(EventNames.OnMouseHover);
 
             if (!string.IsNullOrEmpty(interactable.Tooltip))
             {
@@ -171,8 +168,10 @@ namespace Jan.Interaction
 
             if(currentInteractable != null)
             {
-                currentInteractable.Trigger(EventNames.OnMouseClicked);
-                
+                if(currentInteractable is IInputHandler inputHandler)
+                {
+                    inputHandler.OnMouseClicked(buttonIndex);
+                }
             }
         }
 
@@ -180,7 +179,10 @@ namespace Jan.Interaction
         {
             if(currentInteractable != null)
             {
-                currentInteractable.Trigger(EventNames.OnMouseReleased);
+                if(currentInteractable is IInputHandler inputHandler)
+                {
+                    inputHandler.OnMouseReleased(buttonIndex);
+                }
             }
         }
 
@@ -193,18 +195,55 @@ namespace Jan.Interaction
             
             if(currentInteractable != null)
             {
-                currentInteractable.Trigger(EventNames.OnMouseHold);
+                if(currentInteractable is IInputHandler inputHandler)
+                {
+                    inputHandler.OnMouseHold();
+                }
             } 
         }
 
         public void OnMouseMoved(Vector2 mouseWorldPosition)
         {
-            
+            if(currentInteractable != null)
+            {
+                if(currentInteractable is IInputHandler inputHandler)
+                {
+                    inputHandler.OnMouseMoved(mouseWorldPosition);
+                }
+            } 
         }
 
         public void OnScroll(Vector2 scrollValue)
         {
-            
+            if(currentInteractable != null)
+            {
+                if(currentInteractable is IInputHandler inputHandler)
+                {
+                    inputHandler.OnScroll(scrollValue);
+                }
+            } 
+        }
+
+        public void OnMouseHover()
+        {
+            if(currentInteractable != null)
+            {
+                if(currentInteractable is IInputHandler inputHandler)
+                {
+                    inputHandler.OnMouseHover();
+                }
+            } 
+        }
+
+        public void OnMouseHoverOut()
+        {
+            if(currentInteractable != null)
+            {
+                if(currentInteractable is IInputHandler inputHandler)
+                {
+                    inputHandler.OnMouseHoverOut();
+                }
+            } 
         }
     }
 }

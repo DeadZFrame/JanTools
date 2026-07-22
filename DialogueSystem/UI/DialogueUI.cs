@@ -11,7 +11,7 @@ namespace Jan.Dialogue
     public class DialogueUI : UIElement, IDialogueUI
     {
         [SerializeField] private DialogueButton buttonPrefab;
-        [SerializeField] private VerticalLayoutGroup layoutGroup;
+        [SerializeField] private HorizontalLayoutGroup layoutGroup;
         [SerializeField] private TextMeshProUGUI dialogueText;
 
         private readonly List<DialogueButton> _buttons = new List<DialogueButton>();
@@ -25,6 +25,7 @@ namespace Jan.Dialogue
         {
             var button = JanPool.Spawn(buttonPrefab, layoutGroup.transform);
             button.Initialize(text, action);
+            button.transform.localScale = Vector3.one;
 
             _buttons.Add(button);
         }

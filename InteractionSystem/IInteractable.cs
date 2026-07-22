@@ -9,9 +9,6 @@ namespace Jan.Interaction
         bool IsHoldable { get; }
         string Tooltip { get; }
         GameState SupportedGameState { get; }
-        void OnHover();
-
-        void HoverOut();
 
         void Interact(IInteractionContext interactor, int buttonIndex);
     }

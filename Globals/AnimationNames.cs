@@ -6,5 +6,6 @@ namespace Jan.Core
         public const string IsIdle = "IsIdle";
         public const string RandomIdleIndex = "RandomIdleIndex";
         public const string RandomIdle = "RandomIdle";
+        public const string Expression = "Expression";
     }
 }

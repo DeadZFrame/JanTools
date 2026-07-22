@@ -21,27 +21,11 @@ namespace Jan.Core
             {
                 gameObject.SetLayerToChildren(Layers.Interactable);
             }
-            
-            if(this is IInputHandler inputHandler)
-            {
-                EventManager.Register<int>(EventNames.OnMouseClicked, inputHandler.OnMouseClicked);
-                EventManager.Register(EventNames.OnMouseHold, inputHandler.OnMouseHold);
-                EventManager.Register<Vector2>(EventNames.OnMouseMoved, inputHandler.OnMouseMoved);
-                EventManager.Register<int>(EventNames.OnMouseReleased, inputHandler.OnMouseReleased);
-                EventManager.Register<Vector2>(EventNames.OnScroll, inputHandler.OnScroll);
-            }
         }
 
         protected virtual void OnDisable()
         {
-            if(this is IInputHandler inputHandler)
-            {
-                EventManager.UnRegister<int>(EventNames.OnMouseClicked, inputHandler.OnMouseClicked);
-                EventManager.UnRegister(EventNames.OnMouseHold, inputHandler.OnMouseHold);
-                EventManager.UnRegister<Vector2>(EventNames.OnMouseMoved, inputHandler.OnMouseMoved);
-                EventManager.UnRegister<int>(EventNames.OnMouseReleased, inputHandler.OnMouseReleased);
-                EventManager.UnRegister<Vector2>(EventNames.OnScroll, inputHandler.OnScroll);
-            }
+            
         }
     }
 
@@ -60,27 +44,11 @@ namespace Jan.Core
             {
                 gameObject.SetLayerToChildren(Layers.Interactable);
             }
-
-            if(this is IInputHandler inputHandler)
-            {
-                EventManager.Register<int>(EventNames.OnMouseClicked, inputHandler.OnMouseClicked);
-                EventManager.Register(EventNames.OnMouseHold, inputHandler.OnMouseHold);
-                EventManager.Register<Vector2>(EventNames.OnMouseMoved, inputHandler.OnMouseMoved);
-                EventManager.Register<int>(EventNames.OnMouseReleased, inputHandler.OnMouseReleased);
-                EventManager.Register<Vector2>(EventNames.OnScroll, inputHandler.OnScroll);
-            }
         }
 
         protected virtual void OnDisable()
         {
-            if(this is IInputHandler inputHandler)
-            {
-                EventManager.UnRegister<int>(EventNames.OnMouseClicked, inputHandler.OnMouseClicked);
-                EventManager.UnRegister(EventNames.OnMouseHold, inputHandler.OnMouseHold);
-                EventManager.UnRegister<Vector2>(EventNames.OnMouseMoved, inputHandler.OnMouseMoved);
-                EventManager.UnRegister<int>(EventNames.OnMouseReleased, inputHandler.OnMouseReleased);
-                EventManager.UnRegister<Vector2>(EventNames.OnScroll, inputHandler.OnScroll);
-            }
+            
         }
     }
 }

@@ -16,6 +16,8 @@ namespace Jan.UI
 
         public void SetFillAmount(float amount, float duration, Ease ease = Ease.Linear)
         {
+            return;
+            Debug.Log($"Setting fill amount to {amount} over {duration} seconds with ease {ease}");
             this.FloatMotion(bar.fillAmount, amount, duration, ease);
             if (handle == null) return;
             this.FloatMotion(handle.rectTransform.anchoredPosition.x, amount * bar.rectTransform.sizeDelta.x, duration, ease);

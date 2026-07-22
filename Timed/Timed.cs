@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
@@ -899,6 +900,44 @@ namespace Jan.Tasks
         }
 
         #endregion
+
+        public static Cts Observe<T, K>(this T target, Func<T, K> valueFactory, Action action, GameObject cullingObject, PlayerLoops playerLoop) where T : class
+        {
+            var cts = CancellationTokenSourcePool.GetCtsFromPool(cullingObject);
+            Task(cullingObject == null ? cts.Token : cts.LinkedTokenSource.Token).Forget();
+
+            return cts;
+
+            async UniTaskVoid Task(CancellationToken token)
+            {
+                var canceled = await UniTask.WaitUntilValueChanged(target, valueFactory, (PlayerLoopTiming)playerLoop, cancellationToken: token).TryAwait();
+                
+                if (!canceled)
+                {
+                    action?.Invoke();
+                }
+
+                if(!canceled) cts?.CompletedCallback?.Invoke();
+                else cts?.CancellationCallback?.Invoke();
+                
+                if(!canceled) CancellationTokenSourcePool.ReturnToPool(cts);
+            }
+        }
+
+        public static Cts Observe<T, K>(this T target, Func<T, K> valueFactory, Action action, PlayerLoops playerLoop) where T : class
+        {
+            return Observe(target, valueFactory, action, null, playerLoop);
+        }
+
+        public static Cts Observe<T, K>(this T target, Func<T, K> valueFactory, Action action) where T : class
+        {
+            return Observe(target, valueFactory, action, null, PlayerLoops.Update);
+        }
+
+        public static Cts Observe<T, K>(this T target, Func<T, K> valueFactory, Action action, GameObject cullingObject) where T : class
+        {
+            return Observe(target, valueFactory, action, cullingObject, PlayerLoops.Update);
+        }
 
         /// Releases all resources used by the Timed class and clears the internal cancellation token pool.
         /// This method iterates through the internal queue of CancellationTokenSource objects, cancels each token
