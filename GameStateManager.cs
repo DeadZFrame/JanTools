@@ -22,6 +22,12 @@ namespace Jan.Core
 
         public static void SetGameState(GameState newState)
         {
+            if(newState == CurrentGameState)
+            {
+                Debug.LogWarning($"Game State is already set to {newState}. No change made.");
+                return;
+            }
+            
             if(PreviousGameState != CurrentGameState) PreviousGameState = CurrentGameState;
             
             switch (newState)

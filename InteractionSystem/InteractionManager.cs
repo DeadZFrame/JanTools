@@ -7,7 +7,9 @@ namespace Jan.Interaction
 {
     public class InteractionManager : JanBehaviour, IInputHandler
     {
+        [SerializeField] private LayerMask inputHandlerDetectionLayerMask = 1 << 0;
         private IInteractable currentInteractable;
+        private IInputHandler currentInputHandler;
         private IInteractable previousInteractable;
         private IInteractionUI _interactionUI;
         private static IInteractionContext _currentContext;
@@ -102,6 +104,8 @@ namespace Jan.Interaction
                     _interactionUI.Show(false);
                 }
             }
+
+            GetInputHandler(ray);
         }
 
         private void InteractionLogic(IInteractable interactable, MonoBehaviour monoBehaviour)
@@ -131,6 +135,24 @@ namespace Jan.Interaction
                     _interactionUI.SetTextAndIcon(interactable.Tooltip, interactable.HighlightEffect ? InteractionIconNames.LeftClick : "");
                     _interactionUI.Show(true);
                 }
+            }
+        }
+
+        private void GetInputHandler(Ray ray)
+        {            
+            var isHit = Physics.Raycast(ray, out var hit, rayDistance, inputHandlerDetectionLayerMask);
+
+            if (isHit)
+            {
+                if (hit.collider.gameObject.TryGetComponentInParentChildren(out IInputHandler inputHandler))
+                {                 
+                    currentInputHandler = inputHandler;
+                    //Debug.Log($"Hit: {hit.collider.gameObject.name}, InputHandler: {inputHandler.GetType().Name}");
+                }
+            }
+            if(!isHit)
+            {                
+                currentInputHandler = null;
             }
         }
 
@@ -166,24 +188,12 @@ namespace Jan.Interaction
                 currentInteractable.Interact(_currentContext, buttonIndex);
             }
 
-            if(currentInteractable != null)
-            {
-                if(currentInteractable is IInputHandler inputHandler)
-                {
-                    inputHandler.OnMouseClicked(buttonIndex);
-                }
-            }
+            currentInputHandler?.OnMouseClicked(buttonIndex);
         }
 
         public void OnMouseReleased(int buttonIndex)
         {
-            if(currentInteractable != null)
-            {
-                if(currentInteractable is IInputHandler inputHandler)
-                {
-                    inputHandler.OnMouseReleased(buttonIndex);
-                }
-            }
+            currentInputHandler?.OnMouseReleased(buttonIndex);
         }
 
         public void OnMouseHold()
@@ -193,57 +203,27 @@ namespace Jan.Interaction
                 currentInteractable.Interact(_currentContext, 0);
             }
             
-            if(currentInteractable != null)
-            {
-                if(currentInteractable is IInputHandler inputHandler)
-                {
-                    inputHandler.OnMouseHold();
-                }
-            } 
+            currentInputHandler?.OnMouseHold(); 
         }
 
         public void OnMouseMoved(Vector2 mouseWorldPosition)
         {
-            if(currentInteractable != null)
-            {
-                if(currentInteractable is IInputHandler inputHandler)
-                {
-                    inputHandler.OnMouseMoved(mouseWorldPosition);
-                }
-            } 
+            currentInputHandler?.OnMouseMoved(mouseWorldPosition); 
         }
 
         public void OnScroll(Vector2 scrollValue)
         {
-            if(currentInteractable != null)
-            {
-                if(currentInteractable is IInputHandler inputHandler)
-                {
-                    inputHandler.OnScroll(scrollValue);
-                }
-            } 
+            currentInputHandler?.OnScroll(scrollValue); 
         }
 
         public void OnMouseHover()
         {
-            if(currentInteractable != null)
-            {
-                if(currentInteractable is IInputHandler inputHandler)
-                {
-                    inputHandler.OnMouseHover();
-                }
-            } 
+            currentInputHandler?.OnMouseHover();
         }
 
         public void OnMouseHoverOut()
         {
-            if(currentInteractable != null)
-            {
-                if(currentInteractable is IInputHandler inputHandler)
-                {
-                    inputHandler.OnMouseHoverOut();
-                }
-            } 
+            currentInputHandler?.OnMouseHoverOut();
         }
     }
 }
