@@ -12,6 +12,9 @@ namespace Jan.Core
         FPS = 1 << 2,
         UI = 1 << 3,
         Build = 1 << 4,
+        ObjectPlacement = 1 << 5,
+        Painting = 1 << 6,
+        Cleaning = 1 << 7,
         Any = ~0,
     }
 
@@ -51,10 +54,15 @@ namespace Jan.Core
                     Cursor.visible = true;
                     break;
 
-                    case GameState.Build:
-                        Cursor.lockState = CursorLockMode.Locked;
-                        Cursor.visible = false;
-                        break;
+                case GameState.Build:
+                    Cursor.lockState = CursorLockMode.Locked;
+                    Cursor.visible = false;
+                    break;
+
+                case GameState.ObjectPlacement or GameState.Painting or GameState.Cleaning:
+                    Cursor.lockState = CursorLockMode.Locked;
+                    Cursor.visible = false;
+                    break;
 
                 default:
                     break;

@@ -10,7 +10,6 @@ namespace Jan.Interaction
         [SerializeField] private LayerMask inputHandlerDetectionLayerMask = 1 << 0;
         private IInteractable currentInteractable;
         private IInputHandler currentInputHandler;
-        private IInteractable previousInteractable;
         private IInteractionUI _interactionUI;
         private static IInteractionContext _currentContext;
 
@@ -69,19 +68,20 @@ namespace Jan.Interaction
 
             if (isHit)
             {
-                var monoBehaviour = currentInteractable as MonoBehaviour;
-                if (monoBehaviour != null)
-                {
-                    highlightManager.Unhighlight(monoBehaviour.transform);
-                }
-
                 if (hit.collider.gameObject.TryGetComponentInParentChildren(out IInteractable interactable))
                 {
+                    MonoBehaviour monoBehaviour = currentInteractable as MonoBehaviour;
+
+                    if(monoBehaviour != null && currentInteractable != interactable)
+                    {
+                        highlightManager.Unhighlight(monoBehaviour.transform);
+                    }
+
                     isStateSupported = interactable.SupportedGameState.HasFlag(gamestate);
 
                     if (isStateSupported)
                     {
-                        InteractionLogic(interactable, monoBehaviour);
+                        InteractionLogic(interactable);
                     }                    
 
                     //Debug.Log($"Hit: {hit.collider.gameObject.name}, Interactable: {interactable.GetType().Name}, SupportedGameState: {interactable.SupportedGameState}, CurrentGameState: {gamestate}");
@@ -93,7 +93,6 @@ namespace Jan.Interaction
                 if (monoBehaviour != null)
                 {
                     HighlightManager.Instance.Unhighlight(monoBehaviour.transform);
-                    EventManager.Trigger(EventNames.OnMouseHoverOut);
                 }
                 
                 currentInteractable = null;
@@ -108,25 +107,14 @@ namespace Jan.Interaction
             GetInputHandler(ray);
         }
 
-        private void InteractionLogic(IInteractable interactable, MonoBehaviour monoBehaviour)
+        private void InteractionLogic(IInteractable interactable)
         {
-            //check interactable object change and update interactable
-            bool currentInteractableChanged = (currentInteractable != interactable);
-
-            if (currentInteractable != null && currentInteractableChanged)
-            {
-                previousInteractable = currentInteractable;
-                EventManager.Trigger(EventNames.OnMouseHoverOut);
-            }
-
             currentInteractable = interactable;
 
             if (!interactable.IsActive) return;
 
-            monoBehaviour = interactable as MonoBehaviour;
+            var monoBehaviour = interactable as MonoBehaviour;
             if (interactable.HighlightEffect) HighlightManager.Instance.Highlight(monoBehaviour.transform);
-
-            EventManager.Trigger(EventNames.OnMouseHover);
 
             if (!string.IsNullOrEmpty(interactable.Tooltip))
             {
@@ -146,13 +134,19 @@ namespace Jan.Interaction
             {
                 if (hit.collider.gameObject.TryGetComponentInParentChildren(out IInputHandler inputHandler))
                 {                 
+                    currentInputHandler?.OnMouseHoverOut();
+                    
                     currentInputHandler = inputHandler;
-                    //Debug.Log($"Hit: {hit.collider.gameObject.name}, InputHandler: {inputHandler.GetType().Name}");
+                    currentInputHandler?.OnMouseHover();
+                }
+                else
+                {
+                    currentInputHandler?.OnMouseHoverOut();
                 }
             }
             if(!isHit)
-            {                
-                currentInputHandler = null;
+            {       
+                currentInputHandler?.OnMouseHoverOut();
             }
         }
 

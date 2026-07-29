@@ -62,6 +62,30 @@ namespace Jan.Core
             }
         }
 
+        public static Motion LitRotate(this Transform transform, Vector3 axis, float angle, float duration, Ease ease = Ease.Linear, bool localSpace = false)
+        {
+            if(!localSpace)
+            {
+                var targetRotation = Quaternion.AngleAxis(angle, axis) * transform.rotation;
+
+                var motionHandle = LMotion.Create(transform.rotation, targetRotation, duration)
+                    .WithEase(ease.ConvertToLitEase())
+                    .BindToRotation(transform);
+
+                return new Motion(motionHandle);
+            }
+            else
+            {
+                var targetRotation = Quaternion.AngleAxis(angle, axis) * transform.rotation;
+
+                var motionHandle = LMotion.Create(transform.rotation, targetRotation, duration)
+                    .WithEase(ease.ConvertToLitEase())
+                    .BindToLocalRotation(transform);
+
+                return new Motion(motionHandle);
+            }
+        }
+
         public static void SafeCancel(this MotionHandle handle)
         {
             if (handle.IsActive())
