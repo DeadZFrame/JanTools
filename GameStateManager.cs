@@ -11,17 +11,23 @@ namespace Jan.Core
         Workshop = 1 << 1,
         FPS = 1 << 2,
         UI = 1 << 3,
-        Build = 1 << 4,
-        ObjectPlacement = 1 << 5,
-        Painting = 1 << 6,
-        Cleaning = 1 << 7,
         Any = ~0,
+    }
+
+    public enum SubStates
+    {
+        None,
+        Painting,
+        Cleaning,
+        ObjectPlacement,
+        Building,
     }
 
     public static class GameStateManager
     {
         public static GameState CurrentGameState { get; private set; }
         public static GameState PreviousGameState { get; private set; }
+        public static SubStates CurrentSubState { get; private set; }
 
         public static void SetGameState(GameState newState)
         {
@@ -54,24 +60,24 @@ namespace Jan.Core
                     Cursor.visible = true;
                     break;
 
-                case GameState.Build:
-                    Cursor.lockState = CursorLockMode.Locked;
-                    Cursor.visible = false;
-                    break;
-
-                case GameState.ObjectPlacement or GameState.Painting or GameState.Cleaning:
-                    Cursor.lockState = CursorLockMode.Locked;
-                    Cursor.visible = false;
-                    break;
-
                 default:
+                    Cursor.lockState = CursorLockMode.None;
+                    Cursor.visible = true;
                     break;
             }
 
             CurrentGameState = newState;
-            EventManager.Trigger<GameState>(EventNames.OnGameStateChanged, newState);
+            EventManager.Trigger(EventNames.OnGameStateChanged, newState);
 
             Debug.Log($"Game State changed to: {newState}");
+        }
+
+        public static void SetSubState(SubStates newSubState)
+        {
+            CurrentSubState = newSubState;
+            EventManager.Trigger(EventNames.OnGameStateChanged, newSubState);
+
+            Debug.Log($"Sub State changed to: {newSubState}");
         }
     }
 }

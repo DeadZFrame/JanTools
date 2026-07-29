@@ -1,6 +1,7 @@
 using Jan.Core;
 using Jan.Events;
 using Jan.UI;
+using NUnit.Framework;
 using UnityEngine;
 
 namespace Jan.Interaction
@@ -48,6 +49,7 @@ namespace Jan.Interaction
         private void Start()
         {
             UIBusManager.TryGetUIElement(UINames.InteractionUI, out _interactionUI);
+            GameStateManager.SetSubState(SubStates.None);
         }
 
         private void Update()
@@ -65,6 +67,7 @@ namespace Jan.Interaction
             var isHit = Physics.Raycast(ray, out var hit, rayDistance, LayerMask.GetMask(Layers.Interactable));
 
             bool isStateSupported = false;
+            bool isActive = false;
 
             if (isHit)
             {
@@ -78,16 +81,18 @@ namespace Jan.Interaction
                     }
 
                     isStateSupported = interactable.SupportedGameState.HasFlag(gamestate);
+                    isActive = interactable.IsActive;
 
-                    if (isStateSupported)
+                    if (isStateSupported && isActive)
                     {
                         InteractionLogic(interactable);
-                    }                    
+                    }    
 
                     //Debug.Log($"Hit: {hit.collider.gameObject.name}, Interactable: {interactable.GetType().Name}, SupportedGameState: {interactable.SupportedGameState}, CurrentGameState: {gamestate}");
                 }
             }
-            if(!isHit || !isStateSupported)
+
+            if(!isHit || !isStateSupported || !isActive)
             {
                 var monoBehaviour = currentInteractable as MonoBehaviour;
                 if (monoBehaviour != null)
@@ -110,8 +115,6 @@ namespace Jan.Interaction
         private void InteractionLogic(IInteractable interactable)
         {
             currentInteractable = interactable;
-
-            if (!interactable.IsActive) return;
 
             var monoBehaviour = interactable as MonoBehaviour;
             if (interactable.HighlightEffect) HighlightManager.Instance.Highlight(monoBehaviour.transform);

@@ -22,6 +22,12 @@ namespace Jan.Core
             EventManager.Register<Vector2>(EventNames.OnLookInput, OnLookInput);
         }
 
+        protected override void OnDisable()
+        {
+            base.OnDisable();
+            EventManager.UnRegister<Vector2>(EventNames.OnLookInput, OnLookInput);
+        }
+
         protected override void Awake()
         {
             base.Awake();
@@ -29,15 +35,9 @@ namespace Jan.Core
             GameStateManager.SetGameState(GameState.FPS);
         }
 
-        protected override void OnDisable()
-        {
-            base.OnDisable();
-            EventManager.UnRegister<Vector2>(EventNames.OnLookInput, OnLookInput);
-        }
-
         void LateUpdate()
-        {
-            if(GameStateManager.CurrentGameState is GameState.FPS or GameState.Build)
+        {            
+            if(GameStateManager.CurrentGameState is GameState.FPS)
             {
                 var smoothedPosition = Vector3.SmoothDamp(transform.position, playerBody.position + playerBody.TransformDirection(offset), ref _velocity, smoothStrength);
             
