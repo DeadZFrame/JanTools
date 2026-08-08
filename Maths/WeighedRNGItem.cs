@@ -26,7 +26,7 @@ namespace Jan.Maths
         /// This property is used as the primary value in a weighted random generator logic.
         /// The associated weight of the item determines the probability of its selection during randomization.
         /// </remarks>
-        [field: SerializeField] public T Item { get; private set; }
+        [field: SerializeField] public T RNGItem { get; private set; }
 
         /// <summary>
         /// Represents the weight of an item in a weighted random number generator system.
@@ -55,7 +55,7 @@ namespace Jan.Maths
         /// </remarks>
         public WeightedRNGItem(T item, float weight, int maxSelections)
         {
-            Item = item;
+            RNGItem = item;
             Weight = weight;
             MaxSelections = maxSelections;
             LimitMaxSelections = false;

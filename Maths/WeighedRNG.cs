@@ -28,9 +28,9 @@ namespace Jan.Maths
             for (int i = 0; i < items.Length; i++)
             {
                 var item = items[i];
-                if (item.Item.Equals(excludedItem)) continue;
+                if (item.RNGItem.Equals(excludedItem)) continue;
 
-                if (_spawnedObjects.TryGetValue(item.Item, out int count) && item.LimitMaxSelections)
+                if (_spawnedObjects.TryGetValue(item.RNGItem, out int count) && item.LimitMaxSelections)
                 {
                     if (count >= item.MaxSelections) continue;
                 }
@@ -45,13 +45,13 @@ namespace Jan.Maths
             for (int i = 0; i < items.Length; i++)
             {
                 var item = items[i];
-                var exists = _spawnedObjects.TryGetValue(item.Item, out int count) && item.LimitMaxSelections;
+                var exists = _spawnedObjects.TryGetValue(item.RNGItem, out int count) && item.LimitMaxSelections;
 
                 if (exists)
                 {
                     if (count >= item.MaxSelections)
                     {
-                        if(debugMode) Debug.Log($"GetRandomItemExcept: Skipping {item.Item} as it has reached its max selections of {item.MaxSelections}, current count: {count}");
+                        if(debugMode) Debug.Log($"GetRandomItemExcept: Skipping {item.RNGItem} as it has reached its max selections of {item.MaxSelections}, current count: {count}");
                         continue;
                     }
                 }
@@ -62,11 +62,11 @@ namespace Jan.Maths
                     if (exists)
                     {
                         count++;
-                        _spawnedObjects[item.Item] = count;
+                        _spawnedObjects[item.RNGItem] = count;
                     }
-                    else if (item.LimitMaxSelections) _spawnedObjects.Add(item.Item, 1);
+                    else if (item.LimitMaxSelections) _spawnedObjects.Add(item.RNGItem, 1);
 
-                    return item.Item;
+                    return item.RNGItem;
                 }
             }
 
@@ -103,9 +103,9 @@ namespace Jan.Maths
                 var item = items[i];
                 
                 // Check if item should be excluded
-                if (item.Item.Equals(excludedItem)) continue;
+                if (item.RNGItem.Equals(excludedItem)) continue;
 
-                if(_spawnedObjects.TryGetValue(item.Item, out int count) && item.LimitMaxSelections)
+                if(_spawnedObjects.TryGetValue(item.RNGItem, out int count) && item.LimitMaxSelections)
                 {
                     if(count >= item.MaxSelections) continue;
                 }
@@ -122,14 +122,14 @@ namespace Jan.Maths
                 var item = items[i];
                 
                 // Check if item should be excluded
-                if (item.Item.Equals(excludedItem)) continue;
+                if (item.RNGItem.Equals(excludedItem)) continue;
                 
-                var exists = _spawnedObjects.TryGetValue(item.Item, out int count) && item.LimitMaxSelections;
+                var exists = _spawnedObjects.TryGetValue(item.RNGItem, out int count) && item.LimitMaxSelections;
                 if(exists)
                 {
                     if (count >= item.MaxSelections)
                     {
-                        if(debugMode) Debug.Log($"GetRandomItemExcept: Skipping {item.Item} as it has reached its max selections of {item.MaxSelections}, current count: {count}");
+                        if(debugMode) Debug.Log($"GetRandomItemExcept: Skipping {item.RNGItem} as it has reached its max selections of {item.MaxSelections}, current count: {count}");
                         continue;
                     }   
                 }
@@ -140,11 +140,11 @@ namespace Jan.Maths
                     if(exists)
                     {
                         count++;
-                        _spawnedObjects[item.Item] = count;
+                        _spawnedObjects[item.RNGItem] = count;
                     }                    
-                    else if(item.LimitMaxSelections) _spawnedObjects.Add(item.Item, 1);
+                    else if(item.LimitMaxSelections) _spawnedObjects.Add(item.RNGItem, 1);
 
-                    return item.Item;
+                    return item.RNGItem;
                 }
             }
 

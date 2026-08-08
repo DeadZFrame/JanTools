@@ -29,9 +29,9 @@ namespace Jan.Core
         public static GameState PreviousGameState { get; private set; }
         public static SubStates CurrentSubState { get; private set; }
 
-        public static void SetGameState(GameState newState)
+        public static void SetGameState(GameState newState, bool force = false)
         {
-            if(newState == CurrentGameState)
+            if(newState == CurrentGameState && !force)
             {
                 Debug.LogWarning($"Game State is already set to {newState}. No change made.");
                 return;
@@ -77,7 +77,7 @@ namespace Jan.Core
             CurrentSubState = newSubState;
             EventManager.Trigger(EventNames.OnGameStateChanged, newSubState);
 
-            Debug.Log($"Sub State changed to: {newSubState}");
+            Debug.Log($"SubState changed to: {newSubState}");
         }
     }
 }

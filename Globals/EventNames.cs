@@ -1,6 +1,6 @@
 namespace Jan.Core
 {
-    public static partial class EventNames
+    public static class EventNames
     {
         public const string OnMouseClicked = "OnMouseClicked";
         public const string OnMouseHold = "OnMouseHold";
@@ -19,7 +19,12 @@ namespace Jan.Core
         public const string OnPopularityChanged = "OnPopularityChanged";
         public const string OnMouseHover = "OnMouseHover";
         public const string OnMouseHoverOut = "OnMouseHoverOut";
-        public const string OnDateProgressed = "OnDateProgressed";
         public const string OnTimeProgressed = "OnTimeProgressed";
+        public const string OnRotate = "Rotate";
+        public const string SaveTexture = "SaveTexture";
+        public const string OnDrop = "OnDrop";
+        public const string ContrainMouseDirection = "ConstrainMouseDirection";
+        public const string ContrainMouseDirectionRelease = "ConstrainMouseDirectionRelease";
+        public const string SpawnCharacter = "SpawnCharacter";
     }
 }

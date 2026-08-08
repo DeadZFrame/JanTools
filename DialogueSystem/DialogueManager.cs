@@ -23,6 +23,8 @@ namespace Jan.Dialogue
             {
                 dialogueUI.Show(false);
             }
+
+            
         }
     }
 }

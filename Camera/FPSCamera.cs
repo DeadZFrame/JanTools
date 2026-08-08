@@ -32,7 +32,7 @@ namespace Jan.Core
         {
             base.Awake();
             CameraManager.Instance.SetCurrentCamera(this);
-            GameStateManager.SetGameState(GameState.FPS);
+            GameStateManager.SetGameState(GameState.FPS, true);
         }
 
         void LateUpdate()
