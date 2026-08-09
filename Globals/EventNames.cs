@@ -26,5 +26,6 @@ namespace Jan.Core
         public const string ContrainMouseDirection = "ConstrainMouseDirection";
         public const string ContrainMouseDirectionRelease = "ConstrainMouseDirectionRelease";
         public const string SpawnCharacter = "SpawnCharacter";
+        public const string OnLanguageLoaded = "OnLanguageLoaded";
     }
 }

@@ -1,35 +1,32 @@
 using System.Collections.Generic;
 using Jan.Core;
+using Jan.Events;
 using UnityEngine;
 
-namespace Jan.Localizaton
+namespace Jan.Localization
 {
-    public class LocalizationManager : Singleton<LocalizationManager>
+    public static class LocalizationManager
     {
-        private Dictionary<string, string> localizedText;
+        private static Dictionary<string, LocalizationItem[]> localizedText;
 
-        private void Awake()
-        {            
-            // Load default language on start
-            LoadLanguage("en"); 
-        }
-
-        public void LoadLanguage(string langCode)
+        public static void LoadLanguage(string langCode)
         {
-            localizedText = new Dictionary<string, string>();
+            localizedText = new Dictionary<string, LocalizationItem[]>();
 
-            // Load JSON file from Assets/Resources/
-            TextAsset jsonAsset = Resources.Load<TextAsset>(langCode);
-            
+            // Load JSON file from Assets/Resources/Locales/
+            TextAsset jsonAsset = Resources.Load<TextAsset>($"Locales/{langCode}");
+
             if (jsonAsset != null)
             {
                 LocalizationData data = JsonUtility.FromJson<LocalizationData>(jsonAsset.text);
 
-                foreach (LocalizationItem item in data.items)
+                foreach (LocalizationContext cls in data.items)
                 {
-                    localizedText[item.key] = item.value;
+                    localizedText[cls.key] = cls.value;
                 }
+
                 Debug.Log($"Language loaded: {langCode}");
+                EventManager.Trigger(EventNames.OnLanguageLoaded);
             }
             else
             {
@@ -37,13 +34,46 @@ namespace Jan.Localizaton
             }
         }
 
-        public string GetLocalizedValue(string key)
+        public static string GetLocalizedValue(string contextKey, string key)
         {
-            if (localizedText != null && localizedText.ContainsKey(key))
+            if(localizedText == null)
             {
-                return localizedText[key];
+                Debug.LogWarning("LocalizationManager: No language loaded. Please call LoadLanguage first.");
+                return null;
             }
+
+            if (localizedText.TryGetValue(contextKey, out LocalizationItem[] items))
+            {
+                if(items.TryGetMatch(item => item.key.Equals(key), out LocalizationItem foundItem))
+                {
+                    return foundItem.value;
+                }
+            }
+
             return $"[{key}]"; // Returns the key as a fallback if missing
+        }
+
+        public static string[] GetContext(string contextKey)
+        {
+            if(localizedText == null)
+            {
+                Debug.LogWarning("LocalizationManager: No language loaded. Please call LoadLanguage first.");
+                return new string[0];
+            }
+            
+            if (localizedText.TryGetValue(contextKey, out LocalizationItem[] items))
+            {
+                string[] values = new string[items.Length];
+                for (int i = 0; i < items.Length; i++)
+                {
+                    values[i] = items[i].key;
+                }
+                return values;
+            }
+
+            Debug.LogWarning($"Localization context not found: {contextKey}");
+
+            return new string[0]; // Returns an empty array if the context is not found
         }
     }
 

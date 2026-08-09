@@ -1,4 +1,4 @@
-namespace Jan.Localizaton
+namespace Jan.Localization
 {
     [System.Serializable]
     public class LocalizationItem
@@ -8,14 +8,15 @@ namespace Jan.Localizaton
     }
 
     [System.Serializable]
-    public class LocalizationClass
+    public class LocalizationContext
     {
-        public LocalizationItem[] chloeOrder1;
+        public string key;
+        public LocalizationItem[] value;
     }
 
     [System.Serializable]
     public class LocalizationData
     {
-        public LocalizationItem[] items;
+        public LocalizationContext[] items;
     }
 }

@@ -48,8 +48,11 @@ namespace Jan.Core
 
         private void OnLookInput(Vector2 lookInput)
         {
-            _pitch = Mathf.Clamp(_pitch - lookInput.y * lookSensitivity, minPitch, maxPitch);
-            _yaw += lookInput.x * lookSensitivity;
+            if(GameStateManager.CurrentGameState is GameState.FPS)
+            {
+                _pitch = Mathf.Clamp(_pitch - lookInput.y * lookSensitivity, minPitch, maxPitch);
+                _yaw += lookInput.x * lookSensitivity;
+            }
         }
     }
 

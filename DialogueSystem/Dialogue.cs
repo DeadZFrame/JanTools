@@ -1,6 +1,10 @@
 using System;
+using Jan.Core;
+using Jan.Localization;
 using Jan.UI;
+using Sirenix.OdinInspector;
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace Jan.Dialogue
 {
@@ -8,24 +12,28 @@ namespace Jan.Dialogue
     public class Dialogue<T>
     {
         [field: SerializeField] public T Id { get; private set; }
-        [field: SerializeField, TextArea] public string DialogueText { get; private set; }
-        private DialogueAction[] _actions;
+        [SerializeField, ValueDropdown(nameof(GetLocalizationContexts))] private string localizationContext;
+        [SerializeField, ValueDropdown(nameof(GetDialogueIds))] private string dialogueId;
+
+        private string[] GetLocalizationContexts => GlobalsUtils.GetNames(typeof(LocalizationKeys));
+        private string[] GetDialogueIds => LocalizationManager.GetContext(localizationContext);
+        [SerializeField] private DialogueAction[] _actions;
 
         public void StartDialogue()
         {
             if(UIBusManager.TryGetUIElement(out IDialogueUI dialogueUI))
             {
-                dialogueUI.SetDialogueText(DialogueText);
+                dialogueUI.Show(true);
+
+                dialogueUI.SetDialogueText(LocalizationManager.GetLocalizedValue(localizationContext, dialogueId));
 
                 if (_actions != null && _actions.Length > 0)
                 {
                     foreach (var action in _actions)
                     {
-                        dialogueUI.RegisterAction(action.Event.Invoke, action.Text);
+                        dialogueUI.RegisterAction(action.Event.Invoke, LocalizationManager.GetLocalizedValue(LocalizationKeys.DialogueActions, action.TextId));
                     }
                 }
-
-                dialogueUI.Show(true);
             }
         }
 
@@ -35,15 +43,17 @@ namespace Jan.Dialogue
         }
     }
 
+    [Serializable]
     public class DialogueAction
     {
-        public string Text { get; private set; }
-        public Action Event { get; private set; }
+        [field: SerializeField, ValueDropdown(nameof(GetDialogueIds))] public string TextId { get; private set; }
+        private string[] GetDialogueIds => LocalizationManager.GetContext(LocalizationKeys.DialogueActions);
+        [field: SerializeField] public UnityEvent Event { get; private set; } = new UnityEvent();
 
-        public DialogueAction(Action action, string text)
+        public DialogueAction(UnityAction action, string text)
         {
-            Event = action;
-            Text = text;
+            Event.AddListener(action);
+            TextId = text;
         }
     }
 }
