@@ -10,7 +10,7 @@ namespace Jan.Interaction
         string Tooltip { get; }
         GameState SupportedGameState { get; }
 
-        void Interact(IInteractionContext interactor, int buttonIndex);
+        bool Interact(IInteractionContext interactor, int buttonIndex);
     }
 }
 

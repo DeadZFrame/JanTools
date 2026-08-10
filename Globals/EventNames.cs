@@ -29,5 +29,7 @@ namespace Jan.Core
         public const string OnLanguageLoaded = "OnLanguageLoaded";
         public const string OnLevelUp = "OnLevelUp";
         public const string OnXPChanged = "OnXPChanged";
+        public const string OnDryProgressed = "OnDryProgressed";
+        public const string OnInvalidInteraction = "OnInvalidInteraction";
     }
 }

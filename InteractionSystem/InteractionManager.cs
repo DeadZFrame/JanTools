@@ -1,5 +1,6 @@
 using Jan.Core;
 using Jan.Events;
+using Jan.Feel;
 using Jan.UI;
 using NUnit.Framework;
 using UnityEngine;
@@ -71,7 +72,7 @@ namespace Jan.Interaction
 
             if (isHit)
             {
-                if (hit.collider.gameObject.TryGetComponentInChildren(out IInteractable interactable))
+                if (hit.collider.gameObject.TryGetComponentInParentChildren(out IInteractable interactable))
                 {
                     MonoBehaviour monoBehaviour = currentInteractable as MonoBehaviour;
 
@@ -135,7 +136,7 @@ namespace Jan.Interaction
 
             if (isHit)
             {
-                if (hit.collider.gameObject.TryGetComponentInChildren(out IInputHandler inputHandler))
+                if (hit.collider.gameObject.TryGetComponentInParentChildren(out IInputHandler inputHandler))
                 {                 
                     currentInputHandler?.OnMouseHoverOut();
                     
@@ -182,7 +183,13 @@ namespace Jan.Interaction
         {
             if(currentInteractable != null && !currentInteractable.IsHoldable)
             {
-                currentInteractable.Interact(_currentContext, buttonIndex);
+                var response = currentInteractable.Interact(_currentContext, buttonIndex);
+                if (!response) 
+                {
+                    var invalidInteractable = (currentInteractable as MonoBehaviour).transform;
+                    HighlightManager.Instance.HighlightInvalid(invalidInteractable);
+                    FeedbackManager.Instance.PlayFeedback(EventNames.OnInvalidInteraction, invalidInteractable);
+                }
             }
 
             currentInputHandler?.OnMouseClicked(buttonIndex);

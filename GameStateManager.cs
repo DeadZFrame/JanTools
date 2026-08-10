@@ -21,6 +21,7 @@ namespace Jan.Core
         Cleaning,
         ObjectPlacement,
         Building,
+        DryingBench,
     }
 
     public static class GameStateManager
