@@ -21,5 +21,6 @@ namespace Jan.Core
         public const string OnMouseHoverOut = "OnMouseHoverOut";
         public const string OnDateProgressed = "OnDateProgressed";
         public const string OnTimeProgressed = "OnTimeProgressed";
+        public const string OnDryProgressed = "OnDryProgressed";
     }
 }
