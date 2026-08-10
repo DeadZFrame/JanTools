@@ -71,7 +71,7 @@ namespace Jan.Interaction
 
             if (isHit)
             {
-                if (hit.collider.gameObject.TryGetComponentInParentChildren(out IInteractable interactable))
+                if (hit.collider.gameObject.TryGetComponentInChildren(out IInteractable interactable))
                 {
                     MonoBehaviour monoBehaviour = currentInteractable as MonoBehaviour;
 
@@ -135,7 +135,7 @@ namespace Jan.Interaction
 
             if (isHit)
             {
-                if (hit.collider.gameObject.TryGetComponentInParentChildren(out IInputHandler inputHandler))
+                if (hit.collider.gameObject.TryGetComponentInChildren(out IInputHandler inputHandler))
                 {                 
                     currentInputHandler?.OnMouseHoverOut();
                     
