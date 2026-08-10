@@ -166,6 +166,42 @@ namespace Jan.Core
             return false;
         }
 
+        /// <summary>
+        /// Attempts to find all elements in <paramref name="list"/> that satisfy the provided <paramref name="match"/> predicate.
+        /// </summary>
+        /// <typeparam name="T">Element type of the list.</typeparam>
+        /// <param name="list">List to search.</param>
+        /// <param name="match">Predicate used to test elements.</param>
+        /// <param name="items">If found, the matched elements are assigned to this out parameter.</param>
+        /// <returns>True if any matching elements were found; otherwise false.</returns>
+        /// <remarks>Null entries in <paramref name="list"/> are skipped.</remarks>
+        public static bool TryGetMatches<T>(this List<T> list, Predicate<T> match, out T[] items)
+        {
+            var matches = new T[list.Count];
+            int count = 0;
+            for (int i = 0; i < list.Count; i++)
+            {
+                var currentItem = list[i];
+                if(currentItem == null) continue;
+                if (match(currentItem))
+                {
+                    matches[count++] = currentItem;
+                }
+            }
+
+            if (count > 0)
+            {
+                items = new T[count];
+                Array.Copy(matches, items, count);
+                return true;
+            }
+            else
+            {
+                items = new T[0];
+                return false;
+            }
+        }
+
         public static bool TryGetIndex<T>(this List<T> list, Predicate<T> match, out int index)
         {
             for (int i = 0; i < list.Count; i++)

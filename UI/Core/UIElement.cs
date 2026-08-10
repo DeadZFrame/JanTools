@@ -26,6 +26,8 @@ namespace Jan.UI
         {
             ui.SetActive(show);
 
+            //Canvas.ForceUpdateCanvases();
+
             if (show && pauseGame)
             {
                 Time.timeScale = 0f;

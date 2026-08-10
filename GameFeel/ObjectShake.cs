@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using LitMotion;
-using LitMotion.Extensions;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
@@ -62,6 +61,13 @@ namespace Jan.Feel
             Vector2 uiVerticalShake = new Vector2(0f, shakePower);
             Vector3 verticalShake = new Vector3(0f, shakePower, 0f);
 
+            // Cache original transform state so the punch offsets are applied relative to it,
+            // instead of overwriting it with the punch's zero-based animated value
+            Vector3 originalLocalEulerAngles = transform.localEulerAngles;
+            Vector3 originalLocalPosition = transform.localPosition;
+            Quaternion originalLocalRotation = transform.localRotation;
+            Vector2 originalAnchoredPosition = isUI ? rectTransform.anchoredPosition : Vector2.zero;
+
             MotionHandle handle = default;
 
             // Callback to remove from active handles when complete
@@ -83,7 +89,7 @@ namespace Jan.Feel
                             .WithFrequency(shakeVibrato)
                             .WithDampingRatio(1f - (shakeRandomness / 100f))
                             .WithOnComplete(onCompleteCallback)
-                            .BindToLocalEulerAngles(transform);
+                            .Bind(offset => transform.localEulerAngles = originalLocalEulerAngles + offset);
                     }
                     else
                     {
@@ -92,7 +98,7 @@ namespace Jan.Feel
                             .WithFrequency(shakeVibrato)
                             .WithDampingRatio(1f - (shakeRandomness / 100f))
                             .WithOnComplete(onCompleteCallback)
-                            .BindToLocalEulerAngles(transform);
+                            .Bind(offset => transform.localEulerAngles = originalLocalEulerAngles + offset);
                     }
                     break;
 
@@ -104,7 +110,7 @@ namespace Jan.Feel
                             .WithFrequency(shakeVibrato)
                             .WithDampingRatio(1f - (shakeRandomness / 100f))
                             .WithOnComplete(onCompleteCallback)
-                            .BindToAnchoredPosition(rectTransform);
+                            .Bind(offset => rectTransform.anchoredPosition = originalAnchoredPosition + offset);
                     }
                     else
                     {
@@ -113,7 +119,7 @@ namespace Jan.Feel
                             .WithFrequency(shakeVibrato)
                             .WithDampingRatio(1f - (shakeRandomness / 100f))
                             .WithOnComplete(onCompleteCallback)
-                            .BindToLocalPosition(transform);
+                            .Bind(offset => transform.localPosition = originalLocalPosition + originalLocalRotation * offset);
                     }
                     break;
 
@@ -125,7 +131,7 @@ namespace Jan.Feel
                             .WithFrequency(shakeVibrato)
                             .WithDampingRatio(1f - (shakeRandomness / 100f))
                             .WithOnComplete(onCompleteCallback)
-                            .BindToAnchoredPosition(rectTransform);
+                            .Bind(offset => rectTransform.anchoredPosition = originalAnchoredPosition + offset);
                     }
                     else
                     {
@@ -134,7 +140,7 @@ namespace Jan.Feel
                             .WithFrequency(shakeVibrato)
                             .WithDampingRatio(1f - (shakeRandomness / 100f))
                             .WithOnComplete(onCompleteCallback)
-                            .BindToLocalPosition(transform);
+                            .Bind(offset => transform.localPosition = originalLocalPosition + originalLocalRotation * offset);
                     }
                     break;
 
@@ -146,7 +152,7 @@ namespace Jan.Feel
                             .WithFrequency(shakeVibrato)
                             .WithDampingRatio(1f - (shakeRandomness / 100f))
                             .WithOnComplete(onCompleteCallback)
-                            .BindToAnchoredPosition(rectTransform);
+                            .Bind(offset => rectTransform.anchoredPosition = originalAnchoredPosition + offset);
                     }
                     else
                     {
@@ -155,7 +161,7 @@ namespace Jan.Feel
                             .WithFrequency(shakeVibrato)
                             .WithDampingRatio(1f - (shakeRandomness / 100f))
                             .WithOnComplete(onCompleteCallback)
-                            .BindToLocalPosition(transform);
+                            .Bind(offset => transform.localPosition = originalLocalPosition + originalLocalRotation * offset);
                     }
                     break;
             }

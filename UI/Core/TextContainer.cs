@@ -3,6 +3,7 @@ using UnityEngine;
 
 namespace Jan.UI
 {
+    [RequireComponent(typeof(TextMeshProUGUI))]
     public class TextContainer : UIElement
     {
         [SerializeField] private TextMeshProUGUI textMesh;

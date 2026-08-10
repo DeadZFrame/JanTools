@@ -9,7 +9,7 @@ namespace Jan.Core
         public Texture2D verticalHoverCursor;
         public Vector2 cursorHotspot = Vector2.zero;
 
-        public void Start()
+        public void Awake()
         {
             Cursor.SetCursor(defaultCursor, cursorHotspot, CursorMode.Auto);
         }

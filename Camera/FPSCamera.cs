@@ -22,22 +22,22 @@ namespace Jan.Core
             EventManager.Register<Vector2>(EventNames.OnLookInput, OnLookInput);
         }
 
-        protected override void Awake()
-        {
-            base.Awake();
-            CameraManager.Instance.SetCurrentCamera(this);
-            GameStateManager.SetGameState(GameState.FPS);
-        }
-
         protected override void OnDisable()
         {
             base.OnDisable();
             EventManager.UnRegister<Vector2>(EventNames.OnLookInput, OnLookInput);
         }
 
-        void LateUpdate()
+        protected override void Awake()
         {
-            if(GameStateManager.CurrentGameState is GameState.FPS or GameState.Build)
+            base.Awake();
+            CameraManager.Instance.SetCurrentCamera(this);
+            GameStateManager.SetGameState(GameState.FPS, true);
+        }
+
+        void LateUpdate()
+        {            
+            if(GameStateManager.CurrentGameState is GameState.FPS)
             {
                 var smoothedPosition = Vector3.SmoothDamp(transform.position, playerBody.position + playerBody.TransformDirection(offset), ref _velocity, smoothStrength);
             
@@ -48,8 +48,11 @@ namespace Jan.Core
 
         private void OnLookInput(Vector2 lookInput)
         {
-            _pitch = Mathf.Clamp(_pitch - lookInput.y * lookSensitivity, minPitch, maxPitch);
-            _yaw += lookInput.x * lookSensitivity;
+            if(GameStateManager.CurrentGameState is GameState.FPS)
+            {
+                _pitch = Mathf.Clamp(_pitch - lookInput.y * lookSensitivity, minPitch, maxPitch);
+                _yaw += lookInput.x * lookSensitivity;
+            }
         }
     }
 

@@ -4,13 +4,13 @@ namespace Jan.Interaction
 {
     public interface IInteractable
     {
-        bool IsActive { get; }
+        bool IsActive { get; set; }
         bool HighlightEffect { get; }
         bool IsHoldable { get; }
         string Tooltip { get; }
         GameState SupportedGameState { get; }
 
-        void Interact(IInteractionContext interactor, int buttonIndex);
+        bool Interact(IInteractionContext interactor, int buttonIndex);
     }
 }
 

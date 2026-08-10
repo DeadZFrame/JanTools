@@ -4,6 +4,7 @@ using UnityEngine.UI;
 
 namespace Jan.UI
 {
+    [RequireComponent(typeof(Button))]
     public class ButtonContainer : UIElement, IButtonContainer
     {
         [SerializeField] private Button button;

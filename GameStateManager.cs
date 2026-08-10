@@ -16,14 +16,25 @@ namespace Jan.Core
         Any = ~0,
     }
 
+    public enum SubStates
+    {
+        None,
+        Painting,
+        Cleaning,
+        ObjectPlacement,
+        Building,
+        DryingBench,
+    }
+
     public static class GameStateManager
     {
         public static GameState CurrentGameState { get; private set; }
         public static GameState PreviousGameState { get; private set; }
+        public static SubStates CurrentSubState { get; private set; }
 
-        public static void SetGameState(GameState newState)
+        public static void SetGameState(GameState newState, bool force = false)
         {
-            if(newState == CurrentGameState)
+            if(newState == CurrentGameState && !force)
             {
                 Debug.LogWarning($"Game State is already set to {newState}. No change made.");
                 return;
@@ -61,13 +72,23 @@ namespace Jan.Core
                     break;
 
                 default:
+                    Cursor.lockState = CursorLockMode.None;
+                    Cursor.visible = true;
                     break;
             }
 
             CurrentGameState = newState;
-            EventManager.Trigger<GameState>(EventNames.OnGameStateChanged, newState);
+            EventManager.Trigger(EventNames.OnGameStateChanged, newState);
 
             Debug.Log($"Game State changed to: {newState}");
+        }
+
+        public static void SetSubState(SubStates newSubState)
+        {
+            CurrentSubState = newSubState;
+            EventManager.Trigger(EventNames.OnGameStateChanged, newSubState);
+
+            Debug.Log($"SubState changed to: {newSubState}");
         }
     }
 }

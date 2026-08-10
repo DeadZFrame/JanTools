@@ -27,7 +27,7 @@ namespace Jan.Core
 
         public void Set(T value)
         {
-            if (!currentValue.Equals(value))
+            //if (!currentValue.Equals(value))
             {
                 lastValue = currentValue;
                 currentValue = value;
@@ -44,6 +44,16 @@ namespace Jan.Core
         public void SetSilently(T value)
         {
             currentValue = value;
+        }
+
+        public readonly void Listen(Action<T> callback)
+        {
+            EventManager.Register<T>(EventNames.OnValueObserved, callback);
+        }
+
+        public readonly void Unlisten(Action<T> callback)
+        {
+            EventManager.UnRegister<T>(EventNames.OnValueObserved, callback);
         }
     }
 }

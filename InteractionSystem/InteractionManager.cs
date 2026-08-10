@@ -1,6 +1,8 @@
 using Jan.Core;
 using Jan.Events;
+using Jan.Feel;
 using Jan.UI;
+using NUnit.Framework;
 using UnityEngine;
 
 namespace Jan.Interaction
@@ -10,7 +12,6 @@ namespace Jan.Interaction
         [SerializeField] private LayerMask inputHandlerDetectionLayerMask = 1 << 0;
         private IInteractable currentInteractable;
         private IInputHandler currentInputHandler;
-        private IInteractable previousInteractable;
         private IInteractionUI _interactionUI;
         private static IInteractionContext _currentContext;
 
@@ -49,6 +50,7 @@ namespace Jan.Interaction
         private void Start()
         {
             UIBusManager.TryGetUIElement(UINames.InteractionUI, out _interactionUI);
+            GameStateManager.SetSubState(SubStates.None);
         }
 
         private void Update()
@@ -66,34 +68,37 @@ namespace Jan.Interaction
             var isHit = Physics.Raycast(ray, out var hit, rayDistance, LayerMask.GetMask(Layers.Interactable));
 
             bool isStateSupported = false;
+            bool isActive = false;
 
             if (isHit)
             {
-                var monoBehaviour = currentInteractable as MonoBehaviour;
-                if (monoBehaviour != null)
-                {
-                    highlightManager.Unhighlight(monoBehaviour.transform);
-                }
-
                 if (hit.collider.gameObject.TryGetComponentInParentChildren(out IInteractable interactable))
                 {
-                    isStateSupported = interactable.SupportedGameState.HasFlag(gamestate);
+                    MonoBehaviour monoBehaviour = currentInteractable as MonoBehaviour;
 
-                    if (isStateSupported)
+                    if(monoBehaviour != null && currentInteractable != interactable)
                     {
-                        InteractionLogic(interactable, monoBehaviour);
-                    }                    
+                        highlightManager.Unhighlight(monoBehaviour.transform);
+                    }
+
+                    isStateSupported = interactable.SupportedGameState.HasFlag(gamestate);
+                    isActive = interactable.IsActive;
+
+                    if (isStateSupported && isActive)
+                    {
+                        InteractionLogic(interactable);
+                    }    
 
                     //Debug.Log($"Hit: {hit.collider.gameObject.name}, Interactable: {interactable.GetType().Name}, SupportedGameState: {interactable.SupportedGameState}, CurrentGameState: {gamestate}");
                 }
             }
-            if(!isHit || !isStateSupported)
+
+            if(!isHit || !isStateSupported || !isActive)
             {
                 var monoBehaviour = currentInteractable as MonoBehaviour;
                 if (monoBehaviour != null)
                 {
                     HighlightManager.Instance.Unhighlight(monoBehaviour.transform);
-                    EventManager.Trigger(EventNames.OnMouseHoverOut);
                 }
                 
                 currentInteractable = null;
@@ -108,25 +113,12 @@ namespace Jan.Interaction
             GetInputHandler(ray);
         }
 
-        private void InteractionLogic(IInteractable interactable, MonoBehaviour monoBehaviour)
+        private void InteractionLogic(IInteractable interactable)
         {
-            //check interactable object change and update interactable
-            bool currentInteractableChanged = (currentInteractable != interactable);
-
-            if (currentInteractable != null && currentInteractableChanged)
-            {
-                previousInteractable = currentInteractable;
-                EventManager.Trigger(EventNames.OnMouseHoverOut);
-            }
-
             currentInteractable = interactable;
 
-            if (!interactable.IsActive) return;
-
-            monoBehaviour = interactable as MonoBehaviour;
+            var monoBehaviour = interactable as MonoBehaviour;
             if (interactable.HighlightEffect) HighlightManager.Instance.Highlight(monoBehaviour.transform);
-
-            EventManager.Trigger(EventNames.OnMouseHover);
 
             if (!string.IsNullOrEmpty(interactable.Tooltip))
             {
@@ -146,13 +138,19 @@ namespace Jan.Interaction
             {
                 if (hit.collider.gameObject.TryGetComponentInParentChildren(out IInputHandler inputHandler))
                 {                 
+                    currentInputHandler?.OnMouseHoverOut();
+                    
                     currentInputHandler = inputHandler;
-                    //Debug.Log($"Hit: {hit.collider.gameObject.name}, InputHandler: {inputHandler.GetType().Name}");
+                    currentInputHandler?.OnMouseHover();
+                }
+                else
+                {
+                    currentInputHandler?.OnMouseHoverOut();
                 }
             }
             if(!isHit)
-            {                
-                currentInputHandler = null;
+            {       
+                currentInputHandler?.OnMouseHoverOut();
             }
         }
 
@@ -185,7 +183,13 @@ namespace Jan.Interaction
         {
             if(currentInteractable != null && !currentInteractable.IsHoldable)
             {
-                currentInteractable.Interact(_currentContext, buttonIndex);
+                var response = currentInteractable.Interact(_currentContext, buttonIndex);
+                if (!response) 
+                {
+                    var invalidInteractable = (currentInteractable as MonoBehaviour).transform;
+                    HighlightManager.Instance.HighlightInvalid(invalidInteractable);
+                    FeedbackManager.Instance.PlayFeedback(EventNames.OnInvalidInteraction, invalidInteractable);
+                }
             }
 
             currentInputHandler?.OnMouseClicked(buttonIndex);
