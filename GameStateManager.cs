@@ -11,6 +11,8 @@ namespace Jan.Core
         Workshop = 1 << 1,
         FPS = 1 << 2,
         UI = 1 << 3,
+        Build = 1 << 4,
+        DryingBench = 1 << 5,
         Any = ~0,
     }
 
@@ -57,6 +59,14 @@ namespace Jan.Core
                     break;
 
                 case GameState.Workshop:
+                    Cursor.lockState = CursorLockMode.None;
+                    Cursor.visible = true;
+                    break;
+                case GameState.Build:
+                    Cursor.lockState = CursorLockMode.Locked;
+                    Cursor.visible = false;
+                    break;
+                case GameState.DryingBench:
                     Cursor.lockState = CursorLockMode.None;
                     Cursor.visible = true;
                     break;
