@@ -12,18 +12,19 @@ namespace Jan.Core
         FPS = 1 << 2,
         UI = 1 << 3,
         Build = 1 << 4,
-        DryingBench = 1 << 5,
         Any = ~0,
     }
 
     public enum SubStates
     {
         None,
+        Marbling,
         Painting,
         Cleaning,
         ObjectPlacement,
         Building,
         DryingBench,
+        CraftingBech
     }
 
     public static class GameStateManager
@@ -66,11 +67,6 @@ namespace Jan.Core
                     Cursor.lockState = CursorLockMode.Locked;
                     Cursor.visible = false;
                     break;
-                case GameState.DryingBench:
-                    Cursor.lockState = CursorLockMode.None;
-                    Cursor.visible = true;
-                    break;
-
                 default:
                     Cursor.lockState = CursorLockMode.None;
                     Cursor.visible = true;

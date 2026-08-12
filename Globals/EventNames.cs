@@ -20,7 +20,6 @@ namespace Jan.Core
         public const string OnMouseHover = "OnMouseHover";
         public const string OnMouseHoverOut = "OnMouseHoverOut";
         public const string OnTimeProgressed = "OnTimeProgressed";
-        public const string OnDryProgressed = "OnDryProgressed";
         public const string OnRotate = "Rotate";
         public const string SaveTexture = "SaveTexture";
         public const string OnDrop = "OnDrop";

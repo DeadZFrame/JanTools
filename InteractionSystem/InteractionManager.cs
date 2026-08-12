@@ -56,6 +56,7 @@ namespace Jan.Interaction
         private void Update()
         {
             var gamestate = GameStateManager.CurrentGameState;
+            var substate = GameStateManager.CurrentSubState;
             if(gamestate is GameState.UI or GameState.Paused) return;
 
             var camera = CameraManager.GetCurrentCamera();
@@ -68,6 +69,7 @@ namespace Jan.Interaction
             var isHit = Physics.Raycast(ray, out var hit, rayDistance, LayerMask.GetMask(Layers.Interactable));
 
             bool isStateSupported = false;
+            bool isSubStateSupported = false;
             bool isActive = false;
 
             if (isHit)
@@ -82,9 +84,19 @@ namespace Jan.Interaction
                     }
 
                     isStateSupported = interactable.SupportedGameState.HasFlag(gamestate);
+                  
+                    foreach(var state in interactable.SupportedSubStates)
+                    {
+                        if(state == substate)
+                        {
+                            isSubStateSupported = true;
+                            break;
+                        }
+                    }
+
                     isActive = interactable.IsActive;
 
-                    if (isStateSupported && isActive)
+                    if (isStateSupported && isSubStateSupported && isActive)
                     {
                         InteractionLogic(interactable);
                     }    
