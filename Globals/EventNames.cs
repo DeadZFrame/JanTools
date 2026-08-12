@@ -31,5 +31,6 @@ namespace Jan.Core
         public const string OnXPChanged = "OnXPChanged";
         public const string OnDryProgressed = "OnDryProgressed";
         public const string OnInvalidInteraction = "OnInvalidInteraction";
+        public const string OnEscPressed = "OnEscPressed";
     }
 }
