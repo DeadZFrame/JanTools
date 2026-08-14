@@ -10,7 +10,7 @@ namespace Jan.Interaction
         bool IsHoldable { get; }
         string Tooltip { get; }
         GameState SupportedGameState { get; }
-        List<SubStates> SupportedSubStates { get; }
+        SubStates SupportedSubStates { get; }
 
         bool Interact(IInteractionContext interactor, int buttonIndex);
     }

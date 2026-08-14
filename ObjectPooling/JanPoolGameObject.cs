@@ -95,7 +95,7 @@ namespace Jan.Pool
         {
             if (poolable == null)
             {
-                Debug.LogError("Poolable object must be a MonoBehaviour.");
+                Debug.LogError("Poolable is null or not a MonoBehaviour.");
                 return;
             }
 

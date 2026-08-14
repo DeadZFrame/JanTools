@@ -84,15 +84,7 @@ namespace Jan.Interaction
                     }
 
                     isStateSupported = interactable.SupportedGameState.HasFlag(gamestate);
-                  
-                    foreach(var state in interactable.SupportedSubStates)
-                    {
-                        if(state == substate)
-                        {
-                            isSubStateSupported = true;
-                            break;
-                        }
-                    }
+                    isSubStateSupported = interactable.SupportedSubStates.HasFlag(substate);
 
                     isActive = interactable.IsActive;
 
@@ -105,7 +97,7 @@ namespace Jan.Interaction
                 }
             }
 
-            if(!isHit || !isStateSupported || !isActive)
+            if(!isHit || !isStateSupported || !isSubStateSupported || !isActive)
             {
                 var monoBehaviour = currentInteractable as MonoBehaviour;
                 if (monoBehaviour != null)
