@@ -55,7 +55,20 @@ namespace Jan.Interaction
                 renderer.materials = materials;
 
                 var duration = .5f;
-                Timed.CallDelayed(duration, () => Unhighlight(target));
+                Timed.CallDelayed(duration, () => 
+                {
+                    if(InteractionManager.CurrentInteractable != null)
+                    {
+                        Material[] materials = new Material[OriginalMaterials[renderer].Length + 1];
+                        OriginalMaterials[renderer].CopyTo(materials, 0);
+                        materials[^1] = highlightMaterial;
+                        renderer.materials = materials;
+
+                        return;
+                    }
+                    
+                    Unhighlight(target);
+                });
                 _cts?.Cancel();
                 _cts = Timed.CallDelayed(duration, () => _isinvalid = false);
                 _isinvalid = true;

@@ -3,14 +3,16 @@ using Jan.Events;
 using Jan.Feel;
 using Jan.UI;
 using NUnit.Framework;
+using UI;
 using UnityEngine;
 
 namespace Jan.Interaction
 {
-    public class InteractionManager : JanBehaviour, IInputHandler
+    public class InteractionManager : JanBehaviour<InteractionManager>, IInputHandler
     {
         [SerializeField] private LayerMask inputHandlerDetectionLayerMask = 1 << 0;
         private IInteractable currentInteractable;
+        public static IInteractable CurrentInteractable => Instance.currentInteractable;
         private IInputHandler currentInputHandler;
         private IInteractionUI _interactionUI;
         private static IInteractionContext _currentContext;
@@ -119,6 +121,7 @@ namespace Jan.Interaction
 
         private void InteractionLogic(IInteractable interactable)
         {
+            if(currentInteractable == interactable) return;
             currentInteractable = interactable;
 
             var monoBehaviour = interactable as MonoBehaviour;
@@ -181,6 +184,15 @@ namespace Jan.Interaction
         public static void SetContext(IInteractionContext interactor)
         {
             _currentContext = interactor;
+        }
+        
+        public static void SetWarning(string warningText, bool isWarning)
+        {
+            if (UIBusManager.TryGetUIElement(out IWarningUI warningUI))
+            {
+                warningUI.Show(true);
+                warningUI.SetWarningText(warningText, isWarning);
+            }
         }
 
         public void OnMouseClicked(int buttonIndex)

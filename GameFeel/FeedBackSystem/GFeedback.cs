@@ -106,11 +106,6 @@ namespace Jan.Feel
             }
         }
 
-        public void Play()
-        {
-            Play();
-        }
-
         public Feedback GetFB(string feedbackName)
         {
             return feedbacks.Find(fb => fb.name == feedbackName);
