@@ -153,7 +153,7 @@ namespace Jan.Feel
 
                 for (int i = 0; i < targetRenderers.Length; i++)
                 {
-                    if (targetRenderers[i] != null && targetRenderers[i].material.HasProperty(materialColorProperty))
+                    if (targetRenderers[i] != null && targetRenderers[i].sharedMaterial.HasProperty(materialColorProperty))
                     {
                         _propertyBlocks[i] = new MaterialPropertyBlock();
                         targetRenderers[i].GetPropertyBlock(_propertyBlocks[i]);
@@ -164,7 +164,7 @@ namespace Jan.Feel
                         }
                         else
                         {
-                            localDefaultRendererColors[i] = targetRenderers[i].material.GetColor(materialColorProperty);
+                            localDefaultRendererColors[i] = targetRenderers[i].sharedMaterial.GetColor(materialColorProperty);
                         }
                     }
                 }
@@ -200,9 +200,9 @@ namespace Jan.Feel
                 localDefaultRendererColors = new Color[targetRenderers.Length];
                 for (int i = 0; i < targetRenderers.Length; i++)
                 {
-                    if (targetRenderers[i] != null && targetRenderers[i].material.HasProperty(materialColorProperty))
+                    if (targetRenderers[i] != null && targetRenderers[i].sharedMaterial.HasProperty(materialColorProperty))
                     {
-                        localDefaultRendererColors[i] = targetRenderers[i].material.GetColor(materialColorProperty);
+                        localDefaultRendererColors[i] = targetRenderers[i].sharedMaterial.GetColor(materialColorProperty);
                     }
                 }
             }

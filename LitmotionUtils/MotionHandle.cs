@@ -21,6 +21,12 @@ namespace Jan.Core
             _cts?.SafeCancel();
         }
 
+        public readonly void Complete()
+        {
+            _handle.Complete();
+            _cts?.SafeCancel();
+        }
+
         public void OnCompleted(Action callback)
         {
             if(_handle.IsActive())

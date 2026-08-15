@@ -32,6 +32,11 @@ namespace Jan.Core
         {
             base.Awake();
             CameraManager.Instance.SetCurrentCamera(this);
+            
+        }
+
+        void Start()
+        {
             GameStateManager.SetGameState(GameState.FPS, true);
         }
 

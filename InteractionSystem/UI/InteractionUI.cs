@@ -30,12 +30,14 @@ namespace Jan.Interaction
             var icon = GetIcon(iconName);
             if (icon != null)
             {
+                interactionImage.gameObject.SetActive(true);
                 dividerImage.gameObject.SetActive(true);
                 interactionImage.sprite = icon;
             }
             else
             {
                 dividerImage.gameObject.SetActive(false);
+                interactionImage.gameObject.SetActive(false);
             }
         }
 
