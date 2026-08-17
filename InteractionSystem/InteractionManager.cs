@@ -1,6 +1,7 @@
 using Jan.Core;
 using Jan.Events;
 using Jan.Feel;
+using Jan.Tasks;
 using Jan.UI;
 using NUnit.Framework;
 using UI;
@@ -52,7 +53,7 @@ namespace Jan.Interaction
         private void Start()
         {
             UIBusManager.TryGetUIElement(UINames.InteractionUI, out _interactionUI);
-            GameStateManager.SetSubState(SubStates.None);
+            GameStateManager.SetSubState(SubStates.Idle);
         }
 
         private void Update()
@@ -145,19 +146,29 @@ namespace Jan.Interaction
             {
                 if (hit.collider.gameObject.TryGetComponentInParentChildren(out IInputHandler inputHandler))
                 {                 
-                    currentInputHandler?.OnMouseHoverOut();
-                    
-                    currentInputHandler = inputHandler;
-                    currentInputHandler?.OnMouseHover();
+                    if(currentInputHandler != inputHandler)
+                    {
+                        currentInputHandler?.OnMouseHoverOut();
+                        currentInputHandler = inputHandler;
+                        currentInputHandler?.OnMouseHover();
+                    }
                 }
                 else
                 {
-                    currentInputHandler?.OnMouseHoverOut();
+                    if(currentInputHandler != null)
+                    {
+                        currentInputHandler?.OnMouseHoverOut();
+                        currentInputHandler = null;
+                    }
                 }
             }
             if(!isHit)
             {       
-                currentInputHandler?.OnMouseHoverOut();
+                if(currentInputHandler != null)
+                {
+                    currentInputHandler?.OnMouseHoverOut();
+                    currentInputHandler = null;
+                }
             }
         }
 
@@ -213,14 +224,27 @@ namespace Jan.Interaction
 
         public void OnMouseReleased(int buttonIndex)
         {
+            _heldTime = 0;
+            _interactionUI.SetInteractionProgress(0);
             currentInputHandler?.OnMouseReleased(buttonIndex);
         }
+
+        private float _heldTime;
 
         public void OnMouseHold()
         {
             if(currentInteractable != null && currentInteractable.IsHoldable)
             {
-                currentInteractable.Interact(_currentContext, 0);
+                _heldTime += Time.deltaTime;
+                _interactionUI.SetInteractionProgress(_heldTime / currentInteractable.HoldTime);
+                if(_heldTime >= currentInteractable.HoldTime)
+                {
+                    currentInteractable.Interact(_currentContext, 0);
+                    _heldTime = 0;
+                    currentInteractable.IsActive = false;
+                    var interactable = currentInteractable;
+                    Timed.CallDelayed(2f, () =>  interactable.IsActive = true, (interactable as MonoBehaviour).gameObject);
+                }
             }
             
             currentInputHandler?.OnMouseHold(); 

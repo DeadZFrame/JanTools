@@ -18,14 +18,15 @@ namespace Jan.Core
     [Flags]
     public enum SubStates
     {
-        None = 1 << 0,
-        Marbling = 1 << 1,
-        Painting = 1 << 2,
-        Cleaning = 1 << 3,
-        ObjectPlacement = 1 << 4,
-        Building = 1 << 5,
-        DryingBench = 1 << 6,
-        CraftingBench = 1 << 7
+        Any = ~0,
+        Marbling = 1 << 0,
+        Painting = 1 << 1,
+        Cleaning = 1 << 2,
+        ObjectPlacement = 1 << 3,
+        Building = 1 << 4,
+        DryingBench = 1 << 5,
+        CraftingBench = 1 << 6,
+        Idle = 1 << 7
     }
 
     public static class GameStateManager

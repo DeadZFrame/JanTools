@@ -19,7 +19,7 @@ namespace Jan.Interaction
         }
 
         [SerializeField] private InteractionIcons[] interactionIcons;
-
+        [SerializeField] private Image circleFill;
         [SerializeField] private Image interactionImage;
         [SerializeField] private Image dividerImage;
 
@@ -39,6 +39,11 @@ namespace Jan.Interaction
                 dividerImage.gameObject.SetActive(false);
                 interactionImage.gameObject.SetActive(false);
             }
+        }
+
+        public void SetInteractionProgress(float progress)
+        {
+            circleFill.fillAmount = progress;
         }
 
         private Sprite GetIcon(string iconName)

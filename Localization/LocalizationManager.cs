@@ -53,6 +53,19 @@ namespace Jan.Localization
             return $"[{key}]"; // Returns the key as a fallback if missing
         }
 
+        public static string[] GetContextNames()
+        {
+            if(localizedText == null)
+            {
+                Debug.LogWarning("LocalizationManager: No language loaded. Please call LoadLanguage first.");
+                return new string[0];
+            }
+
+            string[] contextNames = new string[localizedText.Count];
+            localizedText.Keys.CopyTo(contextNames, 0);
+            return contextNames;
+        }
+
         public static string[] GetContext(string contextKey)
         {
             if(localizedText == null)

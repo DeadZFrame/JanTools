@@ -8,6 +8,7 @@ namespace Jan.Interaction
         bool IsActive { get; set; }
         bool HighlightEffect { get; }
         bool IsHoldable { get; }
+        float HoldTime { get; }
         string Tooltip { get; }
         GameState SupportedGameState { get; }
         SubStates SupportedSubStates { get; }
