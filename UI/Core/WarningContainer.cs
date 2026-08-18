@@ -22,6 +22,8 @@ namespace UI
         {
             base.SetText(text);
 
+            Show(true);    
+
             var icon = GetIcon(isWarning);
             if (icon != null)
             {
