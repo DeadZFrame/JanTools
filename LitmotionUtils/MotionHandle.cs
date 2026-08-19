@@ -34,5 +34,10 @@ namespace Jan.Core
                 _cts = Timed.CallDelayed(_handle.Duration, callback);
             }
         }
+
+        public readonly bool IsActive()
+        {
+            return _handle.IsActive();
+        }
     }
 }
