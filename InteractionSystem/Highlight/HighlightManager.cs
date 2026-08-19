@@ -28,7 +28,8 @@ namespace Jan.Interaction
                     OriginalMaterials[renderer] = renderer.sharedMaterials;
                 }
 
-                target.gameObject.AddComponent<DisallowGPUDrivenRendering>();
+                var dgdr = target.gameObject.AddComponent<DisallowGPUDrivenRendering>();
+                dgdr.applyToChildrenRecursively = true;
 
                 // Add highlight material as a second material
                 Material[] materials = new Material[OriginalMaterials[renderer].Length + 1];

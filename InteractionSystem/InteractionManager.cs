@@ -117,7 +117,10 @@ namespace Jan.Interaction
                 }
             }
 
-            GetInputHandler(ray);
+            if (isStateSupported && isSubStateSupported && isActive)
+            {
+                GetInputHandler(ray);
+            }   
         }
 
         private void InteractionLogic(IInteractable interactable)
@@ -142,12 +145,17 @@ namespace Jan.Interaction
         {            
             var isHit = Physics.Raycast(ray, out var hit, rayDistance, inputHandlerDetectionLayerMask);
 
+            var currentMono = currentInputHandler as MonoBehaviour;
+
             if (isHit)
             {
                 if (hit.collider.gameObject.TryGetComponentInParentChildren(out IInputHandler inputHandler))
                 {                 
-                    if(currentInputHandler != inputHandler)
+                    var mono = inputHandler as MonoBehaviour;
+                    
+                    if(currentMono != mono)
                     {
+                        currentInputHandler?.OnMouseReleased(0);
                         currentInputHandler?.OnMouseHoverOut();
                         currentInputHandler = inputHandler;
                         currentInputHandler?.OnMouseHover();
@@ -155,8 +163,9 @@ namespace Jan.Interaction
                 }
                 else
                 {
-                    if(currentInputHandler != null)
+                    if(currentMono != null)
                     {
+                        currentInputHandler?.OnMouseReleased(0);
                         currentInputHandler?.OnMouseHoverOut();
                         currentInputHandler = null;
                     }
@@ -164,8 +173,9 @@ namespace Jan.Interaction
             }
             if(!isHit)
             {       
-                if(currentInputHandler != null)
+                if(currentMono != null)
                 {
+                    currentInputHandler?.OnMouseReleased(0);
                     currentInputHandler?.OnMouseHoverOut();
                     currentInputHandler = null;
                 }

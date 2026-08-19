@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Jan.Core;
 using Jan.Events;
 using Sirenix.OdinInspector;
 using UnityEngine;
@@ -32,16 +33,22 @@ namespace Jan.Feel
                     fb.Initialize(transform);
                     if (fb.listenEvent) EventManager.Register(fb.name, fb.Play);
                 }
+
+                if (playOnStart)
+                {
+                    foreach (var fb in feedbacks)
+                    {
+                        if(fb.playOnStart) fb.Play();
+                    }
+                } 
             }
             else
             {
                 feedback?.Initialize(transform);
                 if (feedback.listenEvent) EventManager.Register(feedback.name, feedback.Play);
-            }
 
-            //FeedbackManager.Instance.AddFeedback(this);
-
-            if (playOnStart) feedback?.Play();
+                if (playOnStart) feedback?.Play();
+            }            
         }
 
         void OnDisable()
@@ -104,6 +111,17 @@ namespace Jan.Feel
                     return fb;
                 }
             }
+        }
+
+        private string[] GetEventNames => GlobalsUtils.GetNames(typeof(EventNames));
+        public void Play([ValueDropdown(nameof(GetEventNames))] string feedbackName)
+        {
+            Play(feedbackName, null);
+        }
+
+        public void Play()
+        {
+            Play(null);
         }
 
         public Feedback GetFB(string feedbackName)

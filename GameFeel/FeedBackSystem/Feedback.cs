@@ -50,6 +50,7 @@ namespace Jan.Feel
 
         public Transform feedbackTransform;
         public bool listenEvent;
+        public bool playOnStart;
         private string[] GetEventNames => GlobalsUtils.GetNames(typeof(EventNames));
 
         [Button, ShowIf(nameof(IsAppPlaying)), GUIColor(1f, .5f, .5f)]

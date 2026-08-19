@@ -16,20 +16,29 @@ namespace Jan.Feel
         [SerializeField, BoxGroup("Components"), LabelText("Use TextMeshPro")] 
         private bool useTextMeshPro;
         
-        [SerializeField, BoxGroup("Components"), LabelText("Use Renderer")] 
+        [SerializeField, BoxGroup("Components"), LabelText("Use Renderer")]
         private bool useRenderer;
 
-        [SerializeField, BoxGroup("Components"), ShowIf(nameof(useImage)), LabelText("Target Images")] 
+        [SerializeField, BoxGroup("Components"), LabelText("Use Canvas Group")]
+        private bool useCanvasGroup;
+
+        [SerializeField, BoxGroup("Components"), ShowIf(nameof(useImage)), LabelText("Target Images")]
         private Image[] targetImages;
-        
-        [SerializeField, BoxGroup("Components"), ShowIf(nameof(useTextMeshPro)), LabelText("Target TextMeshPro")] 
+
+        [SerializeField, BoxGroup("Components"), ShowIf(nameof(useTextMeshPro)), LabelText("Target TextMeshPro")]
         private TextMeshProUGUI[] targetTexts;
-        
-        [SerializeField, BoxGroup("Components"), ShowIf(nameof(useRenderer)), LabelText("Target Renderers")] 
+
+        [SerializeField, BoxGroup("Components"), ShowIf(nameof(useRenderer)), LabelText("Target Renderers")]
         private Renderer[] targetRenderers;
+
+        [SerializeField, BoxGroup("Components"), ShowIf(nameof(useCanvasGroup)), LabelText("Target Canvas Groups")]
+        private CanvasGroup[] targetCanvasGroups;
         
         [SerializeField, BoxGroup("Components"), ShowIf(nameof(useRenderer)), LabelText("Material Color Property")] 
         private string materialColorProperty = "_BaseColor";
+
+        [SerializeField, BoxGroup("Components")]
+        private bool autoGetComponents;
 
         [BoxGroup("Components"), Button("Get Images in Children"), ShowIf(nameof(useImage))]
         private void GetImagesInChildren(Transform transform)
@@ -55,6 +64,15 @@ namespace Jan.Feel
             if (transform != null)
             {
                 targetRenderers = transform.GetComponentsInChildren<Renderer>();
+            }
+        }
+
+        [BoxGroup("Components"), Button("Get Canvas Groups in Children"), ShowIf(nameof(useCanvasGroup))]
+        private void GetCanvasGroupsInChildren(Transform transform)
+        {
+            if (transform != null)
+            {
+                targetCanvasGroups = transform.GetComponentsInChildren<CanvasGroup>();
             }
         }
 
@@ -96,45 +114,58 @@ namespace Jan.Feel
 
         public override FeedbackBase Play(Transform transform)
         {
-            if (_targetTransform != transform)
+            if (autoGetComponents && _targetTransform != transform)
             {
                 targetImages = null;
                 targetTexts = null;
                 targetRenderers = null;
+                targetCanvasGroups = null;
                 _targetTransform = transform;
             }
 
-            // Auto-populate target arrays if they're empty
-            if (useImage && (targetImages == null || targetImages.Length == 0))
+            if(autoGetComponents)
             {
-                if (targetImages == null || targetImages.Length == 0)
+                 // Auto-populate target arrays if they're empty
+                if (useImage && (targetImages == null || targetImages.Length == 0))
                 {
-                    targetImages = transform.GetComponentsInChildren<Image>();
+                    if (targetImages == null || targetImages.Length == 0)
+                    {
+                        targetImages = transform.GetComponentsInChildren<Image>();
+                    }
+                }
+
+                if (useTextMeshPro && (targetTexts == null || targetTexts.Length == 0))
+                {
+                    if (targetTexts == null || targetTexts.Length == 0)
+                    {
+                        targetTexts = transform.GetComponentsInChildren<TextMeshProUGUI>();
+                    }
+                }
+
+                if (useRenderer && (targetRenderers == null || targetRenderers.Length == 0))
+                {
+                    if (targetRenderers == null || targetRenderers.Length == 0)
+                    {
+                        targetRenderers = transform.GetComponentsInChildren<Renderer>();
+                    }
+                }
+
+                if (useCanvasGroup && (targetCanvasGroups == null || targetCanvasGroups.Length == 0))
+                {
+                    if (targetCanvasGroups == null || targetCanvasGroups.Length == 0)
+                    {
+                        targetCanvasGroups = transform.GetComponentsInChildren<CanvasGroup>();
+                    }
                 }
             }
-
-            if (useTextMeshPro && (targetTexts == null || targetTexts.Length == 0))
-            {
-                if (targetTexts == null || targetTexts.Length == 0)
-                {
-                    targetTexts = transform.GetComponentsInChildren<TextMeshProUGUI>();
-                }
-            }
-
-            if (useRenderer && (targetRenderers == null || targetRenderers.Length == 0))
-            {
-                if (targetRenderers == null || targetRenderers.Length == 0)
-                {
-                    targetRenderers = transform.GetComponentsInChildren<Renderer>();
-                }
-            }
-
+           
             bool hasValidImageTargets = useImage && targetImages != null && targetImages.Length > 0;
             bool hasValidTextTargets = useTextMeshPro && targetTexts != null && targetTexts.Length > 0;
             bool hasValidRendererTargets = useRenderer && targetRenderers != null && targetRenderers.Length > 0;
+            bool hasValidCanvasGroupTargets = useCanvasGroup && targetCanvasGroups != null && targetCanvasGroups.Length > 0;
 
             // Check if we have any valid targets
-            if (!hasValidImageTargets && !hasValidTextTargets && !hasValidRendererTargets)
+            if (!hasValidImageTargets && !hasValidTextTargets && !hasValidRendererTargets && !hasValidCanvasGroupTargets)
             {
                 Debug.LogWarning("ColorGradient: No valid target components assigned.");
                 return this; // No valid targets found
@@ -144,6 +175,7 @@ namespace Jan.Feel
             Color[] localDefaultTextColors = null;
             Color[] localDefaultImageColors = null;
             Color[] localDefaultRendererColors = null;
+            float[] localDefaultCanvasGroupAlphas = null;
 
             // Initialize property blocks for renderers
             if (hasValidRendererTargets)
@@ -195,6 +227,18 @@ namespace Jan.Feel
                 }
             }
 
+            if (hasValidCanvasGroupTargets)
+            {
+                localDefaultCanvasGroupAlphas = new float[targetCanvasGroups.Length];
+                for (int i = 0; i < targetCanvasGroups.Length; i++)
+                {
+                    if (targetCanvasGroups[i] != null)
+                    {
+                        localDefaultCanvasGroupAlphas[i] = targetCanvasGroups[i].alpha;
+                    }
+                }
+            }
+
             if (hasValidRendererTargets)
             {
                 localDefaultRendererColors = new Color[targetRenderers.Length];
@@ -222,9 +266,11 @@ namespace Jan.Feel
             bool cachedUseTextMeshPro = useTextMeshPro;
             bool cachedUseImage = useImage;
             bool cachedUseRenderer = useRenderer;
+            bool cachedUseCanvasGroup = useCanvasGroup;
             TextMeshProUGUI[] cachedTargetTexts = targetTexts;
             Image[] cachedTargetImages = targetImages;
             Renderer[] cachedTargetRenderers = targetRenderers;
+            CanvasGroup[] cachedTargetCanvasGroups = targetCanvasGroups;
             MaterialPropertyBlock[] cachedPropertyBlocks = _propertyBlocks;
             string cachedMaterialColorProperty = materialColorProperty;
             bool cachedReturnToDefaultColor = returnToDefaultColor;
@@ -233,6 +279,7 @@ namespace Jan.Feel
             Color[] cachedDefaultTextColors = localDefaultTextColors;
             Color[] cachedDefaultImageColors = localDefaultImageColors;
             Color[] cachedDefaultRendererColors = localDefaultRendererColors;
+            float[] cachedDefaultCanvasGroupAlphas = localDefaultCanvasGroupAlphas;
 
             Timed.CallWhileTrue(() => delta < cachedDuration, () =>
             {
@@ -378,6 +425,21 @@ namespace Jan.Feel
                     }
                 }
 
+                if (cachedUseCanvasGroup && cachedTargetCanvasGroups != null)
+                {
+                    for (int i = 0; i < cachedTargetCanvasGroups.Length; i++)
+                    {
+                        if (cachedTargetCanvasGroups[i] != null && i < cachedDefaultCanvasGroupAlphas.Length)
+                        {
+                            float currentAlpha = cachedUseFullGradient
+                                ? cachedGradient.Evaluate(progress).a
+                                : cachedAlphaGradient.Evaluate(progress).a;
+
+                            cachedTargetCanvasGroups[i].alpha = currentAlpha;
+                        }
+                    }
+                }
+
             }, transform.gameObject).OnCompleted(() =>
             {
                 Timed.CallAfterTrue(() => !transform.gameObject.activeInHierarchy, () =>
@@ -414,6 +476,17 @@ namespace Jan.Feel
                                 {
                                     cachedPropertyBlocks[i].SetColor(cachedMaterialColorProperty, localDefaultRendererColors[i]);
                                     cachedTargetRenderers[i].SetPropertyBlock(cachedPropertyBlocks[i]);
+                                }
+                            }
+                        }
+
+                        if (cachedUseCanvasGroup && cachedTargetCanvasGroups != null && localDefaultCanvasGroupAlphas != null)
+                        {
+                            for (int i = 0; i < cachedTargetCanvasGroups.Length && i < localDefaultCanvasGroupAlphas.Length; i++)
+                            {
+                                if (cachedTargetCanvasGroups[i] != null)
+                                {
+                                    cachedTargetCanvasGroups[i].alpha = localDefaultCanvasGroupAlphas[i];
                                 }
                             }
                         }
