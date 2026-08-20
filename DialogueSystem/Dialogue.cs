@@ -41,6 +41,11 @@ namespace Jan.Dialogue
         {
             _actions = actions;
         }
+        
+        public void SetLocalizationContext(string context)
+        {
+            localizationContext = context;
+        }
     }
 
     [Serializable]
