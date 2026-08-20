@@ -12,7 +12,7 @@ namespace Jan.Core
     /// comparison to the number of times it is updated.
     
     [Serializable]
-    public struct ObservedValue<T> where T : struct
+    public class ObservedValue<T> where T : struct
     {
         [SerializeField] private T currentValue;
         public T lastValue { get; private set; }
@@ -23,7 +23,7 @@ namespace Jan.Core
             lastValue = currentValue;
         }
 
-        public readonly T Value => currentValue;
+        public T Value => currentValue;
 
         public void Set(T value)
         {
@@ -46,14 +46,14 @@ namespace Jan.Core
             currentValue = value;
         }
 
-        public readonly void Listen(Action<T> callback)
+        public void Listen(Action<T> callback)
         {
-            EventManager.Register<T>(EventNames.OnValueObserved, callback);
+            this.Register<T>(EventNames.OnValueObserved, callback);
         }
 
-        public readonly void Unlisten(Action<T> callback)
+        public void Unlisten(Action<T> callback)
         {
-            EventManager.UnRegister<T>(EventNames.OnValueObserved, callback);
+            this.UnRegister<T>(EventNames.OnValueObserved, callback);
         }
     }
 }

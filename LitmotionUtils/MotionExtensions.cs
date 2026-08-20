@@ -22,6 +22,25 @@ namespace Jan.Core
             motion.MotionHandle = new Motion(motionHandle);
         }
 
+
+        public static Motion FloatMotion(this float value, float target, float duration, Ease ease = Ease.Linear, System.Action<float> onUpdate = null)
+        {
+            var motionHandle = LMotion.Create(value, target, duration)
+                .WithEase(ease.ConvertToLitEase())
+                .Bind(onUpdate);
+
+            return new Motion(motionHandle);
+        }
+
+        public static Motion IntMotion(this int value, int target, float duration, Ease ease = Ease.Linear, System.Action<int> onUpdate = null)
+        {
+            var motionHandle = LMotion.Create(value, target, duration)
+                .WithEase(ease.ConvertToLitEase())
+                .Bind(onUpdate);
+
+            return new Motion(motionHandle);
+        }
+
         public static Motion LitMove(this Transform transform, Vector3 targetPosition, float duration, Ease ease = Ease.Linear, bool localSpace = false)
         {
             if(!localSpace)
