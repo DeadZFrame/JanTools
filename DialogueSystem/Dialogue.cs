@@ -15,7 +15,7 @@ namespace Jan.Dialogue
         [SerializeField, ValueDropdown(nameof(GetLocalizationContexts))] private string localizationContext;
         [SerializeField, ValueDropdown(nameof(GetDialogueIds))] private string dialogueId;
 
-        private string[] GetLocalizationContexts => GlobalsUtils.GetNames(typeof(LocalizationKeys));
+        private string[] GetLocalizationContexts => LocalizationManager.GetContextNames();
         private string[] GetDialogueIds => LocalizationManager.GetContext(localizationContext);
         [SerializeField] private DialogueAction[] _actions;
 
@@ -31,7 +31,7 @@ namespace Jan.Dialogue
                 {
                     foreach (var action in _actions)
                     {
-                        dialogueUI.RegisterAction(action.Event.Invoke, LocalizationManager.GetLocalizedValue(LocalizationKeys.DialogueActions, action.TextId));
+                        dialogueUI.RegisterAction(action.Event.Invoke, LocalizationManager.GetLocalizedValue("dialogueActions", action.TextId));
                     }
                 }
             }
@@ -47,7 +47,7 @@ namespace Jan.Dialogue
     public class DialogueAction
     {
         [field: SerializeField, ValueDropdown(nameof(GetDialogueIds))] public string TextId { get; private set; }
-        private string[] GetDialogueIds => LocalizationManager.GetContext(LocalizationKeys.DialogueActions);
+        private string[] GetDialogueIds => LocalizationManager.GetContext("dialogueActions");
         [field: SerializeField] public UnityEvent Event { get; private set; } = new UnityEvent();
 
         public DialogueAction(UnityAction action, string text)

@@ -216,5 +216,34 @@ namespace Jan.Core
             index = -1;
             return false;
         }
+
+        public static void RemoveMatch<T>(this List<T> list, Predicate<T> match)
+        {
+            for (int i = 0; i < list.Count; i++)
+            {
+                var currentItem = list[i];
+                if (currentItem == null) continue;
+
+                if (match(currentItem))
+                {
+                    list.Remove(currentItem);
+                    return;
+                }
+            }
+        }
+
+        public static void RemoveMatches<T>(this List<T> list, Predicate<T> match)
+        {
+            for (int i = 0; i < list.Count; i++)
+            {
+                var currentItem = list[i];
+                if (currentItem == null) continue;
+
+                if (match(currentItem))
+                {
+                    list.Remove(currentItem);
+                }
+            }
+        }
     }
 }

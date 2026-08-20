@@ -1,16 +1,19 @@
 using Jan.Core;
 using Jan.Events;
 using Jan.Feel;
+using Jan.Tasks;
 using Jan.UI;
 using NUnit.Framework;
+using UI;
 using UnityEngine;
 
 namespace Jan.Interaction
 {
-    public class InteractionManager : JanBehaviour, IInputHandler
+    public class InteractionManager : JanBehaviour<InteractionManager>, IInputHandler
     {
         [SerializeField] private LayerMask inputHandlerDetectionLayerMask = 1 << 0;
         private IInteractable currentInteractable;
+        public static IInteractable CurrentInteractable => Instance.currentInteractable;
         private IInputHandler currentInputHandler;
         private IInteractionUI _interactionUI;
         private static IInteractionContext _currentContext;
@@ -50,7 +53,7 @@ namespace Jan.Interaction
         private void Start()
         {
             UIBusManager.TryGetUIElement(UINames.InteractionUI, out _interactionUI);
-            GameStateManager.SetSubState(SubStates.None);
+            GameStateManager.SetSubState(SubStates.Idle);
         }
 
         private void Update()
@@ -114,11 +117,15 @@ namespace Jan.Interaction
                 }
             }
 
-            GetInputHandler(ray);
+            if (isStateSupported && isSubStateSupported && isActive)
+            {
+                GetInputHandler(ray);
+            }   
         }
 
         private void InteractionLogic(IInteractable interactable)
         {
+            if(currentInteractable == interactable) return;
             currentInteractable = interactable;
 
             var monoBehaviour = interactable as MonoBehaviour;
@@ -138,23 +145,40 @@ namespace Jan.Interaction
         {            
             var isHit = Physics.Raycast(ray, out var hit, rayDistance, inputHandlerDetectionLayerMask);
 
+            var currentMono = currentInputHandler as MonoBehaviour;
+
             if (isHit)
             {
                 if (hit.collider.gameObject.TryGetComponentInParentChildren(out IInputHandler inputHandler))
                 {                 
-                    currentInputHandler?.OnMouseHoverOut();
+                    var mono = inputHandler as MonoBehaviour;
                     
-                    currentInputHandler = inputHandler;
-                    currentInputHandler?.OnMouseHover();
+                    if(currentMono != mono)
+                    {
+                        currentInputHandler?.OnMouseReleased(0);
+                        currentInputHandler?.OnMouseHoverOut();
+                        currentInputHandler = inputHandler;
+                        currentInputHandler?.OnMouseHover();
+                    }
                 }
                 else
                 {
-                    currentInputHandler?.OnMouseHoverOut();
+                    if(currentMono != null)
+                    {
+                        currentInputHandler?.OnMouseReleased(0);
+                        currentInputHandler?.OnMouseHoverOut();
+                        currentInputHandler = null;
+                    }
                 }
             }
             if(!isHit)
             {       
-                currentInputHandler?.OnMouseHoverOut();
+                if(currentMono != null)
+                {
+                    currentInputHandler?.OnMouseReleased(0);
+                    currentInputHandler?.OnMouseHoverOut();
+                    currentInputHandler = null;
+                }
             }
         }
 
@@ -182,6 +206,15 @@ namespace Jan.Interaction
         {
             _currentContext = interactor;
         }
+        
+        public static void SetWarning(string warningText, bool isWarning)
+        {
+            if (UIBusManager.TryGetUIElement(out IWarningUI warningUI))
+            {
+                warningUI.Show(true);
+                warningUI.SetWarningText(warningText, isWarning);
+            }
+        }
 
         public void OnMouseClicked(int buttonIndex)
         {
@@ -201,14 +234,27 @@ namespace Jan.Interaction
 
         public void OnMouseReleased(int buttonIndex)
         {
+            _heldTime = 0;
+            _interactionUI.SetInteractionProgress(0);
             currentInputHandler?.OnMouseReleased(buttonIndex);
         }
+
+        private float _heldTime;
 
         public void OnMouseHold()
         {
             if(currentInteractable != null && currentInteractable.IsHoldable)
             {
-                currentInteractable.Interact(_currentContext, 0);
+                _heldTime += Time.deltaTime;
+                _interactionUI.SetInteractionProgress(_heldTime / currentInteractable.HoldTime);
+                if(_heldTime >= currentInteractable.HoldTime)
+                {
+                    currentInteractable.Interact(_currentContext, 0);
+                    _heldTime = 0;
+                    currentInteractable.IsActive = false;
+                    var interactable = currentInteractable;
+                    Timed.CallDelayed(2f, () =>  interactable.IsActive = true, (interactable as MonoBehaviour).gameObject);
+                }
             }
             
             currentInputHandler?.OnMouseHold(); 

@@ -11,6 +11,7 @@ namespace Jan.UI
         [SerializeField, ValueDropdown(nameof(GetUINames)), FoldoutGroup("UI Element")] private string _key = UINames.None;
         private string[] GetUINames => GlobalsUtils.GetNames(typeof(UINames));
         [SerializeField, FoldoutGroup("UI Element")] private bool pauseGame;
+        public bool IsActive { get; private set; }
 
         protected virtual void Awake()
         {
@@ -25,6 +26,7 @@ namespace Jan.UI
         public virtual void Show(bool show)
         {
             ui.SetActive(show);
+            IsActive = show;
 
             //Canvas.ForceUpdateCanvases();
 

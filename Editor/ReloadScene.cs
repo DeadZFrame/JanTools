@@ -14,6 +14,7 @@ public class ReloadSceneEditor
         if (!string.IsNullOrEmpty(currentScenePath))
         {
             // Open the scene again, which forces a reload from disk
+            EditorSceneManager.SaveOpenScenes();
             EditorSceneManager.OpenScene(currentScenePath);
         }
     }

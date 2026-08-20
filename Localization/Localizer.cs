@@ -12,7 +12,7 @@ namespace Jan.Localization
         [SerializeField, ValueDropdown(nameof(GetLocalizationContexts))] private string localizationContext;
         [SerializeField, ValueDropdown(nameof(GetDialogueIds))] private string localizationKey;
 
-        private string[] GetLocalizationContexts => GlobalsUtils.GetNames(typeof(LocalizationKeys));
+        private string[] GetLocalizationContexts => LocalizationManager.GetContextNames();
         private string[] GetDialogueIds => LocalizationManager.GetContext(localizationContext);
 
         void OnEnable()
