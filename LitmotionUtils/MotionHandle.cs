@@ -8,7 +8,6 @@ namespace Jan.Core
     {
         private MotionHandle _handle;
         private Cts _cts;
-        public readonly bool IsActive => _handle.IsActive();
 
         public Motion(MotionHandle handle)
         {
