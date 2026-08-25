@@ -32,5 +32,6 @@ namespace Jan.Core
         public const string OnXPChanged = "OnXPChanged";
         public const string OnInvalidInteraction = "OnInvalidInteraction";
         public const string OnEscPressed = "OnEscPressed";
+        public const string OnNextDay = "OnNextDay";
     }
 }

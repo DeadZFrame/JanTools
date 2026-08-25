@@ -1,4 +1,5 @@
 using System;
+using UnityEngine;
 
 namespace Jan.Core
 {
@@ -63,18 +64,20 @@ namespace Jan.Core
             if (array.Length == 0)
                 throw new IndexOutOfRangeException("Array is Empty");
 
+            var newArray = new T[0];
+            int newIndex = 0;
             for (int i = 0; i < array.Length; i++)
             {
                 var item = array[i];
-                if (item.Equals(except))
+                if (!item.Equals(except))
                 {
-                    array[i] = array[array.Length - 1];
-                    Array.Resize(ref array, array.Length - 1);
-                    break;
+                    Array.Resize(ref newArray, newIndex + 1);
+                    newArray[newIndex] = array[i];
+                    newIndex++;
                 }
             }
 
-            return array.RandomItem();
+            return newArray.RandomItem();
         }
 
         /// <summary>

@@ -121,6 +121,20 @@ namespace Jan.Interaction
             {
                 GetInputHandler(ray);
             }   
+            else if (!isHit)
+            {
+                var currentMono = currentInputHandler as MonoBehaviour;
+                if(currentMono is not IInteractable)
+                {
+                    GetInputHandler(ray);
+                } 
+                else if(currentMono != null)
+                {
+                    currentInputHandler?.OnMouseReleased(0);
+                    currentInputHandler?.OnMouseHoverOut();
+                    currentInputHandler = null;
+                }
+            }
         }
 
         private void InteractionLogic(IInteractable interactable)
@@ -145,13 +159,13 @@ namespace Jan.Interaction
         {            
             var isHit = Physics.Raycast(ray, out var hit, rayDistance, inputHandlerDetectionLayerMask);
 
-            var currentMono = currentInputHandler as MonoBehaviour;
-
             if (isHit)
             {
                 if (hit.collider.gameObject.TryGetComponentInParentChildren(out IInputHandler inputHandler))
                 {                 
                     var mono = inputHandler as MonoBehaviour;
+
+                    var currentMono = currentInputHandler as MonoBehaviour;
                     
                     if(currentMono != mono)
                     {
@@ -163,6 +177,7 @@ namespace Jan.Interaction
                 }
                 else
                 {
+                    var currentMono = currentInputHandler as MonoBehaviour;
                     if(currentMono != null)
                     {
                         currentInputHandler?.OnMouseReleased(0);
@@ -173,6 +188,7 @@ namespace Jan.Interaction
             }
             if(!isHit)
             {       
+                var currentMono = currentInputHandler as MonoBehaviour;
                 if(currentMono != null)
                 {
                     currentInputHandler?.OnMouseReleased(0);
@@ -226,6 +242,11 @@ namespace Jan.Interaction
                     var invalidInteractable = (currentInteractable as MonoBehaviour).transform;
                     HighlightManager.Instance.HighlightInvalid(invalidInteractable);
                     FeedbackManager.Instance.PlayFeedback(EventNames.OnInvalidInteraction, invalidInteractable);
+                    //SoundLibrary.PlaySound(SoundNames.InvalidInteraction);
+                }
+                else
+                {
+                    //SoundLibrary.PlaySound(SoundNames.Interact);
                 }
             }
 

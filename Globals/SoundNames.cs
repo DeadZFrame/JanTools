@@ -5,7 +5,13 @@ namespace Jan.Core
         public const string Click = "Click";
         public const string Hover = "Hover";
         public const string Interact = "Interact";
+        public const string InteractNegative = "InteractNegative";
         public const string Glass = "Glass";
         public const string Liquid = "Liquid";
+        public const string Cash = "Cash";
+        public const string NegativeCash = "NegativeCash";
+        public const string PaperPickup = "PaperPickup";
+        public const string PaperPut = "PaperPut";
+        public const string WaterPour = "WaterPour";
     }
 }

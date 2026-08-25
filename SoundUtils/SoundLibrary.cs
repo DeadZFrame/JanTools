@@ -1,3 +1,4 @@
+using Jan.Tasks;
 using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.Audio;
@@ -19,15 +20,17 @@ namespace Jan.Core
         [SerializeField] private AudioMixer audioMixer;
         [SerializeField, BoxGroup("Audio Components")] private AudioSource[] audioSources;
 
-        [SerializeField, Range(0f, 1f), BoxGroup("Volumes")] private float masterVolume = 1f;
-        [SerializeField, Range(0f, 1f), BoxGroup("Volumes")] private float musicVolume = 1f;
-        [SerializeField, Range(0f, 1f), BoxGroup("Volumes")] private float sfxVolume = 1f;
-        [SerializeField, Range(0f, 1f), BoxGroup("Volumes")] private float uiVolume = 1f;
+        [SerializeField, Range(-80f, 20f), BoxGroup("Volumes")] private float masterVolume = 0f;
+        [SerializeField, Range(-80f, 20f), BoxGroup("Volumes")] private float musicVolume = 0f;
+        [SerializeField, Range(-80f, 20f), BoxGroup("Volumes")] private float sfxVolume = 0f;
+        [SerializeField, Range(-80f, 20f), BoxGroup("Volumes")] private float uiVolume = 0f;
 
 
         [SerializeField, BoxGroup("Sounds")] private Sound[] UISounds;
         [SerializeField, BoxGroup("Sounds")] private Sound[] SFXSounds;
         [SerializeField, BoxGroup("Sounds")] private Sound[] MusicSounds;
+
+        private AudioClip _previousClip;
 
         void Start()
         {
@@ -35,6 +38,11 @@ namespace Jan.Core
             SetVolume("Music", musicVolume);
             SetVolume("SFX", sfxVolume);
             SetVolume("UI", uiVolume);
+        }
+
+        public static void PlayDelayedSound(string soundName, float delay)
+        {
+            Timed.CallDelayed(delay, () => PlaySound(soundName));
         }
 
         public static void PlaySound(string soundName)
@@ -45,7 +53,10 @@ namespace Jan.Core
             {
                 if (uiSounds[i].Name.Equals(soundName))
                 {
-                    Instance.PlayClip(uiSounds[i].Clips.RandomItem(), "UI");
+                    if(uiSounds[i].Clips.Length == 1) Instance._previousClip =  null;
+                    var clipToPlay = uiSounds[i].Clips.RandomItemExcept(Instance._previousClip);
+                    Instance.PlayClip(clipToPlay, "UI");
+                    Instance._previousClip = clipToPlay;
                     return;
                 }
             }
@@ -56,7 +67,10 @@ namespace Jan.Core
             {
                 if (sfxSounds[i].Name.Equals(soundName))
                 {
-                    Instance.PlayClip(sfxSounds[i].Clips.RandomItem(), "SFX");
+                    if(sfxSounds[i].Clips.Length == 1) Instance._previousClip =  null;
+                    var clipToPlay = sfxSounds[i].Clips.RandomItemExcept(Instance._previousClip);
+                    Instance.PlayClip(clipToPlay, "SFX");
+                    Instance._previousClip = clipToPlay;
                     return;
                 }
             }
@@ -67,7 +81,10 @@ namespace Jan.Core
             {
                 if (musicSounds[i].Name.Equals(soundName))
                 {
-                    Instance.PlayClip(musicSounds[i].Clips.RandomItem(), "Music");
+                    if(musicSounds[i].Clips.Length == 1) Instance._previousClip =  null;
+                    var clipToPlay = musicSounds[i].Clips.RandomItemExcept(Instance._previousClip);
+                    Instance.PlayClip(clipToPlay, "Music");
+                    Instance._previousClip = clipToPlay;
                     return;
                 }
             }
@@ -123,5 +140,15 @@ namespace Jan.Core
 
             Instance.audioMixer.SetFloat(parameterName, volume);
         }
+
+#if UNITY_EDITOR
+        void OnValidate()
+        {
+            SetVolume("Master", masterVolume);
+            SetVolume("Music", musicVolume);
+            SetVolume("SFX", sfxVolume);
+            SetVolume("UI", uiVolume);
+        }
+#endif
     }
 }
