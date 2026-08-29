@@ -96,6 +96,27 @@ namespace Jan.Core
             return array[randomIndex];
         }
 
+        public static T RandomItemExcept<T>(this T[] array, T[] except)
+        {
+            if (array.Length == 0)
+                throw new IndexOutOfRangeException("Array is Empty");
+
+            var newArray = new T[0];
+            int newIndex = 0;
+            for (int i = 0; i < array.Length; i++)
+            {
+                var item = array[i];
+                if (!except.Contains(item))
+                {
+                    Array.Resize(ref newArray, newIndex + 1);
+                    newArray[newIndex] = array[i];
+                    newIndex++;
+                }
+            }
+
+            return newArray.RandomItem();
+        }
+
         /// <summary>
         /// Compares two arrays for element-wise equality using <c>Equals</c>.
         /// </summary>

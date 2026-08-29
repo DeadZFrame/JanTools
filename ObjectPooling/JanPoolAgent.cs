@@ -1,3 +1,4 @@
+using Jan.Events;
 using UnityEngine;
 
 namespace Jan.Pool
@@ -7,6 +8,7 @@ namespace Jan.Pool
         void OnDisable()
         {
             this.Dispose();
+            EventManager.Dispose();
         }
     }
 }

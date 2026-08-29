@@ -114,14 +114,29 @@ namespace Jan.Feel
         }
 
         private string[] GetEventNames => GlobalsUtils.GetNames(typeof(EventNames));
-        public void Play([ValueDropdown(nameof(GetEventNames))] string feedbackName)
+        public Feedback Play([ValueDropdown(nameof(GetEventNames))] string feedbackName)
         {
-            Play(feedbackName, null);
+            return Play(feedbackName, null);
         }
 
-        public void Play()
+        public Feedback Play()
         {
-            Play(null);
+            return Play(null);
+        }
+
+        public Feedback PlayFromArray(int index)
+        {
+            if (multiple)
+            {
+                if(feedbacks.IsIndexValid(index, out var fb))
+                {
+                    fb.Play();
+                    return fb;
+                }
+            }
+
+            Debug.LogWarning("[GFeedback] Invalid index for PlayFromArray.");
+            return null;
         }
 
         public Feedback GetFB(string feedbackName)

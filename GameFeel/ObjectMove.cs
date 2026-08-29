@@ -27,7 +27,7 @@ namespace Jan.Feel
         
         [SerializeField] private Ease ease = Ease.Linear;
         [SerializeField] private bool returnToStart = true;
-        [SerializeField] private LoopType loopType = LoopType.Restart;
+        [SerializeField] private LoopType loopType = LoopType.Yoyo;
         [SerializeField] private int loopCount = 1;
 
         public override FeedbackBase Play(Transform transform)
