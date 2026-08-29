@@ -132,6 +132,7 @@ namespace Jan.Core
 
         public static void SetVolume(string parameterName, float volume)
         {
+            
             if (Instance.audioMixer == null)
             {
                 Debug.LogWarning("SoundLibrary not initialized with an AudioMixer.");
@@ -144,6 +145,7 @@ namespace Jan.Core
 #if UNITY_EDITOR
         void OnValidate()
         {
+            if(Instance == null) return;
             SetVolume("Master", masterVolume);
             SetVolume("Music", musicVolume);
             SetVolume("SFX", sfxVolume);

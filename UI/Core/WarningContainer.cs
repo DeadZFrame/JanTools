@@ -4,6 +4,7 @@ using UnityEngine.UI;
 using Jan.Feel;
 using Jan.Tasks;
 using JeffGrawAssets.FlexibleUI;
+using Jan.Core;
 
 namespace UI
 {
@@ -40,6 +41,11 @@ namespace UI
             if (isWarning)
             {
                 warningFeedback.Play();
+                SoundLibrary.PlaySound(SoundNames.NegativeWarning);
+            }
+            else
+            {
+                SoundLibrary.PlaySound(SoundNames.PositiveWarning);
             }
 
             _cts?.SafeCancel();
