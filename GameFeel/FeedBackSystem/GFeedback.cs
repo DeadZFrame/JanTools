@@ -119,6 +119,11 @@ namespace Jan.Feel
             return Play(feedbackName, null);
         }
 
+        public void PlayVoid([ValueDropdown(nameof(GetEventNames))] string feedbackName)
+        {
+            Play(feedbackName, null);
+        }
+
         public Feedback Play()
         {
             return Play(null);

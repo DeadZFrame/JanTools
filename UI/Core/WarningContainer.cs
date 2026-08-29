@@ -13,7 +13,7 @@ namespace UI
         [SerializeField] private Image interactionImage;
         [SerializeField] private Image dividerImage;
         [SerializeField] private Sprite warningIcon, infoIcon;
-        [SerializeField] private GFeedback warningFeedback;
+        [SerializeField] private GFeedback warningFeedback, notificationFeedback;
         [SerializeField] private BlurredImage blurredImage;
         [SerializeField] private Color warningColor, infoColor;
         
@@ -40,11 +40,14 @@ namespace UI
 
             if (isWarning)
             {
+                warningFeedback.Complete();
                 warningFeedback.Play();
                 SoundLibrary.PlaySound(SoundNames.NegativeWarning);
             }
             else
             {
+                notificationFeedback.Complete();
+                notificationFeedback.Play();
                 SoundLibrary.PlaySound(SoundNames.PositiveWarning);
             }
 

@@ -42,8 +42,11 @@ namespace Jan.Feel
             // Cancel existing motion if there's one already playing on this transform
             if (activeMotionHandles.TryGetValue(transform, out MotionHandle existingHandle) && existingHandle.IsActive())
             {
-                existingHandle.Complete();
-                activeMotionHandles.Remove(transform);
+                if(existingHandle.Loops > -1)
+                {
+                    existingHandle.Complete();
+                    activeMotionHandles.Remove(transform);
+                }
             }
 
             // Cache all variables

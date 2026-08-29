@@ -818,8 +818,11 @@ namespace Jan.Tasks
                 while (condition() && !canceled)
                 {
                     action?.Invoke();
+                    Debug.Log("CallWhileTruePeriodically executing action.");
                     canceled = await UniTask.WaitForSeconds(timeStep, ignoreTimeScale, (PlayerLoopTiming)playerLoop, token).TryAwait();
                 }
+
+                Debug.Log("CallWhileTruePeriodically was canceled:" + canceled);
 
                 if(!canceled) cts?.CompletedCallback?.Invoke();
                 else cts?.CancellationCallback?.Invoke();
