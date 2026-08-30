@@ -8,7 +8,7 @@ namespace Jan.UI
     {
         private static Dictionary<string, IUIElement> UIElements { get; } = new Dictionary<string, IUIElement>();
 
-        public static void RegisterUIElement(string key, IUIElement element)
+        internal static void RegisterUIElement(string key, IUIElement element)
         {
             key = key == UINames.None ? element.GetType().Name : key;
             if (!UIElements.ContainsKey(key))
@@ -21,7 +21,7 @@ namespace Jan.UI
             }
         }
 
-        public static void UnregisterUIElement(string key, IUIElement element)
+        internal static void UnregisterUIElement(string key, IUIElement element)
         {
             key = key == UINames.None ? element.GetType().Name : key;
 

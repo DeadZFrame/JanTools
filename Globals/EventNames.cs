@@ -35,5 +35,6 @@ namespace Jan.Core
         public const string OnCraft = "OnCraft";
         public const string OnNextDay = "OnNextDay";
         public const string OnQueueProgressed = "OnQueueProgressed";
+        public const string OnWorkshopOpened = "OnWorkshopOpened";
     }
 }

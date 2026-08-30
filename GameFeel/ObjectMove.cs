@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using Jan.Tasks;
 using LitMotion;
 using LitMotion.Extensions;
 using Sirenix.OdinInspector;
@@ -22,6 +21,13 @@ namespace Jan.Feel
         // Starting position support
         [SerializeField] private bool useStartingPosition = false;
         [SerializeField, ShowIf(nameof(useStartingPosition))] private Vector3 customStartingPosition = Vector3.zero;
+        // Which axes of the custom starting position are applied (all effective by default)
+        [SerializeField, ShowIf(nameof(useStartingPosition)), HorizontalGroup("StartAxes"), LabelText("Start X")]
+        private bool startingPositionX = true;
+        [SerializeField, ShowIf(nameof(useStartingPosition)), HorizontalGroup("StartAxes"), LabelText("Start Y")]
+        private bool startingPositionY = true;
+        [SerializeField, ShowIf(nameof(useStartingPosition)), HorizontalGroup("StartAxes"), LabelText("Start Z")]
+        private bool startingPositionZ = true;
         [SerializeField] private bool useStartingRotation = false;
         [SerializeField, ShowIf(nameof(useStartingRotation))] private Vector3 customStartingRotation = Vector3.zero;
         
@@ -63,13 +69,13 @@ namespace Jan.Feel
                 {
                     if (isUI)
                     {
-                        _startAnchoredPosition = (Vector2)customStartingPosition;
-                        _startAnchoredPosition3D = customStartingPosition;
+                        _startAnchoredPosition3D = ApplyStartingPositionAxes(_startAnchoredPosition3D, customStartingPosition);
+                        _startAnchoredPosition = (Vector2)_startAnchoredPosition3D;
                         rectTransform.anchoredPosition = _startAnchoredPosition;
                     }
                     else
                     {
-                        _startLocalPosition = customStartingPosition;
+                        _startLocalPosition = ApplyStartingPositionAxes(_startLocalPosition, customStartingPosition);
                         transform.localPosition = _startLocalPosition;
                     }
                 }
@@ -77,13 +83,13 @@ namespace Jan.Feel
                 {
                     if (isUI)
                     {
-                        _startAnchoredPosition3D = customStartingPosition;
+                        _startAnchoredPosition3D = ApplyStartingPositionAxes(_startAnchoredPosition3D, customStartingPosition);
                         rectTransform.anchoredPosition3D = _startAnchoredPosition3D;
                         _startAnchoredPosition = (Vector2)_startAnchoredPosition3D;
                     }
                     else
                     {
-                        _startPosition = customStartingPosition;
+                        _startPosition = ApplyStartingPositionAxes(_startPosition, customStartingPosition);
                         transform.position = _startPosition;
                     }
                 }
@@ -197,6 +203,15 @@ namespace Jan.Feel
             }
 
             return this;
+        }
+
+        // Mixes the custom starting position with the current one, per enabled axis
+        private Vector3 ApplyStartingPositionAxes(Vector3 current, Vector3 custom)
+        {
+            return new Vector3(
+                startingPositionX ? custom.x : current.x,
+                startingPositionY ? custom.y : current.y,
+                startingPositionZ ? custom.z : current.z);
         }
 
         public void UpdateMoveOffset(Vector3 offset)
