@@ -1,4 +1,5 @@
 using Jan.Core;
+using Jan.Dialogue;
 using Sirenix.OdinInspector;
 using UI;
 using UnityEngine;
@@ -26,7 +27,7 @@ namespace Jan.UI
 
         public virtual void Show(bool show)
         {
-            if(show && this is not IWarningUI && UIBusManager.TryGetUIElement(out IWarningUI warningUI))
+            if(show && this is DialogueUI && UIBusManager.TryGetUIElement(out IWarningUI warningUI))
             {
                 if(warningUI.IsActive) warningUI.Show(false);
             }
