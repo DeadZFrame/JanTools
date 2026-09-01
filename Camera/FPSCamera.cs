@@ -29,6 +29,10 @@ namespace Jan.Core
         protected override void Awake()
         {
             base.Awake();
+            
+            transform.position = playerBody.position + playerBody.TransformDirection(offset);
+            transform.rotation = Quaternion.Euler(_pitch, _yaw, 0f);
+
             CameraManager.SwitchCamera<FPSCamera>();
         }
 

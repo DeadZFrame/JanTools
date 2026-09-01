@@ -27,6 +27,7 @@ public class FPSControls : MonoBehaviour
 
     void FixedUpdate()
     {
+        if(CameraManager.Instance.Transitioning) return;
         if(GameStateManager.CurrentGameState != GameState.FPS) return;
         
         Vector3 move = new Vector3(_moveInput.x, 0f, _moveInput.y);
