@@ -2,14 +2,24 @@ using UnityEngine;
 
 namespace Jan.Core
 {
-    public abstract class CameraBase : JanBehaviour
+    [DefaultExecutionOrder(-5)]
+    public class CameraBase : JanBehaviour
     {
         [field: SerializeField] public Camera CameraComponent { get; private set; }
         [field: SerializeField] public AudioListener AudioListener { get; private set; }
 
-        protected virtual void Awake()
+        void Awake()
         {
-            CameraManager.Instance.RegisterCamera(this);
+            CameraManager.Instance.SetMainCamera(this);
+        }
+
+        void LateUpdate()
+        {
+            if(CameraManager.Instance.Transitioning) return;
+            var currentHook = CameraManager.GetCurrentCamera();
+            if(currentHook == null) return;
+            
+            transform.SetPositionAndRotation(currentHook.transform.position, currentHook.transform.rotation);
         }
     }
 }

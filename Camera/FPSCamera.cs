@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Jan.Core
 {
-    public class FPSCamera : CameraBase
+    public class FPSCamera : CameraHook
     {
         [SerializeField] private Transform playerBody;
         [SerializeField] private Vector3 offset = new Vector3(0, 1.6f, 0);
@@ -16,24 +16,22 @@ namespace Jan.Core
         private float _pitch, _yaw;
         private Vector3 _velocity;
 
-        protected override void OnEnable()
+        void OnEnable()
         {
-            base.OnEnable();
             EventManager.Register<Vector2>(EventNames.OnLookInput, OnLookInput);
         }
 
-        protected override void OnDisable()
+        void OnDisable()
         {
-            base.OnDisable();
             EventManager.UnRegister<Vector2>(EventNames.OnLookInput, OnLookInput);
         }
 
         protected override void Awake()
         {
             base.Awake();
-            CameraManager.Instance.SetCurrentCamera(this);
-            
+            CameraManager.SwitchCamera<FPSCamera>();
         }
+
 
         void Start()
         {
@@ -42,12 +40,14 @@ namespace Jan.Core
 
         void LateUpdate()
         {            
+            if(CameraManager.Instance.Transitioning) return;
             if(GameStateManager.CurrentGameState is GameState.FPS)
             {
                 var smoothedPosition = Vector3.SmoothDamp(transform.position, playerBody.position + playerBody.TransformDirection(offset), ref _velocity, smoothStrength);
             
                 transform.position = smoothedPosition;
-                transform.rotation = Quaternion.Euler(_pitch, _yaw, 0f);
+                var targetRotation = Quaternion.Euler(_pitch, _yaw, 0f);
+                transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, .5f);
             }            
         }
 

@@ -56,9 +56,14 @@ namespace Jan.Interaction
                 renderer.materials = materials;
 
                 var duration = .5f;
-                Timed.CallDelayed(duration, () => 
+
+                _cts?.Cancel();
+                //_isinvalid = true;
+
+                _cts = Timed.CallDelayed(duration, () => 
                 {
-                    if(InteractionManager.CurrentInteractable != null)
+                    var mono = InteractionManager.CurrentInteractable as MonoBehaviour;
+                    if(mono != null && mono.transform == target)
                     {
                         Material[] materials = new Material[OriginalMaterials[renderer].Length + 1];
                         OriginalMaterials[renderer].CopyTo(materials, 0);
@@ -68,11 +73,9 @@ namespace Jan.Interaction
                         return;
                     }
                     
+                    // _isinvalid = false;
                     Unhighlight(target);
                 });
-                _cts?.Cancel();
-                _cts = Timed.CallDelayed(duration, () => _isinvalid = false);
-                _isinvalid = true;
             }
         }
 

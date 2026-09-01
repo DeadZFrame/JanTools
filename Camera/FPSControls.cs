@@ -22,7 +22,7 @@ public class FPSControls : MonoBehaviour
 
     void Start()
     {
-        _fpsCamera = CameraManager.Instance.CurrentCamera as FPSCamera;
+        _fpsCamera = CameraManager.GetCurrentCamera() as FPSCamera;
     }
 
     void FixedUpdate()

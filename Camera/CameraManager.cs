@@ -6,11 +6,13 @@ namespace Jan.Core
 {
     public class CameraManager : Singleton<CameraManager>
     {
-        private List<CameraBase> cameras = new List<CameraBase>();
+        private readonly List<CameraHook> cameras = new List<CameraHook>();
 
-        public CameraBase CurrentCamera { get; private set; }
+        public CameraBase CameraBase { get; private set; }
 
-        public void RegisterCamera(CameraBase camera)
+        public bool Transitioning { get; private set; }
+
+        public void RegisterCamera(CameraHook camera)
         {
             if (!cameras.Contains(camera))
             {
@@ -18,59 +20,55 @@ namespace Jan.Core
             }
         }
 
-        public void SetCurrentCamera(CameraBase camera)
+        public void SetMainCamera(CameraBase camera)
         {
-            CurrentCamera = camera;
+            CameraBase = camera;
         }
 
-        public static Camera GetCurrentCamera()
+        public static CameraHook GetCurrentCamera()
         {
-            var currentCamera = Instance.CurrentCamera;
-
-            if(currentCamera == null)
+            for (int i = Instance.cameras.Count - 1; i >= 0; i--)
             {
-                Debug.LogWarning("Current camera is not set.");
-                return null;
+                if (Instance.cameras[i].IsActive)
+                {
+                    return Instance.cameras[i];
+                }
             }
 
-            return currentCamera.CameraComponent;
+            return null;
         }
 
-        public static CameraBase GetCamera()
+        public static Camera GetMainCamera()
         {
-            return Instance.CurrentCamera;
+            return Instance.CameraBase.CameraComponent;
         }
 
-        public static void SwitchCamera<T>() where T : CameraBase
+        public static void SwitchCamera<T>() where T : CameraHook
         {
-            CameraBase newCamera = null;
+            CameraHook newCamera = null;
 
             foreach (var camera in Instance.cameras)
             {
                 if (camera is T)
                 {
+                    camera.CameraComponent = GetMainCamera();
+                    camera.IsActive = true;
+
                     newCamera = camera;
-                    break;
+                }
+                else
+                {
+                    camera.IsActive = false;
                 }
             }
 
-            if (newCamera == null)
-            {
-                Debug.LogError($"No camera of type {typeof(T)} found in the scene.");
-                return;
-            }
+            Instance.Transitioning = true;
 
-            newCamera.CameraComponent.enabled = true;
-            newCamera.AudioListener.enabled = true;
-            
-            var currentCamera = Instance.CurrentCamera;
-            if (currentCamera != null)
-            {
-                currentCamera.CameraComponent.enabled = false;
-                currentCamera.AudioListener.enabled = false;
-            }
+            Debug.Log(newCamera.transform);
 
-            Instance.SetCurrentCamera(newCamera);
+            Instance.CameraBase.transform.LitMove(newCamera.transform.position, 1,  Ease.OutSine);
+            Instance.CameraBase.transform.LitRotate(newCamera.transform.rotation, 1, Ease.OutSine)
+                .OnCompleted(() => { Instance.Transitioning = false; });
         }
     }
 }

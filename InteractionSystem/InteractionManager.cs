@@ -62,7 +62,7 @@ namespace Jan.Interaction
             var substate = GameStateManager.CurrentSubState;
             if(gamestate is GameState.UI or GameState.Paused) return;
 
-            var camera = CameraManager.GetCurrentCamera();
+            var camera = CameraManager.GetMainCamera();
 
             if(camera == null) return;
 
