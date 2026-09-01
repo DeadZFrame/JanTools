@@ -6,10 +6,9 @@ namespace Jan.Core
 {
     public class CameraManager : Singleton<CameraManager>
     {
+        [SerializeField] private float transitionDuration = 1f;
         private readonly List<CameraHook> cameras = new List<CameraHook>();
-
         public CameraBase CameraBase { get; private set; }
-
         public bool Transitioning { get; private set; }
 
         public void RegisterCamera(CameraHook camera)
@@ -66,8 +65,8 @@ namespace Jan.Core
 
             Debug.Log(newCamera.transform);
 
-            Instance.CameraBase.transform.LitMove(newCamera.transform.position, 1,  Ease.OutSine);
-            Instance.CameraBase.transform.LitRotate(newCamera.transform.rotation, 1, Ease.OutSine)
+            Instance.CameraBase.transform.LitMove(newCamera.transform.position, Instance.transitionDuration,  Ease.OutSine);
+            Instance.CameraBase.transform.LitRotate(newCamera.transform.rotation, Instance.transitionDuration, Ease.OutSine)
                 .OnCompleted(() => { Instance.Transitioning = false; });
         }
     }
