@@ -23,6 +23,7 @@ namespace Jan.Dialogue
         {
             if(UIBusManager.TryGetUIElement(out IDialogueUI dialogueUI))
             {
+                dialogueUI.ClearActions();
                 dialogueUI.Show(true);
 
                 dialogueUI.SetDialogueText(LocalizationManager.GetLocalizedValue(localizationContext, dialogueId));

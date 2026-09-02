@@ -30,6 +30,17 @@ namespace Jan.Dialogue
             _buttons.Add(button);
         }
 
+        public void ClearActions()
+        {
+            foreach (var button in _buttons)
+            {
+                button.ClearListeners();
+                JanPool.Despawn(button);
+            }
+
+            _buttons.Clear();
+        }
+
         public override void Show(bool show)
         {
             base.Show(show);

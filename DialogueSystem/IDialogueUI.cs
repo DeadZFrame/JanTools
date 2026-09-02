@@ -7,5 +7,6 @@ namespace Jan.Dialogue
     {
         void RegisterAction(UnityAction action, string text);
         void SetDialogueText(string text);
+        void ClearActions();
     }
 }

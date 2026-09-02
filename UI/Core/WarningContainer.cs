@@ -5,11 +5,13 @@ using Jan.Feel;
 using Jan.Tasks;
 using JeffGrawAssets.FlexibleUI;
 using Jan.Core;
+using TMPro;
 
 namespace UI
 {
-    public class WarningContainer : TextContainer, IWarningUI
+    public class WarningContainer : UIElement, IWarningUI
     {
+        [SerializeField] private TextMeshProUGUI textMesh;
         [SerializeField] private Image interactionImage;
         [SerializeField] private Image dividerImage;
         [SerializeField] private Sprite warningIcon, infoIcon;
@@ -21,9 +23,8 @@ namespace UI
 
         public void SetWarningText(string text, bool isWarning)
         {
-            base.SetText(text);
-
-            Show(true);    
+            textMesh.SetText(text);
+            Show(true);
 
             var icon = GetIcon(isWarning);
             if (icon != null)

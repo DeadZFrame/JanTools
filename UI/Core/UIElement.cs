@@ -35,16 +35,14 @@ namespace Jan.UI
             ui.SetActive(show);
             IsActive = show;
 
-            //Canvas.ForceUpdateCanvases();
-
             if (show && pauseGame)
             {
-                Time.timeScale = 0f;
+                //Time.timeScale = 0f;
                 GameStateManager.SetGameState(GameState.UI);
             }
             else
             {
-                Time.timeScale = 1f;
+                //Time.timeScale = 1f;
 
                 if(!pauseGame) return;
                 if (GameStateManager.CurrentGameState == GameState.UI)

@@ -31,7 +31,10 @@ namespace Jan.Feel
                 foreach (var fb in feedbacks)
                 {
                     fb.Initialize(transform);
-                    if (fb.listenEvent) EventManager.Register(fb.name, fb.Play);
+                    if (fb.listenEvent)
+                    {
+                        EventManager.Register(fb.name, fb.Play);
+                    } 
                 }
 
                 if (playOnStart)
