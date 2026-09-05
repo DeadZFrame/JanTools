@@ -19,7 +19,7 @@ namespace Jan.Dialogue
         private string[] GetDialogueIds => LocalizationManager.GetContext(localizationContext);
         [SerializeField] private DialogueAction[] _actions;
 
-        public void StartDialogue()
+        public void StartDialogue(int index = 0)
         {
             if(UIBusManager.TryGetUIElement(out IDialogueUI dialogueUI))
             {
