@@ -10,7 +10,7 @@ namespace Jan.Core
         public new Transform transform { get; private set; }
         public new GameObject gameObject { get; private set; }
 
-        [SerializeField] private bool overrideLayer = true;  
+        [SerializeField] protected bool overrideLayer = true;  
 
         protected virtual void OnEnable()
         {

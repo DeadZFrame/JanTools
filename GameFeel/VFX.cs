@@ -1,4 +1,5 @@
 using System;
+using Jan.Pool;
 using UnityEngine;
 
 namespace Jan.Feel
@@ -11,17 +12,26 @@ namespace Jan.Feel
         
         public override FeedbackBase Play(Transform transform)
         {
+            var vfx = JanPool.Spawn(VFXAgent, transform.position, transform.rotation);
+            if(parented)
+            {
+                vfx.transform.SetParent(transform);
+            }
+
+            vfx.Play();
+
+            Debug.Log("VFX played.");
             return this;
         }
 
         public override void Complete()
         {
-            VFXAgent.Stop();
+            Debug.LogWarning("VFX feedback does not support Complete() - it will complete naturally based on its duration.");
         }
 
         public override void Stop()
         {
-             Debug.LogWarning("VFX feedback does not support Stop() - it will complete naturally based on its duration. Use Complete() to immediately stop the effect.");
+            Debug.LogWarning("VFX feedback does not support Stop() - it will complete naturally based on its duration. Use Complete() to immediately stop the effect.");
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Jan.Core;
+using Jan.Pool;
 using Jan.Tasks;
 using Sirenix.OdinInspector;
 using UnityEngine;
@@ -72,20 +73,20 @@ namespace Jan.Feel
                 var rot = transform != null ? transform.rotation : rotation;
                 rot = rotation != default ? rotation : rot;
 
-                // void SpawnVfx()
-                // {
-                //     var effect = LeanPool.Spawn(e.VFXAgent, pos, rot);
-                //     var lifeTime = effect.GetLongestLifeTime();
-                //     var time = lifeTime > 0 ? lifeTime : e.Duration;
-                //     effect.Play();
-                //     if (time > 0)
-                //     {
-                //         effect.CallDelayed(time, LeanPool.Despawn, transform.gameObject).OnCancelled(() => LeanPool.Despawn(effect));
-                //     }
-                // }
+                void SpawnVfx()
+                {
+                    var effect = JanPool.Spawn(e.VFXAgent, pos, rot);
+                    var lifeTime = effect.GetLongestLifeTime();
+                    var time = lifeTime > 0 ? lifeTime : e.Duration;
+                    effect.Play();
+                    if (time > 0)
+                    {
+                        effect.CallDelayed(time, JanPool.Despawn, transform.gameObject).OnCancelled(() => JanPool.Despawn(effect));
+                    }
+                }
 
-                // if (e.Delay > 0) Timed.CallDelayed(e.Delay, SpawnVfx, transform);
-                // else SpawnVfx();
+                if (e.Delay > 0) Timed.CallDelayed(e.Delay, SpawnVfx, transform);
+                else SpawnVfx();
             });
         }
 
