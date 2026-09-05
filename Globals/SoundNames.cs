@@ -12,6 +12,7 @@ namespace Jan.Core
         public const string NegativeCash = "NegativeCash";
         public const string PaperPickup = "PaperPickup";
         public const string PaperPut = "PaperPut";
+        public const string PaperPull = "PaperPull";
         public const string WaterPour = "WaterPour";
         public const string CustomerArrive = "CustomerArrive";
         public const string NegativeWarning = "NegativeWarning";
@@ -22,5 +23,12 @@ namespace Jan.Core
         public const string Deconstruct = "Deconstruct";
         public const string Craft = "Craft";
         public const string WaterWhoosh = "WaterWhoosh";
+        public const string PaintGun = "PaintGun";
+        public const string Powder = "Powder";
+        public const string Sparsifier = "Sparsifier";
+        public const string AddPin = "AddPin";
+        public const string Syringe = "Syringe";
+        public const string LevelUp = "LevelUp";
+        public const string Rake = "Rake";
     }   
 }
