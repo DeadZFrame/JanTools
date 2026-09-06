@@ -106,8 +106,17 @@ namespace Jan.Feel
         [SerializeField, FoldoutGroup("Settings"), HideIf(nameof(useFullGradient)), ShowIf(nameof(affectAlpha))] 
         private Gradient alphaGradient;
         
-        [SerializeField, FoldoutGroup("Settings")] 
+        [SerializeField, FoldoutGroup("Settings")]
         private bool returnToDefaultColor;
+
+        [SerializeField, FoldoutGroup("Settings")]
+        private bool loop;
+
+        [SerializeField, FoldoutGroup("Settings"), ShowIf(nameof(loop)), Tooltip("Number of times to loop. Values <= 0 loop indefinitely.")]
+        private int loopCount = -1;
+
+        [SerializeField, FoldoutGroup("Settings"), ShowIf(nameof(loop)), Tooltip("If true, the gradient reverses direction each loop instead of restarting from the beginning.")]
+        private bool pingPong;
 
         private Transform _targetTransform;
         private MaterialPropertyBlock[] _propertyBlocks;
@@ -274,6 +283,9 @@ namespace Jan.Feel
             MaterialPropertyBlock[] cachedPropertyBlocks = _propertyBlocks;
             string cachedMaterialColorProperty = materialColorProperty;
             bool cachedReturnToDefaultColor = returnToDefaultColor;
+            bool cachedLoop = loop;
+            int cachedLoopCount = loopCount;
+            bool cachedPingPong = pingPong;
 
             // Cache default color arrays
             Color[] cachedDefaultTextColors = localDefaultTextColors;
@@ -281,10 +293,20 @@ namespace Jan.Feel
             Color[] cachedDefaultRendererColors = localDefaultRendererColors;
             float[] cachedDefaultCanvasGroupAlphas = localDefaultCanvasGroupAlphas;
 
-            Timed.CallWhileTrue(() => delta < cachedDuration, () =>
+            Timed.CallWhileTrue(() =>
+            {
+                if (!cachedLoop) return delta < cachedDuration;
+                float cyclesElapsed = delta / cachedDuration;
+                return cachedLoopCount <= 0 || cyclesElapsed < cachedLoopCount;
+            }, () =>
             {
                 delta += Time.deltaTime;
-                float progress = delta / cachedDuration;
+                float rawProgress = delta / cachedDuration;
+                float progress = !cachedLoop
+                    ? Mathf.Clamp01(rawProgress)
+                    : cachedPingPong
+                        ? Mathf.PingPong(rawProgress, 1f)
+                        : Mathf.Repeat(rawProgress, 1f);
 
                 if (cachedUseTextMeshPro && cachedTargetTexts != null)
                 {

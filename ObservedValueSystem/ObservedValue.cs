@@ -1,5 +1,6 @@
 using System;
 using Jan.Events;
+using Sirenix.OdinInspector;
 using UnityEngine;
 
 namespace Jan.Core
@@ -12,8 +13,9 @@ namespace Jan.Core
     /// comparison to the number of times it is updated.
     
     [Serializable]
-    public class ObservedValue<T> where T : struct
+    public class ObservedValue<T> : IObservedValueWrapper where T : struct
     {
+        [SerializeField] private string observedValueName;
         [SerializeField] private T currentValue;
         public T lastValue { get; private set; }
 
@@ -21,6 +23,8 @@ namespace Jan.Core
         {
             currentValue = initialValue;
             lastValue = currentValue;
+
+            //ObservedValueManager.Register(observedValueName, this);
         }
 
         public T Value => currentValue;
@@ -46,14 +50,20 @@ namespace Jan.Core
             currentValue = value;
         }
 
-        public void Listen(Action<T> callback)
+        public void Listen<T>(Action<T> callback)
         {
             this.Register<T>(EventNames.OnValueObserved, callback);
         }
 
-        public void Unlisten(Action<T> callback)
+        public void Unlisten<T>(Action<T> callback)
         {
             this.UnRegister<T>(EventNames.OnValueObserved, callback);
         }
+
+        // [Button]
+        // private void Register()
+        // {
+        //     ObservedValueManager.Register(observedValueName, this);
+        // }
     }
 }
