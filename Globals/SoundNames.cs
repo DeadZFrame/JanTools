@@ -30,5 +30,7 @@ namespace Jan.Core
         public const string Syringe = "Syringe";
         public const string LevelUp = "LevelUp";
         public const string Rake = "Rake";
+        public const string PipetteFill = "PipetteFill";
+        public const string Rotator = "Rotator";
     }   
 }

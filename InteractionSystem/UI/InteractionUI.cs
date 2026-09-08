@@ -4,10 +4,11 @@ using Sirenix.OdinInspector;
 using Jan.UI;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 namespace Jan.Interaction
 {
-    public class InteractionUI : TextContainer, IInteractionUI
+    public class InteractionUI : UIElement, IInteractionUI
     {
         [Serializable]
         public class InteractionIcons
@@ -15,9 +16,10 @@ namespace Jan.Interaction
             [field: SerializeField, ValueDropdown(nameof(GetInteractionIconNames))] public string Name { get; private set; }
             [field: SerializeField] public Sprite Icon { get; private set; }
 
-            public string[] GetInteractionIconNames => Jan.Core.GlobalsUtils.GetNames(typeof(InteractionIconNames));
+            public string[] GetInteractionIconNames => GlobalsUtils.GetNames(typeof(InteractionIconNames));
         }
 
+        [SerializeField] private TextMeshProUGUI leftClickText, rightClickText;
         [SerializeField] private InteractionIcons[] interactionIcons;
         [SerializeField] private Image circleFill;
         [SerializeField] private Image interactionImage;
@@ -25,7 +27,20 @@ namespace Jan.Interaction
 
         public void SetTextAndIcon(string text, string iconName)
         {
-            base.SetText(text);
+            var splitText = text.Split('|');
+            string rightClickTooltip;
+            string leftClickTooltip;
+
+            if(splitText.Length > 1)
+            {
+                rightClickTooltip = splitText[1];
+                leftClickTooltip = splitText[0];
+            }
+            else
+            {
+                rightClickTooltip = "";
+                leftClickTooltip = splitText[0];
+            }
 
             var icon = GetIcon(iconName);
             if (icon != null)
@@ -38,6 +53,26 @@ namespace Jan.Interaction
             {
                 dividerImage.gameObject.SetActive(false);
                 interactionImage.gameObject.SetActive(false);
+            }
+
+            if(string.IsNullOrEmpty(rightClickTooltip))
+            {
+                rightClickText.transform.parent.gameObject.SetActive(false);
+            }
+            else
+            {
+                rightClickText.transform.parent.gameObject.SetActive(true);
+                rightClickText.SetText(rightClickTooltip);
+            }
+
+            if(string.IsNullOrEmpty(leftClickTooltip))
+            {
+                leftClickText.transform.parent.gameObject.SetActive(false);
+            }
+            else
+            {
+                leftClickText.transform.parent.gameObject.SetActive(true);
+                leftClickText.SetText(leftClickTooltip);
             }
         }
 
