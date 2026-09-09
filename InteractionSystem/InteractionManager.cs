@@ -149,7 +149,8 @@ namespace Jan.Interaction
             {
                 if (_interactionUI != null)
                 {
-                    _interactionUI.SetTextAndIcon(interactable.Tooltip, interactable.HighlightEffect ? InteractionIconNames.LeftClick : "");
+                    var tooltip = interactable.Tooltip;
+                    _interactionUI.SetTextAndIcon(tooltip, InteractionIconNames.LeftClick);
                     _interactionUI.Show(true);
                 }
             }
