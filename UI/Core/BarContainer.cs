@@ -14,7 +14,7 @@ namespace Jan.UI
         [SerializeField, ShowIf(nameof(animateColor))] private Gradient gradient;
         [SerializeField] private bool animateColor;
 
-        public void SetFillAmount(float amount, float duration, Ease ease = Ease.Linear)
+        public virtual void SetFillAmount(float amount, float duration, Ease ease = Ease.Linear)
         {
             this.FloatMotion(bar.fillAmount, amount, duration, ease);
             if (handle == null) return;
