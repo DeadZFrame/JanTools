@@ -3,7 +3,6 @@ using Jan.Events;
 using Jan.Feel;
 using Jan.Tasks;
 using Jan.UI;
-using NUnit.Framework;
 using UI;
 using UnityEngine;
 
@@ -17,6 +16,7 @@ namespace Jan.Interaction
         private IInputHandler currentInputHandler;
         private IInteractionUI _interactionUI;
         private static IInteractionContext _currentContext;
+        private Vector2 _lastMousePosition;
 
         [SerializeField] private float rayDistance = 10f;
 
@@ -67,8 +67,11 @@ namespace Jan.Interaction
             if(camera == null) return;
 
             var highlightManager = HighlightManager.Instance;
-            
-            Ray ray = camera.ScreenPointToRay(Input.mousePosition);
+
+            Ray ray = camera.ScreenPointToRay(_lastMousePosition);
+            if(CameraManager.GetCurrentCamera() is FPSCamera) ray.direction = camera.transform.forward;
+            Debug.DrawRay(ray.origin, ray.direction * rayDistance, Color.red);
+
             var isHit = Physics.Raycast(ray, out var hit, rayDistance, LayerMask.GetMask(Layers.Interactable));
 
             bool isStateSupported = false;
@@ -285,6 +288,7 @@ namespace Jan.Interaction
         public void OnMouseMoved(Vector2 mouseWorldPosition)
         {
             currentInputHandler?.OnMouseMoved(mouseWorldPosition); 
+            _lastMousePosition = mouseWorldPosition;
         }
 
         public void OnScroll(Vector2 scrollValue)
