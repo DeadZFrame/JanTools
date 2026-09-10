@@ -38,5 +38,8 @@ namespace Jan.Core
         public const string OnWorkshopOpened = "OnWorkshopOpened";
         public const string OnTutorialProgress = "OnTutorialProgress";
         public const string OnBuildingPurchased = "OnBuildingPurchased";
+        public const string OnCustomerArrived = "OnCustomerArrived";
+        public const string OnOrderCompleted = "OnOrderCompleted";
+        public const string OnCraftBiz = "OnCraftBiz";
     }
 }

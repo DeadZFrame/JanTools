@@ -32,5 +32,8 @@ namespace Jan.Core
         public const string Rake = "Rake";
         public const string PipetteFill = "PipetteFill";
         public const string Rotator = "Rotator";
+        public const string QuestCompleted = "QuestCompleted";
+        public const string QuestFailed = "QuestFailed";
+        public const string QuestSucceeded = "QuestSucceeded";
     }   
 }
