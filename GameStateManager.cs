@@ -71,7 +71,7 @@ namespace Jan.Core
                     break;
                 default:
                     Cursor.lockState = CursorLockMode.None;
-                    Cursor.visible = true;
+                    Cursor.visible = false;
                     break;
             }
 

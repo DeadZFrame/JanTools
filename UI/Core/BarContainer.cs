@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using Jan.Core;
 using Sirenix.OdinInspector;
+using TMPro;
 
 namespace Jan.UI
 {
@@ -10,6 +11,7 @@ namespace Jan.UI
         Jan.Core.Motion IMotion.MotionHandle { get; set; }
 
         [SerializeField] private Image bar;
+        [SerializeField] private TextMeshProUGUI textLabel;
         [SerializeField] private Image handle;
         [SerializeField, ShowIf(nameof(animateColor))] private Gradient gradient;
         [SerializeField] private bool animateColor;
@@ -29,6 +31,11 @@ namespace Jan.UI
         void IMotion.SetFloat(float value)
         {
             bar.fillAmount = value;
+            
+            if(textLabel != null)
+            {
+                textLabel.SetText($"{Mathf.RoundToInt(value * 100)}%");
+            }
             
             if (animateColor)
             {

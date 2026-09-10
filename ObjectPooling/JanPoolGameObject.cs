@@ -119,7 +119,7 @@ namespace Jan.Pool
             return poolable;
         }
 
-        public static void Dispose(this JanPoolAgent _)
+        internal static void Dispose()
         {
             Pools.Clear();
             GameObjectPools.Clear();
