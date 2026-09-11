@@ -42,6 +42,19 @@ namespace Jan.Core
             return Instance.CameraBase.CameraComponent;
         }
 
+        public static T GetCamera<T>() where T : CameraHook
+        {
+            foreach (var camera in Instance.cameras)
+            {
+                if (camera is T)
+                {
+                    return (T)camera;
+                }
+            }
+
+            return null;
+        }
+
         public static void SwitchCamera<T>() where T : CameraHook
         {
             CameraHook newCamera = null;

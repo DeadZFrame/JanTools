@@ -13,6 +13,8 @@ namespace Jan.Core
         [SerializeField] private float maxPitch = 80f;
         [SerializeField] private float smoothStrength = 0.1f;
 
+        public float LookSensitivity => lookSensitivity;
+
         private float _pitch, _yaw;
         private Vector3 _velocity;
 
@@ -62,6 +64,11 @@ namespace Jan.Core
                 _pitch = Mathf.Clamp(_pitch - lookInput.y * lookSensitivity, minPitch, maxPitch);
                 _yaw += lookInput.x * lookSensitivity;
             }
+        }
+
+        public void SetLookSensitivity(float sensitivity)
+        {
+            lookSensitivity = sensitivity;
         }
     }
 

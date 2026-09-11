@@ -25,6 +25,10 @@ namespace Jan.Core
         [SerializeField, Range(-80f, 20f), BoxGroup("Volumes")] private float sfxVolume = 0f;
         [SerializeField, Range(-80f, 20f), BoxGroup("Volumes")] private float uiVolume = 0f;
 
+        public float MasterVolume => masterVolume;
+        public float MusicVolume => musicVolume;
+        public float SFXVolume => sfxVolume;
+        public float UIVolume => uiVolume;
 
         [SerializeField, BoxGroup("Sounds")] private Sound[] UISounds;
         [SerializeField, BoxGroup("Sounds")] private Sound[] SFXSounds;
@@ -175,7 +179,6 @@ namespace Jan.Core
 
         public static void SetVolume(string parameterName, float volume)
         {
-            
             if (Instance.audioMixer == null)
             {
                 Debug.LogWarning("SoundLibrary not initialized with an AudioMixer.");
