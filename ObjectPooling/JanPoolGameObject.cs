@@ -18,7 +18,7 @@ namespace Jan.Pool
             }
 
             Pools.Add(prefab.name, new Queue<MonoBehaviour>());
-            Pools[prefab.name].Enqueue(CreateFunc(prefab));
+            Pools[prefab.name].Enqueue(CreateFunc(prefab, null));
         }
         
         public static T Spawn<T>(this T poolable, Transform parent = null) where T : MonoBehaviour
@@ -33,7 +33,7 @@ namespace Jan.Pool
             {
                 if(!pool.TryDequeue(out var obj))
                 {
-                    obj = CreateFunc(poolable);
+                    obj = CreateFunc(poolable, parent);
                 }
 
                 obj.transform.SetParent(parent);
@@ -72,7 +72,7 @@ namespace Jan.Pool
 
                 if(!Pools[poolable.name].TryDequeue(out var obj))
                 {
-                    obj = CreateFunc(poolable);
+                    obj = CreateFunc(poolable, parent);
                 }
 
                 obj.transform.SetParent(parent);
@@ -113,9 +113,9 @@ namespace Jan.Pool
             }
         }
 
-        private static MonoBehaviour CreateFunc(MonoBehaviour prefab)
+        private static MonoBehaviour CreateFunc(MonoBehaviour prefab, Transform parent)
         {
-            var poolable = UnityEngine.Object.Instantiate(prefab);
+            var poolable = UnityEngine.Object.Instantiate(prefab, parent);
             return poolable;
         }
 

@@ -69,7 +69,11 @@ namespace Jan.Interaction
             var highlightManager = HighlightManager.Instance;
 
             Ray ray = camera.ScreenPointToRay(LastMousePosition);
-            if(CameraManager.GetCurrentCamera() is FPSCamera) ray.direction = camera.transform.forward;
+            if(CameraManager.GetCurrentCamera() is FPSCamera) 
+            {
+                ray.direction = camera.transform.forward;
+                ray.origin = camera.transform.position;
+            }
             Debug.DrawRay(ray.origin, ray.direction * rayDistance, Color.red);
 
             var isHit = Physics.Raycast(ray, out var hit, rayDistance, LayerMask.GetMask(Layers.Interactable));

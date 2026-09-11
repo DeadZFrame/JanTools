@@ -40,6 +40,6 @@ namespace Jan.Core
         public const string OnBuildingPurchased = "OnBuildingPurchased";
         public const string OnCustomerArrived = "OnCustomerArrived";
         public const string OnOrderCompleted = "OnOrderCompleted";
-        public const string OnCraftBiz = "OnCraftBiz";
+        public const string OnColorChanged = "OnColorChanged";
     }
 }

@@ -18,7 +18,7 @@ namespace Jan.Pool
             }
 
             GameObjectPools.Add(prefab.name, new Queue<GameObject>());
-            GameObjectPools[prefab.name].Enqueue(CreateFunc(prefab));
+            GameObjectPools[prefab.name].Enqueue(CreateFunc(prefab, null));
         }
         
         public static GameObject Spawn(this GameObject poolable, Transform parent = null)
@@ -36,7 +36,7 @@ namespace Jan.Pool
                 if(!pool.TryDequeue(out var obj))
                 {
                     Debug.Log($"Pool with key {poolable.name} is empty. Instantiating new object.");
-                    obj = CreateFunc(poolable);
+                    obj = CreateFunc(poolable, parent);
                 }
 
                 obj.transform.SetParent(parent);
@@ -78,7 +78,7 @@ namespace Jan.Pool
                 if(!GameObjectPools[poolable.name].TryDequeue(out var obj))
                 {
                     Debug.Log($"Pool with key {poolable.name} is empty. Instantiating new object.");
-                    obj = CreateFunc(poolable);
+                    obj = CreateFunc(poolable, parent);
                 }
 
                 obj.transform.SetParent(parent);
@@ -120,9 +120,9 @@ namespace Jan.Pool
             }
         }
 
-        private static GameObject CreateFunc(GameObject prefab)
+        private static GameObject CreateFunc(GameObject prefab, Transform parent)
         {
-            var poolable = UnityEngine.Object.Instantiate(prefab);
+            var poolable = UnityEngine.Object.Instantiate(prefab, parent);
             return poolable;
         }
     }
