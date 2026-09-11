@@ -16,7 +16,7 @@ namespace Jan.Interaction
         private IInputHandler currentInputHandler;
         private IInteractionUI _interactionUI;
         private static IInteractionContext _currentContext;
-        private Vector2 _lastMousePosition;
+        public static Vector2 LastMousePosition { get; private set; } = Vector2.zero;
 
         [SerializeField] private float rayDistance = 10f;
 
@@ -68,7 +68,7 @@ namespace Jan.Interaction
 
             var highlightManager = HighlightManager.Instance;
 
-            Ray ray = camera.ScreenPointToRay(_lastMousePosition);
+            Ray ray = camera.ScreenPointToRay(LastMousePosition);
             if(CameraManager.GetCurrentCamera() is FPSCamera) ray.direction = camera.transform.forward;
             Debug.DrawRay(ray.origin, ray.direction * rayDistance, Color.red);
 
@@ -290,7 +290,7 @@ namespace Jan.Interaction
         public void OnMouseMoved(Vector2 mouseWorldPosition)
         {
             currentInputHandler?.OnMouseMoved(mouseWorldPosition); 
-            _lastMousePosition = mouseWorldPosition;
+            LastMousePosition = mouseWorldPosition;
         }
 
         public void OnScroll(Vector2 scrollValue)
