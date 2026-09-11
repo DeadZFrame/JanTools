@@ -137,7 +137,6 @@ namespace Jan.Interaction
                 } 
                 else if(currentMono != null)
                 {
-                    currentInputHandler?.OnMouseReleased(0);
                     currentInputHandler?.OnMouseHoverOut();
                     currentInputHandler = null;
                 }
@@ -146,7 +145,13 @@ namespace Jan.Interaction
 
         private void InteractionLogic(IInteractable interactable)
         {
-            if(currentInteractable == interactable) return;
+            if (currentInteractable == interactable)
+            {
+                var tooltip = interactable.Tooltip;
+                _interactionUI.SetTextAndIcon(tooltip, InteractionIconNames.LeftClick);
+                _interactionUI.Show(true);
+                return;
+            }
             currentInteractable = interactable;
 
             var monoBehaviour = interactable as MonoBehaviour;
@@ -177,7 +182,6 @@ namespace Jan.Interaction
                     
                     if(currentMono != mono)
                     {
-                        currentInputHandler?.OnMouseReleased(0);
                         currentInputHandler?.OnMouseHoverOut();
                         currentInputHandler = inputHandler;
                         currentInputHandler?.OnMouseHover();
@@ -188,7 +192,6 @@ namespace Jan.Interaction
                     var currentMono = currentInputHandler as MonoBehaviour;
                     if(currentMono != null)
                     {
-                        currentInputHandler?.OnMouseReleased(0);
                         currentInputHandler?.OnMouseHoverOut();
                         currentInputHandler = null;
                     }
@@ -199,7 +202,6 @@ namespace Jan.Interaction
                 var currentMono = currentInputHandler as MonoBehaviour;
                 if(currentMono != null)
                 {
-                    currentInputHandler?.OnMouseReleased(0);
                     currentInputHandler?.OnMouseHoverOut();
                     currentInputHandler = null;
                 }
