@@ -124,5 +124,10 @@ namespace Jan.Navigation
             int index = (int)(randomState % (uint)precomputedDirections.Length);
             direction = precomputedDirections[index];
         }
+
+        public void BuildNavMesh()
+        {
+            NavMeshSurface.UpdateNavMesh(NavMeshSurface.navMeshData);
+        }
     }
 }

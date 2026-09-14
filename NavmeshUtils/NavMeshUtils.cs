@@ -60,12 +60,12 @@ namespace Jan.Navigation
                 var randomPosition = sourcePosition + Random.insideUnitCircle.ConvertToVector3() * range;
                 isHit = NavMesh.SamplePosition(randomPosition, out hit, forceInside ? 2f : 1000f, (int)areaMask);
 
-                if (isHit && areaMask == NavmeshAreas.Water)
-                {
-                    int otherAreasMask = ~(int)areaMask;
-                    var anotherLayer = NavMesh.SamplePosition(randomPosition, out var _, 2f, otherAreasMask);
-                    if (anotherLayer) isHit = false;
-                }
+                // if (isHit && areaMask == NavmeshAreas.Water)
+                // {
+                //     int otherAreasMask = ~(int)areaMask;
+                //     var anotherLayer = NavMesh.SamplePosition(randomPosition, out var _, 2f, otherAreasMask);
+                //     if (anotherLayer) isHit = false;
+                // }
 
                 maxTrials--;
                 if (maxTrials == 0) break;
@@ -164,6 +164,63 @@ namespace Jan.Navigation
             }
 
             return nearest;
+        }
+
+        public static Vector3 GetRandomPoint(NavmeshAreas areaMask)
+        {
+            NavMeshTriangulation navData = NavMesh.CalculateTriangulation();
+
+            if (navData.vertices.Length == 0)
+                return Vector3.zero;
+
+            var areaTriangles = new List<Vector3>();
+            for (int i = 0; i < navData.areas.Length; i++)
+            {
+                if (navData.areas[i] == (int)areaMask)
+                {
+                    areaTriangles.Add(navData.vertices[i]);
+                }
+            }
+
+            if (areaTriangles.Count == 0)
+                return Vector3.zero;
+
+            var randomIndex = UnityEngine.Random.Range(0, areaTriangles.Count);
+            var randomVertex = areaTriangles[randomIndex];
+
+            return randomVertex;
+        }
+
+        public static Vector3[] GetRandomPoints(NavmeshAreas areaMask, int count)
+        {
+            NavMeshTriangulation navData = NavMesh.CalculateTriangulation();
+
+            if (navData.vertices.Length == 0)
+                return new Vector3[0];
+    
+            var areaTriangles = new List<Vector3>();
+            for (int i = 0; i < navData.areas.Length; i++)
+            {
+                if (navData.areas[i] == (int)areaMask)
+                {
+                    areaTriangles.Add(navData.vertices[i]);
+                }
+            }
+
+            if (areaTriangles.Count == 0)
+                return new Vector3[0];
+
+            var randomPoints = new Vector3[count];
+            for (int i = 0; i < count; i++)
+            {
+                var cluster = areaTriangles.Count / count;
+                var randomIndex = Random.Range(cluster * i, cluster * (i + 1));
+                randomPoints[i] = areaTriangles[randomIndex];
+
+                count--;
+            }
+
+            return randomPoints;
         }
     }
 }
