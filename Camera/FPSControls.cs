@@ -27,8 +27,12 @@ public class FPSControls : MonoBehaviour
 
     void FixedUpdate()
     {
-        if(CameraManager.Instance.Transitioning) return;
-        if(GameStateManager.CurrentGameState != GameState.FPS) return;
+        if(CameraManager.Instance.Transitioning || GameStateManager.CurrentGameState != GameState.FPS)
+        {
+            _moveInput = Vector2.zero;
+            rb.linearVelocity = Vector3.zero;
+            return;
+        }
         
         Vector3 move = new Vector3(_moveInput.x, 0f, _moveInput.y);
         move = Vector3.ClampMagnitude(move, 1f);
@@ -42,6 +46,8 @@ public class FPSControls : MonoBehaviour
 
     private void OnMoveInput(Vector2 moveInput)
     {
+        if(CameraManager.Instance.Transitioning) return;
+        if(GameStateManager.CurrentGameState != GameState.FPS) return;
         _moveInput = moveInput;
     }
 }

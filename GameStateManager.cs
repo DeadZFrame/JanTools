@@ -43,8 +43,6 @@ namespace Jan.Core
                 return;
             }
             
-            if(PreviousGameState != CurrentGameState) PreviousGameState = CurrentGameState;
-            
             switch (newState)
             {
                 case GameState.Paused:
@@ -75,6 +73,7 @@ namespace Jan.Core
                     break;
             }
 
+            if(PreviousGameState != CurrentGameState) PreviousGameState = CurrentGameState;
             CurrentGameState = newState;
             EventManager.Trigger(EventNames.OnGameStateChanged, newState);
 

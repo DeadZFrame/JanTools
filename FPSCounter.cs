@@ -12,7 +12,7 @@ public class FPSCounter : MonoBehaviour
         Timed.CallPeriodically(int.MaxValue, PollingIncrement, () =>
         {
             var fps = 1f / Time.unscaledDeltaTime;
-            fpsText.SetText($"{fps:0.0} FPS");
+            fpsText.SetText($"{fps:F0} FPS");
         });
     }
 }

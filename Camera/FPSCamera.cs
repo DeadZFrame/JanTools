@@ -32,9 +32,10 @@ namespace Jan.Core
         {
             base.Awake();
             
-            transform.position = playerBody.position + playerBody.TransformDirection(offset);
-            transform.rotation = Quaternion.Euler(_pitch, _yaw, 0f);
-
+            var position = playerBody.position + playerBody.TransformDirection(offset);
+            var rotation = Quaternion.Euler(_pitch, _yaw, 0f);
+            transform.SetPositionAndRotation(position, rotation);
+            
             CameraManager.SwitchCamera<FPSCamera>();
         }
 
@@ -46,8 +47,8 @@ namespace Jan.Core
 
         void LateUpdate()
         {            
-            if(CameraManager.Instance.Transitioning) return;
-            if(GameStateManager.CurrentGameState is GameState.FPS)
+            //if(CameraManager.Instance.Transitioning) return;
+            //if(GameStateManager.CurrentGameState is GameState.FPS)
             {
                 var smoothedPosition = Vector3.SmoothDamp(transform.position, playerBody.position + playerBody.TransformDirection(offset), ref _velocity, smoothStrength);
             
@@ -59,11 +60,11 @@ namespace Jan.Core
 
         private void OnLookInput(Vector2 lookInput)
         {
-            if(GameStateManager.CurrentGameState is GameState.FPS)
-            {
-                _pitch = Mathf.Clamp(_pitch - lookInput.y * lookSensitivity, minPitch, maxPitch);
-                _yaw += lookInput.x * lookSensitivity;
-            }
+            if(CameraManager.Instance.Transitioning) return;
+            if(GameStateManager.CurrentGameState != GameState.FPS) return;
+
+            _pitch = Mathf.Clamp(_pitch - lookInput.y * lookSensitivity, minPitch, maxPitch);
+            _yaw += lookInput.x * lookSensitivity;
         }
 
         public void SetLookSensitivity(float sensitivity)

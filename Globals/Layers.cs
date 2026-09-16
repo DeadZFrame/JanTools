@@ -12,5 +12,7 @@ namespace Jan.Core
         public const string ContainerRegion = "ContainerRegion";
         public const string Ground = "Ground";
         public const string Wall = "Wall";
+        public const string Player = "Player";
+        public const string Table = "Table";
     }
 }
