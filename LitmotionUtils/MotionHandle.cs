@@ -23,7 +23,7 @@ namespace Jan.Core
 
         public readonly void Complete()
         {
-            if(_handle.IsValid()) _handle.Complete();
+            if(_handle.IsValid() && _handle.IsActive()) _handle.Complete();
             _cts?.SafeCancel();
         }
 
