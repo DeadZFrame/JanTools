@@ -108,6 +108,33 @@ namespace Jan.Core
             }
         }
 
+        public static Motion LitLookAt(this Transform transform, Vector3 target, float duration, Ease ease = Ease.Linear, bool localSpace = false)
+        {
+            if(!localSpace)
+            {
+                var targetPosition = target;
+                targetPosition.y = transform.position.y;
+                var targetRotation = Quaternion.LookRotation(targetPosition - transform.position);
+                
+                var motionHandle = LMotion.Create(transform.rotation, targetRotation, duration)
+                    .WithEase(ease.ConvertToLitEase())
+                    .BindToRotation(transform);
+
+                return new Motion(motionHandle);
+            }
+            else
+            {
+                var targetPosition = target;
+                targetPosition.y = 0;
+                var targetRotation = Quaternion.LookRotation(targetPosition - transform.position);
+                var motionHandle = LMotion.Create(transform.localRotation, targetRotation, duration)
+                    .WithEase(ease.ConvertToLitEase())
+                    .BindToLocalRotation(transform);
+
+                return new Motion(motionHandle);
+            }
+        }
+
         public static Motion LitRotate(this Transform transform, Vector3 axis, float angle, float duration, Ease ease = Ease.Linear, bool localSpace = false)
         {
             if(!localSpace)
