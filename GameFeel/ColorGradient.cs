@@ -248,18 +248,6 @@ namespace Jan.Feel
                 }
             }
 
-            if (hasValidRendererTargets)
-            {
-                localDefaultRendererColors = new Color[targetRenderers.Length];
-                for (int i = 0; i < targetRenderers.Length; i++)
-                {
-                    if (targetRenderers[i] != null && targetRenderers[i].sharedMaterial.HasProperty(materialColorProperty))
-                    {
-                        localDefaultRendererColors[i] = targetRenderers[i].sharedMaterial.GetColor(materialColorProperty);
-                    }
-                }
-            }
-
             float delta = 0;
             float cachedDuration = Duration;
             bool cachedUseFullGradient = useFullGradient;
@@ -315,7 +303,7 @@ namespace Jan.Feel
                         if (cachedTargetTexts[i] != null && i < cachedDefaultTextColors.Length)
                         {
                             Color currentColor;
-                            Color startColor = cachedDefaultTextColors[i];
+                            float maxAlpha = cachedDefaultTextColors[i].a;
 
                             if (cachedUseFullGradient)
                             {
@@ -330,25 +318,26 @@ namespace Jan.Feel
                                 if (cachedAffectRed)
                                 {
                                     float newRed = cachedRedGradient.Evaluate(progress).r;
-                                    currentColor.r = Mathf.Clamp(newRed, 0, startColor.r);
+                                    currentColor.r = Mathf.Clamp01(newRed);
                                 }
                                 if (cachedAffectGreen)
                                 {
                                     float newGreen = cachedGreenGradient.Evaluate(progress).g;
-                                    currentColor.g = Mathf.Clamp(newGreen, 0, startColor.g);
+                                    currentColor.g = Mathf.Clamp01(newGreen);
                                 }
                                 if (cachedAffectBlue)
                                 {
                                     float newBlue = cachedBlueGradient.Evaluate(progress).b;
-                                    currentColor.b = Mathf.Clamp(newBlue, 0, startColor.b);
+                                    currentColor.b = Mathf.Clamp01(newBlue);
                                 }
                                 if (cachedAffectAlpha)
                                 {
                                     float newAlpha = cachedAlphaGradient.Evaluate(progress).a;
-                                    currentColor.a = Mathf.Clamp(newAlpha, 0, startColor.a);
+                                    currentColor.a = Mathf.Clamp01(newAlpha);
                                 }
                             }
 
+                            currentColor.a = Mathf.Min(currentColor.a, maxAlpha);
                             cachedTargetTexts[i].color = currentColor;
                         }
                     }
@@ -361,7 +350,7 @@ namespace Jan.Feel
                         if (cachedTargetImages[i] != null && i < cachedDefaultImageColors.Length)
                         {
                             Color currentColor;
-                            Color startColor = cachedDefaultImageColors[i];
+                            float maxAlpha = cachedDefaultImageColors[i].a;
 
                             if (cachedUseFullGradient)
                             {
@@ -376,25 +365,26 @@ namespace Jan.Feel
                                 if (cachedAffectRed)
                                 {
                                     float newRed = cachedRedGradient.Evaluate(progress).r;
-                                    currentColor.r = Mathf.Clamp(newRed, 0, startColor.r);
+                                    currentColor.r = Mathf.Clamp01(newRed);
                                 }
                                 if (cachedAffectGreen)
                                 {
                                     float newGreen = cachedGreenGradient.Evaluate(progress).g;
-                                    currentColor.g = Mathf.Clamp(newGreen, 0, startColor.g);
+                                    currentColor.g = Mathf.Clamp01(newGreen);
                                 }
                                 if (cachedAffectBlue)
                                 {
                                     float newBlue = cachedBlueGradient.Evaluate(progress).b;
-                                    currentColor.b = Mathf.Clamp(newBlue, 0, startColor.b);
+                                    currentColor.b = Mathf.Clamp01(newBlue);
                                 }
                                 if (cachedAffectAlpha)
                                 {
                                     float newAlpha = cachedAlphaGradient.Evaluate(progress).a;
-                                    currentColor.a = Mathf.Clamp(newAlpha, 0, startColor.a);
+                                    currentColor.a = Mathf.Clamp01(newAlpha);
                                 }
                             }
 
+                            currentColor.a = Mathf.Min(currentColor.a, maxAlpha);
                             cachedTargetImages[i].color = currentColor;
                         }
                     }
@@ -407,7 +397,7 @@ namespace Jan.Feel
                         if (cachedTargetRenderers[i] != null && cachedPropertyBlocks[i] != null && i < cachedDefaultRendererColors.Length)
                         {
                             Color currentColor;
-                            Color startColor = cachedDefaultRendererColors[i];
+                            float maxAlpha = cachedDefaultRendererColors[i].a;
 
                             if (cachedUseFullGradient)
                             {
@@ -422,32 +412,33 @@ namespace Jan.Feel
                                 if (cachedAffectRed)
                                 {
                                     float newRed = cachedRedGradient.Evaluate(progress).r;
-                                    currentColor.r = Mathf.Clamp(newRed, 0, startColor.r);
+                                    currentColor.r = Mathf.Clamp01(newRed);
                                 }
                                 if (cachedAffectGreen)
                                 {
                                     float newGreen = cachedGreenGradient.Evaluate(progress).g;
-                                    currentColor.g = Mathf.Clamp(newGreen, 0, startColor.g);
+                                    currentColor.g = Mathf.Clamp01(newGreen);
                                 }
                                 if (cachedAffectBlue)
                                 {
                                     float newBlue = cachedBlueGradient.Evaluate(progress).b;
-                                    currentColor.b = Mathf.Clamp(newBlue, 0, startColor.b);
+                                    currentColor.b = Mathf.Clamp01(newBlue);
                                 }
                                 if (cachedAffectAlpha)
                                 {
                                     float newAlpha = cachedAlphaGradient.Evaluate(progress).a;
-                                    currentColor.a = Mathf.Clamp(newAlpha, 0, startColor.a);
+                                    currentColor.a = Mathf.Clamp01(newAlpha);
                                 }
                             }
 
+                            currentColor.a = Mathf.Min(currentColor.a, maxAlpha);
                             cachedPropertyBlocks[i].SetColor(cachedMaterialColorProperty, currentColor);
                             cachedTargetRenderers[i].SetPropertyBlock(cachedPropertyBlocks[i]);
                         }
                     }
                 }
 
-                if (cachedUseCanvasGroup && cachedTargetCanvasGroups != null)
+                if (cachedUseCanvasGroup && cachedTargetCanvasGroups != null && (cachedUseFullGradient || cachedAffectAlpha))
                 {
                     for (int i = 0; i < cachedTargetCanvasGroups.Length; i++)
                     {
@@ -457,7 +448,7 @@ namespace Jan.Feel
                                 ? cachedGradient.Evaluate(progress).a
                                 : cachedAlphaGradient.Evaluate(progress).a;
 
-                            cachedTargetCanvasGroups[i].alpha = currentAlpha;
+                            cachedTargetCanvasGroups[i].alpha = Mathf.Min(currentAlpha, cachedDefaultCanvasGroupAlphas[i]);
                         }
                     }
                 }
