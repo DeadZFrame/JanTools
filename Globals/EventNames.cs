@@ -41,5 +41,6 @@ namespace Jan.Core
         public const string OnCustomerArrived = "OnCustomerArrived";
         public const string OnOrderCompleted = "OnOrderCompleted";
         public const string OnColorChanged = "OnColorChanged";
+        public const string OnDirtCleaned = "OnDirtCleaned";
     }
 }

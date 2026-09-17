@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Jan.Tasks;
 using UnityEngine;
 using UnityEngine.UI;
@@ -10,12 +11,12 @@ namespace Jan.Feel
     [Serializable]
     public class ColorGradient : FeedbackBase
     {
-        [SerializeField, BoxGroup("Components"), LabelText("Use Image")] 
+        [SerializeField, BoxGroup("Components"), LabelText("Use Image")]
         private bool useImage = true;
 
-        [SerializeField, BoxGroup("Components"), LabelText("Use TextMeshPro")] 
+        [SerializeField, BoxGroup("Components"), LabelText("Use TextMeshPro")]
         private bool useTextMeshPro;
-        
+
         [SerializeField, BoxGroup("Components"), LabelText("Use Renderer")]
         private bool useRenderer;
 
@@ -33,8 +34,8 @@ namespace Jan.Feel
 
         [SerializeField, BoxGroup("Components"), ShowIf(nameof(useCanvasGroup)), LabelText("Target Canvas Groups")]
         private CanvasGroup[] targetCanvasGroups;
-        
-        [SerializeField, BoxGroup("Components"), ShowIf(nameof(useRenderer)), LabelText("Material Color Property")] 
+
+        [SerializeField, BoxGroup("Components"), ShowIf(nameof(useRenderer)), LabelText("Material Color Property")]
         private string materialColorProperty = "_BaseColor";
 
         [SerializeField, BoxGroup("Components")]
@@ -76,36 +77,36 @@ namespace Jan.Feel
             }
         }
 
-        [SerializeField, FoldoutGroup("Settings")] 
+        [SerializeField, FoldoutGroup("Settings")]
         private bool useFullGradient = true;
-        
-        [SerializeField, FoldoutGroup("Settings"), ShowIf(nameof(useFullGradient))] 
+
+        [SerializeField, FoldoutGroup("Settings"), ShowIf(nameof(useFullGradient))]
         private Gradient gradient;
-        
-        [SerializeField, FoldoutGroup("Settings"), HideIf(nameof(useFullGradient))] 
+
+        [SerializeField, FoldoutGroup("Settings"), HideIf(nameof(useFullGradient))]
         private bool affectRed;
-        
-        [SerializeField, FoldoutGroup("Settings"), HideIf(nameof(useFullGradient)), ShowIf(nameof(affectRed))] 
+
+        [SerializeField, FoldoutGroup("Settings"), HideIf(nameof(useFullGradient)), ShowIf(nameof(affectRed))]
         private Gradient redGradient;
-        
-        [SerializeField, FoldoutGroup("Settings"), HideIf(nameof(useFullGradient))] 
+
+        [SerializeField, FoldoutGroup("Settings"), HideIf(nameof(useFullGradient))]
         private bool affectGreen;
-        
-        [SerializeField, FoldoutGroup("Settings"), HideIf(nameof(useFullGradient)), ShowIf(nameof(affectGreen))] 
+
+        [SerializeField, FoldoutGroup("Settings"), HideIf(nameof(useFullGradient)), ShowIf(nameof(affectGreen))]
         private Gradient greenGradient;
-        
-        [SerializeField, FoldoutGroup("Settings"), HideIf(nameof(useFullGradient))] 
+
+        [SerializeField, FoldoutGroup("Settings"), HideIf(nameof(useFullGradient))]
         private bool affectBlue;
-        
-        [SerializeField, FoldoutGroup("Settings"), HideIf(nameof(useFullGradient)), ShowIf(nameof(affectBlue))] 
+
+        [SerializeField, FoldoutGroup("Settings"), HideIf(nameof(useFullGradient)), ShowIf(nameof(affectBlue))]
         private Gradient blueGradient;
-        
-        [SerializeField, FoldoutGroup("Settings"), HideIf(nameof(useFullGradient))] 
+
+        [SerializeField, FoldoutGroup("Settings"), HideIf(nameof(useFullGradient))]
         private bool affectAlpha;
-        
-        [SerializeField, FoldoutGroup("Settings"), HideIf(nameof(useFullGradient)), ShowIf(nameof(affectAlpha))] 
+
+        [SerializeField, FoldoutGroup("Settings"), HideIf(nameof(useFullGradient)), ShowIf(nameof(affectAlpha))]
         private Gradient alphaGradient;
-        
+
         [SerializeField, FoldoutGroup("Settings")]
         private bool returnToDefaultColor;
 
@@ -119,10 +120,25 @@ namespace Jan.Feel
         private bool pingPong;
 
         private Transform _targetTransform;
-        private MaterialPropertyBlock[] _propertyBlocks;
+
+        // Active runs, keyed by the transform they were started on, so Complete/Stop can end them
+        private readonly Dictionary<Transform, Run> _activeRuns = new Dictionary<Transform, Run>();
+
+        private class Run
+        {
+            public Cts Cts;
+            public Action<bool> Finish;
+            public bool Finished;
+        }
 
         public override FeedbackBase Play(Transform transform)
         {
+            if (transform == null)
+            {
+                Debug.LogWarning("ColorGradient: Play called without a transform.");
+                return this;
+            }
+
             if (autoGetComponents && _targetTransform != transform)
             {
                 targetImages = null;
@@ -132,42 +148,30 @@ namespace Jan.Feel
                 _targetTransform = transform;
             }
 
-            if(autoGetComponents)
+            if (autoGetComponents)
             {
-                 // Auto-populate target arrays if they're empty
+                // Auto-populate target arrays if they're empty
                 if (useImage && (targetImages == null || targetImages.Length == 0))
                 {
-                    if (targetImages == null || targetImages.Length == 0)
-                    {
-                        targetImages = transform.GetComponentsInChildren<Image>();
-                    }
+                    targetImages = transform.GetComponentsInChildren<Image>();
                 }
 
                 if (useTextMeshPro && (targetTexts == null || targetTexts.Length == 0))
                 {
-                    if (targetTexts == null || targetTexts.Length == 0)
-                    {
-                        targetTexts = transform.GetComponentsInChildren<TextMeshProUGUI>();
-                    }
+                    targetTexts = transform.GetComponentsInChildren<TextMeshProUGUI>();
                 }
 
                 if (useRenderer && (targetRenderers == null || targetRenderers.Length == 0))
                 {
-                    if (targetRenderers == null || targetRenderers.Length == 0)
-                    {
-                        targetRenderers = transform.GetComponentsInChildren<Renderer>();
-                    }
+                    targetRenderers = transform.GetComponentsInChildren<Renderer>();
                 }
 
                 if (useCanvasGroup && (targetCanvasGroups == null || targetCanvasGroups.Length == 0))
                 {
-                    if (targetCanvasGroups == null || targetCanvasGroups.Length == 0)
-                    {
-                        targetCanvasGroups = transform.GetComponentsInChildren<CanvasGroup>();
-                    }
+                    targetCanvasGroups = transform.GetComponentsInChildren<CanvasGroup>();
                 }
             }
-           
+
             bool hasValidImageTargets = useImage && targetImages != null && targetImages.Length > 0;
             bool hasValidTextTargets = useTextMeshPro && targetTexts != null && targetTexts.Length > 0;
             bool hasValidRendererTargets = useRenderer && targetRenderers != null && targetRenderers.Length > 0;
@@ -177,360 +181,342 @@ namespace Jan.Feel
             if (!hasValidImageTargets && !hasValidTextTargets && !hasValidRendererTargets && !hasValidCanvasGroupTargets)
             {
                 Debug.LogWarning("ColorGradient: No valid target components assigned.");
-                return this; // No valid targets found
+                return this;
             }
 
-            // Store default colors in local variables instead of class fields
-            Color[] localDefaultTextColors = null;
-            Color[] localDefaultImageColors = null;
-            Color[] localDefaultRendererColors = null;
-            float[] localDefaultCanvasGroupAlphas = null;
+            // Cache everything the running task needs, so inspector edits can't change a run in flight
+            bool cachedUseFullGradient = useFullGradient;
+            Gradient cachedGradient = gradient;
+            Gradient cachedRedGradient = redGradient;
+            Gradient cachedGreenGradient = greenGradient;
+            Gradient cachedBlueGradient = blueGradient;
+            Gradient cachedAlphaGradient = alphaGradient;
 
-            // Initialize property blocks for renderers
-            if (hasValidRendererTargets)
+            // A channel is applied only when it is enabled and actually has a gradient to evaluate
+            bool applyRed = !cachedUseFullGradient && affectRed && cachedRedGradient != null;
+            bool applyGreen = !cachedUseFullGradient && affectGreen && cachedGreenGradient != null;
+            bool applyBlue = !cachedUseFullGradient && affectBlue && cachedBlueGradient != null;
+            bool applyAlpha = !cachedUseFullGradient && affectAlpha && cachedAlphaGradient != null;
+
+            if (cachedUseFullGradient && cachedGradient == null)
             {
-                _propertyBlocks = new MaterialPropertyBlock[targetRenderers.Length];
-                localDefaultRendererColors = new Color[targetRenderers.Length];
-
-                for (int i = 0; i < targetRenderers.Length; i++)
-                {
-                    if (targetRenderers[i] != null && targetRenderers[i].sharedMaterial.HasProperty(materialColorProperty))
-                    {
-                        _propertyBlocks[i] = new MaterialPropertyBlock();
-                        targetRenderers[i].GetPropertyBlock(_propertyBlocks[i]);
-
-                        if (_propertyBlocks[i].HasColor(materialColorProperty))
-                        {
-                            localDefaultRendererColors[i] = _propertyBlocks[i].GetColor(materialColorProperty);
-                        }
-                        else
-                        {
-                            localDefaultRendererColors[i] = targetRenderers[i].sharedMaterial.GetColor(materialColorProperty);
-                        }
-                    }
-                }
+                Debug.LogWarning("ColorGradient: No gradient assigned.");
+                return this;
             }
 
-            // Store default colors for text and images
+            if (!cachedUseFullGradient && !applyRed && !applyGreen && !applyBlue && !applyAlpha)
+            {
+                Debug.LogWarning("ColorGradient: No channel gradients assigned.");
+                return this;
+            }
+
+            // A previous run on the same transform would fight this one over the same colors
+            if (_activeRuns.TryGetValue(transform, out var previousRun))
+            {
+                previousRun.Finish?.Invoke(false);
+            }
+
+            Color[] defaultTextColors = null;
+            Color[] defaultImageColors = null;
+            Color[] defaultRendererColors = null;
+            float[] defaultCanvasGroupAlphas = null;
+            MaterialPropertyBlock[] propertyBlocks = null;
+
             if (hasValidTextTargets)
             {
-                localDefaultTextColors = new Color[targetTexts.Length];
+                defaultTextColors = new Color[targetTexts.Length];
                 for (int i = 0; i < targetTexts.Length; i++)
                 {
                     if (targetTexts[i] != null)
                     {
-                        localDefaultTextColors[i] = targetTexts[i].color;
+                        defaultTextColors[i] = targetTexts[i].color;
                     }
                 }
             }
 
             if (hasValidImageTargets)
             {
-                localDefaultImageColors = new Color[targetImages.Length];
+                defaultImageColors = new Color[targetImages.Length];
                 for (int i = 0; i < targetImages.Length; i++)
                 {
                     if (targetImages[i] != null)
                     {
-                        localDefaultImageColors[i] = targetImages[i].color;
+                        defaultImageColors[i] = targetImages[i].color;
                     }
                 }
             }
 
             if (hasValidCanvasGroupTargets)
             {
-                localDefaultCanvasGroupAlphas = new float[targetCanvasGroups.Length];
+                defaultCanvasGroupAlphas = new float[targetCanvasGroups.Length];
                 for (int i = 0; i < targetCanvasGroups.Length; i++)
                 {
                     if (targetCanvasGroups[i] != null)
                     {
-                        localDefaultCanvasGroupAlphas[i] = targetCanvasGroups[i].alpha;
+                        defaultCanvasGroupAlphas[i] = targetCanvasGroups[i].alpha;
                     }
                 }
             }
 
+            // The property block doubles as the "this renderer is usable" marker: a renderer with no
+            // material, or whose material lacks the color property, is left with a null block.
             if (hasValidRendererTargets)
             {
-                localDefaultRendererColors = new Color[targetRenderers.Length];
+                propertyBlocks = new MaterialPropertyBlock[targetRenderers.Length];
+                defaultRendererColors = new Color[targetRenderers.Length];
+
                 for (int i = 0; i < targetRenderers.Length; i++)
                 {
-                    if (targetRenderers[i] != null && targetRenderers[i].sharedMaterial.HasProperty(materialColorProperty))
-                    {
-                        localDefaultRendererColors[i] = targetRenderers[i].sharedMaterial.GetColor(materialColorProperty);
-                    }
+                    var targetRenderer = targetRenderers[i];
+                    if (targetRenderer == null) continue;
+
+                    var material = targetRenderer.sharedMaterial;
+                    if (material == null || !material.HasProperty(materialColorProperty)) continue;
+
+                    var block = new MaterialPropertyBlock();
+                    targetRenderer.GetPropertyBlock(block);
+                    propertyBlocks[i] = block;
+
+                    defaultRendererColors[i] = block.HasColor(materialColorProperty)
+                        ? block.GetColor(materialColorProperty)
+                        : material.GetColor(materialColorProperty);
                 }
             }
 
-            float delta = 0;
-            float cachedDuration = Duration;
-            bool cachedUseFullGradient = useFullGradient;
-            bool cachedAffectRed = affectRed;
-            bool cachedAffectGreen = affectGreen;
-            bool cachedAffectBlue = affectBlue;
-            bool cachedAffectAlpha = affectAlpha;
-            Gradient cachedGradient = gradient;
-            Gradient cachedRedGradient = redGradient;
-            Gradient cachedGreenGradient = greenGradient;
-            Gradient cachedBlueGradient = blueGradient;
-            Gradient cachedAlphaGradient = alphaGradient;
-            bool cachedUseTextMeshPro = useTextMeshPro;
-            bool cachedUseImage = useImage;
-            bool cachedUseRenderer = useRenderer;
-            bool cachedUseCanvasGroup = useCanvasGroup;
+            float cachedDuration = Mathf.Max(Duration, 0f);
+            bool cachedUseTextMeshPro = hasValidTextTargets;
+            bool cachedUseImage = hasValidImageTargets;
+            bool cachedUseRenderer = hasValidRendererTargets;
+            bool cachedUseCanvasGroup = hasValidCanvasGroupTargets;
             TextMeshProUGUI[] cachedTargetTexts = targetTexts;
             Image[] cachedTargetImages = targetImages;
             Renderer[] cachedTargetRenderers = targetRenderers;
             CanvasGroup[] cachedTargetCanvasGroups = targetCanvasGroups;
-            MaterialPropertyBlock[] cachedPropertyBlocks = _propertyBlocks;
             string cachedMaterialColorProperty = materialColorProperty;
             bool cachedReturnToDefaultColor = returnToDefaultColor;
             bool cachedLoop = loop;
             int cachedLoopCount = loopCount;
             bool cachedPingPong = pingPong;
 
-            // Cache default color arrays
-            Color[] cachedDefaultTextColors = localDefaultTextColors;
-            Color[] cachedDefaultImageColors = localDefaultImageColors;
-            Color[] cachedDefaultRendererColors = localDefaultRendererColors;
-            float[] cachedDefaultCanvasGroupAlphas = localDefaultCanvasGroupAlphas;
+            // Where the gradient lands when it ends: one full pass, or the end of the last loop
+            float endProgress = !cachedLoop
+                ? 1f
+                : cachedPingPong
+                    ? Mathf.PingPong(cachedLoopCount, 1f)
+                    : Mathf.Repeat(cachedLoopCount, 1f);
 
-            Timed.CallWhileTrue(() =>
+            // A zero-length gradient has no curve to walk, so just land on its end value
+            if (cachedDuration <= 0f)
+            {
+                ApplyProgress(endProgress);
+                if (cachedReturnToDefaultColor) RestoreDefaults();
+                return this;
+            }
+
+            float delta = 0f;
+            var run = new Run();
+
+            run.Finish = applyEndValue =>
+            {
+                if (run.Finished) return;
+                run.Finished = true;
+
+                RemoveRun(transform, run);
+                run.Cts?.SafeCancel();
+
+                if (applyEndValue) ApplyProgress(endProgress);
+                if (cachedReturnToDefaultColor) RestoreDefaults();
+            };
+
+            run.Cts = Timed.CallWhileTrue(() =>
             {
                 if (!cachedLoop) return delta < cachedDuration;
-                float cyclesElapsed = delta / cachedDuration;
-                return cachedLoopCount <= 0 || cyclesElapsed < cachedLoopCount;
+                if (cachedLoopCount <= 0) return true;
+                return delta / cachedDuration < cachedLoopCount;
             }, () =>
             {
+                // Apply first, then advance, so the gradient starts at its 0 position on the first frame
+                ApplyProgress(GetProgress(delta));
                 delta += Time.deltaTime;
-                float rawProgress = delta / cachedDuration;
-                float progress = !cachedLoop
+            }, transform.gameObject);
+
+            run.Cts.OnCompleted(() => run.Finish(true));
+            // Cancelled means the object was destroyed, or Stop ran, so don't touch the targets here
+            run.Cts.OnCancelled(() =>
+            {
+                run.Finished = true;
+                RemoveRun(transform, run);
+            });
+
+            _activeRuns[transform] = run;
+
+            return this;
+
+            float GetProgress(float elapsed)
+            {
+                float rawProgress = elapsed / cachedDuration;
+
+                return !cachedLoop
                     ? Mathf.Clamp01(rawProgress)
                     : cachedPingPong
                         ? Mathf.PingPong(rawProgress, 1f)
                         : Mathf.Repeat(rawProgress, 1f);
+            }
 
-                if (cachedUseTextMeshPro && cachedTargetTexts != null)
+            // Builds the color for one target: either straight from the full gradient, or by
+            // layering the enabled channel gradients over that target's default color.
+            Color EvaluateColor(float progress, Color startColor)
+            {
+                if (cachedUseFullGradient) return cachedGradient.Evaluate(progress);
+
+                Color currentColor = startColor;
+
+                if (applyRed)
+                {
+                    currentColor.r = Mathf.Clamp(cachedRedGradient.Evaluate(progress).r, 0, startColor.r);
+                }
+                if (applyGreen)
+                {
+                    currentColor.g = Mathf.Clamp(cachedGreenGradient.Evaluate(progress).g, 0, startColor.g);
+                }
+                if (applyBlue)
+                {
+                    currentColor.b = Mathf.Clamp(cachedBlueGradient.Evaluate(progress).b, 0, startColor.b);
+                }
+                if (applyAlpha)
+                {
+                    currentColor.a = Mathf.Clamp(cachedAlphaGradient.Evaluate(progress).a, 0, startColor.a);
+                }
+
+                return currentColor;
+            }
+
+            void ApplyProgress(float progress)
+            {
+                if (cachedUseTextMeshPro)
                 {
                     for (int i = 0; i < cachedTargetTexts.Length; i++)
                     {
-                        if (cachedTargetTexts[i] != null && i < cachedDefaultTextColors.Length)
-                        {
-                            Color currentColor;
-                            Color startColor = cachedDefaultTextColors[i];
-
-                            if (cachedUseFullGradient)
-                            {
-                                currentColor = cachedGradient.Evaluate(progress);
-                            }
-                            else
-                            {
-                                // Get original color as starting point
-                                currentColor = cachedTargetTexts[i].color;
-
-                                // Apply individual channel gradients with clamping
-                                if (cachedAffectRed)
-                                {
-                                    float newRed = cachedRedGradient.Evaluate(progress).r;
-                                    currentColor.r = Mathf.Clamp(newRed, 0, startColor.r);
-                                }
-                                if (cachedAffectGreen)
-                                {
-                                    float newGreen = cachedGreenGradient.Evaluate(progress).g;
-                                    currentColor.g = Mathf.Clamp(newGreen, 0, startColor.g);
-                                }
-                                if (cachedAffectBlue)
-                                {
-                                    float newBlue = cachedBlueGradient.Evaluate(progress).b;
-                                    currentColor.b = Mathf.Clamp(newBlue, 0, startColor.b);
-                                }
-                                if (cachedAffectAlpha)
-                                {
-                                    float newAlpha = cachedAlphaGradient.Evaluate(progress).a;
-                                    currentColor.a = Mathf.Clamp(newAlpha, 0, startColor.a);
-                                }
-                            }
-
-                            cachedTargetTexts[i].color = currentColor;
-                        }
+                        if (cachedTargetTexts[i] == null) continue;
+                        cachedTargetTexts[i].color = EvaluateColor(progress, defaultTextColors[i]);
                     }
                 }
 
-                if (cachedUseImage && cachedTargetImages != null)
+                if (cachedUseImage)
                 {
                     for (int i = 0; i < cachedTargetImages.Length; i++)
                     {
-                        if (cachedTargetImages[i] != null && i < cachedDefaultImageColors.Length)
-                        {
-                            Color currentColor;
-                            Color startColor = cachedDefaultImageColors[i];
-
-                            if (cachedUseFullGradient)
-                            {
-                                currentColor = cachedGradient.Evaluate(progress);
-                            }
-                            else
-                            {
-                                // Get original color as starting point
-                                currentColor = cachedTargetImages[i].color;
-
-                                // Apply individual channel gradients with clamping
-                                if (cachedAffectRed)
-                                {
-                                    float newRed = cachedRedGradient.Evaluate(progress).r;
-                                    currentColor.r = Mathf.Clamp(newRed, 0, startColor.r);
-                                }
-                                if (cachedAffectGreen)
-                                {
-                                    float newGreen = cachedGreenGradient.Evaluate(progress).g;
-                                    currentColor.g = Mathf.Clamp(newGreen, 0, startColor.g);
-                                }
-                                if (cachedAffectBlue)
-                                {
-                                    float newBlue = cachedBlueGradient.Evaluate(progress).b;
-                                    currentColor.b = Mathf.Clamp(newBlue, 0, startColor.b);
-                                }
-                                if (cachedAffectAlpha)
-                                {
-                                    float newAlpha = cachedAlphaGradient.Evaluate(progress).a;
-                                    currentColor.a = Mathf.Clamp(newAlpha, 0, startColor.a);
-                                }
-                            }
-
-                            cachedTargetImages[i].color = currentColor;
-                        }
+                        if (cachedTargetImages[i] == null) continue;
+                        cachedTargetImages[i].color = EvaluateColor(progress, defaultImageColors[i]);
                     }
                 }
 
-                if (cachedUseRenderer && cachedTargetRenderers != null)
+                if (cachedUseRenderer)
                 {
                     for (int i = 0; i < cachedTargetRenderers.Length; i++)
                     {
-                        if (cachedTargetRenderers[i] != null && cachedPropertyBlocks[i] != null && i < cachedDefaultRendererColors.Length)
-                        {
-                            Color currentColor;
-                            Color startColor = cachedDefaultRendererColors[i];
+                        if (cachedTargetRenderers[i] == null || propertyBlocks[i] == null) continue;
 
-                            if (cachedUseFullGradient)
-                            {
-                                currentColor = cachedGradient.Evaluate(progress);
-                            }
-                            else
-                            {
-                                // Get original color as starting point
-                                currentColor = cachedDefaultRendererColors[i];
-
-                                // Apply individual channel gradients with clamping
-                                if (cachedAffectRed)
-                                {
-                                    float newRed = cachedRedGradient.Evaluate(progress).r;
-                                    currentColor.r = Mathf.Clamp(newRed, 0, startColor.r);
-                                }
-                                if (cachedAffectGreen)
-                                {
-                                    float newGreen = cachedGreenGradient.Evaluate(progress).g;
-                                    currentColor.g = Mathf.Clamp(newGreen, 0, startColor.g);
-                                }
-                                if (cachedAffectBlue)
-                                {
-                                    float newBlue = cachedBlueGradient.Evaluate(progress).b;
-                                    currentColor.b = Mathf.Clamp(newBlue, 0, startColor.b);
-                                }
-                                if (cachedAffectAlpha)
-                                {
-                                    float newAlpha = cachedAlphaGradient.Evaluate(progress).a;
-                                    currentColor.a = Mathf.Clamp(newAlpha, 0, startColor.a);
-                                }
-                            }
-
-                            cachedPropertyBlocks[i].SetColor(cachedMaterialColorProperty, currentColor);
-                            cachedTargetRenderers[i].SetPropertyBlock(cachedPropertyBlocks[i]);
-                        }
+                        propertyBlocks[i].SetColor(cachedMaterialColorProperty, EvaluateColor(progress, defaultRendererColors[i]));
+                        cachedTargetRenderers[i].SetPropertyBlock(propertyBlocks[i]);
                     }
                 }
 
-                if (cachedUseCanvasGroup && cachedTargetCanvasGroups != null)
+                if (cachedUseCanvasGroup && (cachedUseFullGradient || applyAlpha))
+                {
+                    float currentAlpha = cachedUseFullGradient
+                        ? cachedGradient.Evaluate(progress).a
+                        : cachedAlphaGradient.Evaluate(progress).a;
+
+                    for (int i = 0; i < cachedTargetCanvasGroups.Length; i++)
+                    {
+                        if (cachedTargetCanvasGroups[i] == null) continue;
+                        cachedTargetCanvasGroups[i].alpha = currentAlpha;
+                    }
+                }
+            }
+
+            void RestoreDefaults()
+            {
+                if (cachedUseTextMeshPro)
+                {
+                    for (int i = 0; i < cachedTargetTexts.Length; i++)
+                    {
+                        if (cachedTargetTexts[i] == null) continue;
+                        cachedTargetTexts[i].color = defaultTextColors[i];
+                    }
+                }
+
+                if (cachedUseImage)
+                {
+                    for (int i = 0; i < cachedTargetImages.Length; i++)
+                    {
+                        if (cachedTargetImages[i] == null) continue;
+                        cachedTargetImages[i].color = defaultImageColors[i];
+                    }
+                }
+
+                if (cachedUseRenderer)
+                {
+                    for (int i = 0; i < cachedTargetRenderers.Length; i++)
+                    {
+                        if (cachedTargetRenderers[i] == null || propertyBlocks[i] == null) continue;
+
+                        propertyBlocks[i].SetColor(cachedMaterialColorProperty, defaultRendererColors[i]);
+                        cachedTargetRenderers[i].SetPropertyBlock(propertyBlocks[i]);
+                    }
+                }
+
+                if (cachedUseCanvasGroup)
                 {
                     for (int i = 0; i < cachedTargetCanvasGroups.Length; i++)
                     {
-                        if (cachedTargetCanvasGroups[i] != null && i < cachedDefaultCanvasGroupAlphas.Length)
-                        {
-                            float currentAlpha = cachedUseFullGradient
-                                ? cachedGradient.Evaluate(progress).a
-                                : cachedAlphaGradient.Evaluate(progress).a;
-
-                            cachedTargetCanvasGroups[i].alpha = currentAlpha;
-                        }
+                        if (cachedTargetCanvasGroups[i] == null) continue;
+                        cachedTargetCanvasGroups[i].alpha = defaultCanvasGroupAlphas[i];
                     }
                 }
-
-            }, transform.gameObject).OnCompleted(() =>
-            {
-                Timed.CallAfterTrue(() => !transform.gameObject.activeInHierarchy, () =>
-                {
-                    if (cachedReturnToDefaultColor)
-                    {
-                        if (cachedUseTextMeshPro && cachedTargetTexts != null && localDefaultTextColors != null)
-                        {
-                            for (int i = 0; i < cachedTargetTexts.Length && i < localDefaultTextColors.Length; i++)
-                            {
-                                if (cachedTargetTexts[i] != null)
-                                {
-                                    cachedTargetTexts[i].color = localDefaultTextColors[i];
-                                }
-                            }
-                        }
-
-                        if (cachedUseImage && cachedTargetImages != null && localDefaultImageColors != null)
-                        {
-                            for (int i = 0; i < cachedTargetImages.Length && i < localDefaultImageColors.Length; i++)
-                            {
-                                if (cachedTargetImages[i] != null)
-                                {
-                                    cachedTargetImages[i].color = localDefaultImageColors[i];
-                                }
-                            }
-                        }
-
-                        if (cachedUseRenderer && cachedTargetRenderers != null && localDefaultRendererColors != null)
-                        {
-                            for (int i = 0; i < cachedTargetRenderers.Length && i < localDefaultRendererColors.Length; i++)
-                            {
-                                if (cachedTargetRenderers[i] != null && cachedPropertyBlocks[i] != null)
-                                {
-                                    cachedPropertyBlocks[i].SetColor(cachedMaterialColorProperty, localDefaultRendererColors[i]);
-                                    cachedTargetRenderers[i].SetPropertyBlock(cachedPropertyBlocks[i]);
-                                }
-                            }
-                        }
-
-                        if (cachedUseCanvasGroup && cachedTargetCanvasGroups != null && localDefaultCanvasGroupAlphas != null)
-                        {
-                            for (int i = 0; i < cachedTargetCanvasGroups.Length && i < localDefaultCanvasGroupAlphas.Length; i++)
-                            {
-                                if (cachedTargetCanvasGroups[i] != null)
-                                {
-                                    cachedTargetCanvasGroups[i].alpha = localDefaultCanvasGroupAlphas[i];
-                                }
-                            }
-                        }
-                    }
-                }, transform.gameObject);
-            });
-
-            return this;
+            }
         }
 
+        // Only clears the entry if it still belongs to this run: a replaced run finishes late,
+        // after the run that replaced it has already registered itself under the same transform.
+        private void RemoveRun(Transform transform, Run run)
+        {
+            if (_activeRuns.TryGetValue(transform, out var activeRun) && activeRun == run)
+            {
+                _activeRuns.Remove(transform);
+            }
+        }
+
+        /// <summary>
+        /// Jumps every running gradient to its end value, then back to the default color when
+        /// Return To Default Color is set.
+        /// </summary>
         public override void Complete()
         {
-            // ColorGradient feedback uses the Timed system which doesn't provide 
-            // direct cancellation functionality. The effect will complete naturally
-            // based on its duration. No immediate completion action is available.
+            FinishActiveRuns(true);
         }
 
+        /// <summary>
+        /// Stops every running gradient where it is, leaving the current color in place unless
+        /// Return To Default Color is set.
+        /// </summary>
         public override void Stop()
-         {
-             // ColorGradient feedback uses the Timed system which doesn't provide 
-             // direct cancellation functionality. The effect will stop naturally
-             // based on its duration. No immediate stop action is available.
-         }
+        {
+            FinishActiveRuns(false);
+        }
+
+        private void FinishActiveRuns(bool applyEndValue)
+        {
+            if (_activeRuns.Count == 0) return;
+
+            var runs = new List<Run>(_activeRuns.Values);
+            foreach (var run in runs)
+            {
+                run.Finish?.Invoke(applyEndValue);
+            }
+
+            _activeRuns.Clear();
+        }
     }
 }
