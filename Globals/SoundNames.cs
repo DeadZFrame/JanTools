@@ -36,5 +36,7 @@ namespace Jan.Core
         public const string QuestCompleted = "QuestCompleted";
         public const string QuestFailed = "QuestFailed";
         public const string QuestSucceeded = "QuestSucceeded";
+        public const string Call = "Call";
+        public const string Clean = "Clean";
     }   
 }

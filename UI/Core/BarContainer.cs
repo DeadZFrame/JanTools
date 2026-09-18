@@ -27,6 +27,14 @@ namespace Jan.UI
         {
             handle.gameObject.SetActive(active);
         }
+
+        public void SetColor(Color color)
+        {
+            if(bar != null)
+            {
+                bar.color = color;
+            }
+        }
         
         void IMotion.SetFloat(float value)
         {
