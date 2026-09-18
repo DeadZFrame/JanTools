@@ -910,12 +910,16 @@ namespace Jan.Tasks
 
             async UniTaskVoid Task(CancellationToken token)
             {
-                var canceled = await UniTask.WaitUntilValueChanged(target, valueFactory, (PlayerLoopTiming)playerLoop, cancellationToken: token).TryAwait();
-                
-                if (!canceled)
+                var canceled = false;
+                while(!canceled)
                 {
-                    action?.Invoke();
-                }
+                    canceled = await UniTask.WaitUntilValueChanged(target, valueFactory, (PlayerLoopTiming)playerLoop, cancellationToken: token).TryAwait();
+
+                    if (!canceled)
+                    {
+                        action?.Invoke();
+                    }
+                }                
 
                 if(!canceled) cts?.CompletedCallback?.Invoke();
                 else cts?.CancellationCallback?.Invoke();
