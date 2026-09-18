@@ -1,6 +1,7 @@
 using System;
 using Jan.Tasks;
 using LitMotion;
+using UnityEngine;
 
 namespace Jan.Core
 {
@@ -27,11 +28,11 @@ namespace Jan.Core
             _cts?.SafeCancel();
         }
 
-        public void OnCompleted(Action callback)
+        public void OnCompleted(Action callback, GameObject cullingObject)
         {
             if(_handle.IsActive())
             {
-                _cts = Timed.CallDelayed(_handle.Duration, callback);
+                _cts = Timed.CallDelayed(_handle.Duration, callback, cullingObject);
             }
         }
 

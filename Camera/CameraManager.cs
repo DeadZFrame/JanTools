@@ -80,7 +80,7 @@ namespace Jan.Core
 
             Instance.CameraBase.transform.LitMove(newCamera.transform.position, Instance.transitionDuration,  Ease.OutSine);
             Instance.CameraBase.transform.LitRotate(newCamera.transform.rotation, Instance.transitionDuration, Ease.OutSine)
-                .OnCompleted(() => { Instance.Transitioning = false; });
+                .OnCompleted(() => { Instance.Transitioning = false; }, Instance.gameObject);
         }
     }
 }
