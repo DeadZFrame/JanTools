@@ -9,5 +9,6 @@ namespace Jan.Core
         public const string DryingUI = "DryingUI";
         public const string DensityBar = "DensityBar";
         public const string None = "None";
+        public const string ThankUI = "ThankUI";
     }
 }

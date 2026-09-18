@@ -19,13 +19,18 @@ namespace Jan.UI
         public virtual void SetFillAmount(float amount, float duration, Ease ease = Ease.Linear)
         {
             this.FloatMotion(bar.fillAmount, amount, duration, ease);
-            if (handle == null) return;
-            handle.rectTransform.anchoredPosition = new Vector2(amount * bar.rectTransform.sizeDelta.x, handle.rectTransform.anchoredPosition.y);
         }
 
         public void SetHandle(bool active)
         {
-            handle.gameObject.SetActive(active);
+            if(handle != null) handle.gameObject.SetActive(active);
+        }
+
+        public void SetHandlePosition(float amount)
+        {
+            if (handle == null) return;
+            amount *= 135;
+            handle.rectTransform.anchoredPosition = new Vector2(amount, handle.rectTransform.anchoredPosition.y);
         }
 
         public void SetColor(Color color)
