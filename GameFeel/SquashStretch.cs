@@ -152,7 +152,7 @@ namespace Jan.Feel
             foreach (var kvp in values)
             {
                 var handle = kvp.Value;
-                if (handle.IsActive())
+                if (handle.IsActive() && handle.Loops != -1)
                 {
                     handle.Complete();
                 }

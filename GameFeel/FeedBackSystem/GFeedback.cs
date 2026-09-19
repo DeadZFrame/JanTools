@@ -60,11 +60,13 @@ namespace Jan.Feel
             {
                 foreach (var fb in feedbacks)
                 {
+                    fb.Complete();
                     if (fb.listenEvent) EventManager.UnRegister(fb.name, fb.Play);
                 }
             }
             else
             {
+                feedback.Complete();
                 if (feedback.listenEvent) EventManager.UnRegister(feedback.name, feedback.Play);
             }
 

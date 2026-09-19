@@ -1,7 +1,5 @@
-using System;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Pool;
 
 namespace Jan.Pool
 {
@@ -102,6 +100,7 @@ namespace Jan.Pool
             if (Pools.TryGetValue(poolable.name.Replace("(Clone)", ""), out var pool))
             {
                 poolable.gameObject.SetActive(false);
+                poolable.transform.SetParent(null);
                 pool.Enqueue(poolable);
             }
             else
@@ -110,6 +109,7 @@ namespace Jan.Pool
                 Pools[poolable.name.Replace("(Clone)", "")].Enqueue(poolable);
 
                 poolable.gameObject.SetActive(false);
+                poolable.transform.SetParent(null);
             }
         }
 

@@ -109,6 +109,7 @@ namespace Jan.Pool
             {
                 Debug.Log($"Despawning to pool: {poolable.name}, Pool Count Before: {pool.Count}");
                 poolable.SetActive(false);
+                poolable.transform.SetParent(null);
                 pool.Enqueue(poolable);
             }
             else
@@ -117,6 +118,7 @@ namespace Jan.Pool
                 GameObjectPools[poolable.name.Replace("(Clone)", "")].Enqueue(poolable);
 
                 poolable.SetActive(false);
+                poolable.transform.SetParent(null);
             }
         }
 
